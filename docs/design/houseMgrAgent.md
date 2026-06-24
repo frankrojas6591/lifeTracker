@@ -1,6 +1,6 @@
 # HouseMgr Agent — Top-Level Design
 
-**Version:** 0.1
+**Version:** 0.2
 **Date:** June 2026
 **Status:** Design — pre-implementation
 
@@ -58,6 +58,57 @@ pyTrackers/
 
 ---
 
+### 2.2 Configuration Profile (`config.json`)
+
+All filesystem paths, house records, and secrets live in **one file outside the git repo**:
+
+```
+~/.houseTracker/config.json
+```
+
+`config.json` is never committed. The git repo contains only code. All house data — records, documents, agent state — lives under `top_folder` for each house, also outside git.
+
+**config.json schema:**
+
+```json
+{
+  "default":            "ranch_house",
+  "APP_SECRET_KEY":     "<flask signing key — one per houseTracker instance>",
+  "APP_GPG_PASSPHRASE": "<gpg passphrase — encrypts the user db>",
+  "houses": [
+    {
+      "house_id":   "ranch_house",
+      "house_name": "Westwood Ranch",
+      "top_folder": "~/houseTracker/ranch_house",
+      "address":    "123 Ranch Rd, Austin TX 78701",
+      "owner_id":   "frank"
+    }
+  ],
+  "owners": [
+    {
+      "owner_id":  "frank",
+      "full_name": "Frank Rojas",
+      "email":     "frankr6591@gmail.com"
+    }
+  ]
+}
+```
+
+`setup_paths.py` reads `~/.houseTracker/config.json` and exposes module-level path constants — `TOP`, `RECORDS_DIR`, `DOCUMENTS_DIR` — for the active house session. No hardcoded absolute paths anywhere else in the codebase.
+
+---
+
+### 2.3 H × O Service Model
+
+The app supports **H homes × O owners**:
+
+- **H (homes):** A single houseTracker instance manages any number of houses. Each house has its own `top_folder`, its own agent records, and its own document vault.
+- **O (owners):** Multiple owners can be registered (e.g., spouses, family members). Each owner authenticates separately and has access to the house(s) they are associated with.
+
+The active session context is `(house_id, owner_id)`. The Flask session stores both after login. Multi-house owners select the active house at login or via a house-switcher in the nav bar.
+
+---
+
 ## 3. Architecture
 
 ### 3.1 Component Map
@@ -66,6 +117,13 @@ pyTrackers/
 Owner (voice / chat / monthly check-in)
         │
         ▼
+┌──────────────────────────────────────────┐
+│       ConfigLoader + AuthLayer            │
+│  ~/.houseTracker/config.json             │
+│  session: (house_id, owner_id, role)     │
+└──────────┬───────────────────────────────┘
+           │  house context injected on every request
+           ▼
 ┌─────────────────────────────────────────┐
 │            HouseMgr (Orchestrator)       │
 │                                          │
@@ -83,10 +141,11 @@ Owner (voice / chat / monthly check-in)
 │  Architecture │ HVAC │ Plumbing │ ...    │
 │  (each agent: query / audit / record)    │
 └──────────┬───────────────────────────────┘
-           │  all reads/writes
+           │  all reads/writes → top_folder/records/
            ▼
 ┌──────────────────────────────────────────┐
 │           HouseRecords (DB)              │
+│  ~/houseTracker/<house_id>/records/      │
 │  house_profile.json                      │
 │  agents/<agent_name>/records.json        │
 │  agents/<agent_name>/action_items.json   │
@@ -147,24 +206,64 @@ Individual agents also call the LLM internally for domain reasoning — each age
 
 ### 3.5 HouseRecords DB Structure
 
+The records directory lives at `top_folder` for the active house — outside the git repo.
+
 ```
-records/
-├── house_profile.json          ← House Profile agent output
-├── systems_registry.json       ← All systems/appliances (HVAC, water heater, etc.)
-├── documents/                  ← PDFs, photos, invoices
-│   ├── permits/
-│   ├── invoices/
-│   └── photos/
-└── agents/
-    ├── architecture/
-    │   ├── knowledge.json      ← Floor plan, structural notes
-    │   └── action_items.json   ← Pending items from last audit
-    ├── hvac/
-    ├── plumbing/
-    └── ...                     ← One directory per agent
+~/houseTracker/<house_id>/             ← top_folder from config.json
+├── records/
+│   ├── house_profile.json             ← House Profile agent output
+│   ├── systems_registry.json          ← All systems/appliances
+│   └── agents/
+│       ├── architecture/
+│       │   ├── knowledge.json         ← Floor plan, structural notes
+│       │   └── action_items.json      ← Pending items from last audit
+│       ├── hvac/
+│       ├── plumbing/
+│       └── ...                        ← One directory per agent
+└── documents/                         ← PDFs, photos, invoices
+    ├── permits/
+    ├── invoices/
+    └── photos/
 ```
 
-All JSON. All local. No cloud dependency.
+All JSON. All local. No cloud dependency. `setup_paths.py` sets `RECORDS_DIR` and `DOCUMENTS_DIR` to these paths at startup.
+
+---
+
+### 3.6 Authentication & Login Layer
+
+Follows the `llcRentalTracker` pattern (`llcLogin_auth.py`).
+
+**User DB:** A single GPG-encrypted file at `~/.houseTracker/users.json.gpg` (outside git). Decrypted in-memory only; never written to disk as plaintext. Passphrase loaded from `config.json` → `APP_GPG_PASSPHRASE`.
+
+**Roles:**
+
+| Role | Access |
+|---|---|
+| `houseMgr` | Full admin — all houses, user management, configurator |
+| `owner` | Full access to their associated house(s) |
+| `viewer` | Read-only access to a house (e.g., family member) |
+
+**Routes registered by `make_auth_routes(app)` in `ui/houseLogin_auth.py`:**
+
+| Route | Method | Description |
+|---|---|---|
+| `/login` | GET/POST | Credential check against GPG user DB; sets session context |
+| `/logout` | GET | Clears session, redirects to `/login` |
+| `/register` | GET/POST | `houseMgr` only — creates new user account |
+| `/select_house` | GET/POST | Multi-house owners pick the active house after login |
+
+**House context stored in Flask session:**
+
+```python
+session["logged_in"] = True
+session["username"]  = "frank"
+session["role"]      = "owner"
+session["house_id"]  = "ranch_house"   # active house
+session["owner_id"]  = "frank"
+```
+
+`login_required` decorator (from `ui/houseLogin_auth.py`) protects all routes except `/login`, `/logout`, and `/register`. Flask secret key is loaded from `config.json` → `APP_SECRET_KEY` at startup.
 
 ---
 
@@ -200,11 +299,13 @@ Agents within a tier can be built in parallel. Each tier depends on the tier abo
 
 **Tier 1 — Infrastructure** *(build first; nothing else works without these)*
 
-| Priority | Agent | Why First |
+| Priority | Component | Why First |
 |---|---|---|
-| 1 | **HouseRecords** | All agents store and retrieve through here; must exist before any agent is built |
-| 2 | **House Profile** | Briefs every agent with house context; onboarding starts here |
-| 3 | **Communication** | Owner interaction layer; monthly check-in and alert routing |
+| 1 | **Setup WebServer** | `wsCmd.py --setup` flow: creates `~/.houseTracker/config.json`, bootstraps the records directory tree, and registers the first user. Nothing else starts without this. |
+| 2 | **Configurator (Owner, House)** | Web UI for registering and editing houses and owners in `config.json`. Must exist before agents can be configured for a specific house. |
+| 3 | **HouseRecords** | All agents store and retrieve through here; must exist before any agent is built |
+| 4 | **House Profile** | Briefs every agent with house context; onboarding starts here |
+| 5 | **Communication** | Owner interaction layer; monthly check-in and alert routing |
 
 ---
 
@@ -281,12 +382,35 @@ Agents within a tier can be built in parallel. Each tier depends on the tier abo
 
 ## 5. Project File Structure
 
+**Outside git (config & data):**
+
+```
+~/.houseTracker/
+├── config.json                 ← Profile: houses, owners, secrets (never committed)
+└── users.json.gpg              ← GPG-encrypted user DB (AES-256 symmetric)
+
+~/houseTracker/<house_id>/      ← top_folder for each registered house
+├── records/
+│   ├── house_profile.json
+│   ├── systems_registry.json
+│   └── agents/
+│       └── <agent_name>/
+│           ├── knowledge.json
+│           └── action_items.json
+└── documents/
+    ├── permits/
+    ├── invoices/
+    └── photos/
+```
+
+**Repo (code only):**
+
 ```
 houseTracker/
-├── wsCmd.py                    ← CLI: start, onboard, check-in
+├── wsCmd.py                    ← CLI: --setup, --start, --onboard, --checkin
 ├── wsgi.py                     ← Flask WSGI entry
 ├── requirements.txt
-├── setup_paths.py              ← Path constants (follows pyTrackers convention)
+├── setup_paths.py              ← Reads ~/.houseTracker/config.json; sets TOP, RECORDS_DIR, etc.
 │
 ├── houseMgr/                   ← Orchestrator package
 │   ├── __init__.py
@@ -304,21 +428,23 @@ houseTracker/
 │   ├── architecture.py         ← Architecture agent (A.1)
 │   └── ...                     ← One file per remaining agent
 │
-├── records/                    ← HouseRecords DB (gitignored data)
-│   ├── house_profile.json
-│   ├── systems_registry.json
-│   ├── documents/
-│   └── agents/
-│
 ├── ui/                         ← Flask views
 │   ├── __init__.py
+│   ├── houseLogin_auth.py      ← Auth routes + login_required decorator (GPG user DB)
+│   ├── configurator.py         ← Configurator routes: manage houses + owners in config.json
 │   ├── chat.py                 ← Chat / voice interface route
 │   ├── checkin.py              ← Monthly check-in UI route
 │   └── templates/
+│       ├── login.html
+│       ├── register.html
+│       ├── select_house.html
+│       ├── configurator.html
+│       └── ...
 │
 ├── tests/
 │   ├── test_router.py
 │   ├── test_checkin.py
+│   ├── test_setup_paths.py
 │   └── test_agents/
 │       └── test_house_records.py
 │
@@ -334,12 +460,13 @@ houseTracker/
 
 ### Phase 0 — Scaffold (no agents yet)
 
-- `wsCmd.py` with `--onboard` and `--checkin` stubs
-- `setup_paths.py` with path constants
-- `houseMgr/models.py` with `AgentResponse`, `ActionItem`
-- `agents/base.py` with `DisciplineAgent` interface
-- `records/` directory structure
-- Flask app skeleton with `/chat` and `/checkin` routes
+- `wsCmd.py --setup` flow: create `~/.houseTracker/config.json`, bootstrap the records directory tree, register the first user (GPG-encrypted user DB)
+- `setup_paths.py`: reads `~/.houseTracker/config.json`, sets `TOP`, `RECORDS_DIR`, `DOCUMENTS_DIR` module globals
+- `ui/houseLogin_auth.py`: GPG user DB, `make_auth_routes()`, `login_required` decorator
+- `ui/configurator.py`: Configurator routes for adding/editing houses and owners in `config.json`
+- `houseMgr/models.py`: `AgentResponse`, `ActionItem` dataclasses
+- `agents/base.py`: `DisciplineAgent` interface
+- Flask app skeleton: `/login`, `/logout`, `/register`, `/select_house`, `/chat`, `/checkin`, `/configurator`
 
 ### Phase 1 — Tier 1 Agents (infrastructure)
 
@@ -363,6 +490,9 @@ Each tier follows the priority order in §4.2. Every new agent follows the `Disc
 | **LLM for intent parsing** | Haiku (fast/cheap) for routing, Sonnet for synthesis | Intent parsing is a simple classification; synthesis needs quality |
 | **Agent LLM calls** | Each agent manages its own | Agents have domain-specific system prompts; centralized LLM would require HouseMgr to know all domains |
 | **Storage** | Local JSON via HouseRecords agent | Consistent with pyTrackers; no cloud dependency; sensitive data stays local |
+| **Config profile location** | `~/.houseTracker/config.json` (outside git) | House data and secrets are personal; same pattern as llcRentalTracker; nothing sensitive ever enters the repo |
+| **Multi-house model (H × O)** | Houses and owners defined in config.json; session holds `(house_id, owner_id)` | Supports multiple properties and co-owners without coupling agents to a single house at the code level |
+| **Authentication** | GPG-encrypted user DB (`users.json.gpg`); `llcRentalTracker` pattern | AES-256 symmetric encryption; passphrase never touches disk; proven pattern from sibling tracker |
 | **Agent interface** | 4-method contract (brief/query/audit/record) | Minimal surface area; new agents drop in without changing router |
 | **Monthly check-in as primary UX** | Scheduled pull, not push | Matches owner preference; avoids notification fatigue; agents queue items between check-ins |
 | **No shared infrastructure with sibling trackers** | Explicit integration contracts only | Each tracker evolves independently; avoids coupling |
