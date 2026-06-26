@@ -1,6 +1,6 @@
 # HouseMgr — Data, Config & Auth
 
-**Version:** 0.3
+**Version:** 0.4
 **Date:** June 2026
 **Parent:** [Design Index](./houseMgrAgent.md)
 
@@ -8,74 +8,107 @@
 
 ## 1. Storage Overview
 
-All HouseMgr data lives on the **PythonAnywhere filesystem** — not the local machine, not a cloud DB. The PA filesystem is the single source of truth. A private GitHub repo provides off-host backup of the JSON records.
+The **private Git data repo** is the master store for all house records. PA and the local Mac each maintain a Git checkout of the data repo. Writes go to the local checkout first, then commit + push to Git immediately. Reads pull from Git at startup.
 
-| Data Type | Location on PA | In Git? |
+| Data Type | Location | In Git? |
 |---|---|---|
-| App code | `/home/<pa_user>/houseTracker/` (cloned from GitHub) | Yes — code repo |
-| Config & secrets | `/home/<pa_user>/.houseTracker/config.json` | No — never committed |
-| User auth DB | `/home/<pa_user>/.houseTracker/users.json.gpg` | No — never committed |
-| HouseRecords (JSON) | `/home/<pa_user>/houseTracker/<house_id>/records/` | Yes — private data repo (backup) |
-| Documents (PDFs, photos) | `/home/<pa_user>/houseTracker/<house_id>/documents/` | No — too large; PA filesystem only |
+| App code | `houseTracker/` (code repo, both PA and local) | Yes — code repo |
+| Config & secrets | `~/.houseTracker/config.json` (each environment) | No — never committed |
+| User auth DB | `~/.houseTracker/users.json.gpg` (each environment) | No — never committed |
+| **HouseRecords (JSON)** | **`houseTracker-data/<house_id>/records/`** | **Yes — data repo (master)** |
+| Documents (PDFs, photos) | `houseTracker-data/<house_id>/documents/` | No — too large; local filesystem only |
+
+Two repos, one environment apiece:
+
+```
+github.com/<user>/houseTracker        ← code (Flask app, agents, UI)
+github.com/<user>/houseTracker-data   ← records master (private)
+```
 
 ---
 
-## 2. HouseRecords DB Structure
+## 2. Git Records Model
+
+### Why Git as Master
+
+Git gives records version history, branching for experiments, and a sync bus between PA and local Mac — with no additional infrastructure. Every record change is a commit; the log is the audit trail.
+
+### Checkout Paths
+
+| Environment | Data repo checkout path |
+|---|---|
+| PythonAnywhere | `/home/<pa_user>/houseTracker-data/` |
+| Local Mac | `~/GDrive/dev/pyTrackers/houseTracker-data/` |
+
+`config.json → data_repo_path` holds the environment-specific checkout path. `setup_paths.py` reads it and sets `DATA_REPO`, `RECORDS_DIR`, `DOCUMENTS_DIR`.
+
+### Sync Protocol
 
 ```
-/home/<pa_user>/houseTracker/<house_id>/        ← top_folder from config.json
-├── records/
-│   ├── house_profile.json                       ← House Profile agent output
-│   ├── systems_registry.json                    ← All systems / appliances
-│   └── agents/
-│       ├── architecture/
-│       │   ├── knowledge.json                   ← Floor plan, structural notes
-│       │   └── action_items.json                ← Pending items from last audit
-│       ├── hvac/
-│       │   ├── knowledge.json
-│       │   └── action_items.json
-│       ├── plumbing/
-│       └── ...                                  ← One directory per agent
-└── documents/
-    ├── permits/
-    ├── invoices/
-    └── photos/
+On startup (both environments):
+    git -C DATA_REPO pull --ff-only
+
+On each agent write (house_records.py):
+    git -C DATA_REPO add records/<house_id>/
+    git -C DATA_REPO commit -m "auto: <agent> <event> <timestamp>"
+    git -C DATA_REPO push origin main
+
+On conflict:
+    push fails → wsCmd.py --sync logs the error and halts
+    owner resolves via: wsCmd.py --resolve (git pull --rebase + push)
 ```
 
-All JSON. No external DB. `setup_paths.py` sets `RECORDS_DIR` and `DOCUMENTS_DIR` at startup from `config.json`.
+Simultaneous writes from both PA and local are unlikely in normal use (single owner, one active session). The protocol surfaces conflicts explicitly rather than silently merging.
 
-### Git Backup of Records
-
-The `records/` subtree (JSON only, no documents) is pushed to a **private GitHub repo** on a scheduled basis (PA always-on task, nightly). This gives version history and off-PA redundancy without committing sensitive data to the code repo.
+### What Lives in the Data Repo
 
 ```
-Code repo  (public or private):  github.com/<user>/houseTracker
-Data repo  (private):            github.com/<user>/houseTracker-data
+houseTracker-data/
+└── <house_id>/
+    ├── records/
+    │   ├── house_profile.json
+    │   ├── systems_registry.json
+    │   └── agents/
+    │       ├── architecture/
+    │       │   ├── knowledge.json
+    │       │   └── action_items.json
+    │       ├── hvac/
+    │       │   ├── knowledge.json
+    │       │   └── action_items.json
+    │       └── ...                    ← one directory per agent
+    └── documents/                     ← NOT committed; filesystem only
+        ├── permits/
+        ├── invoices/
+        └── photos/
 ```
 
-The data repo contains only `<house_id>/records/**/*.json`. Documents (PDFs, photos) are never committed — PA filesystem only.
+`records/` is committed on every write. `documents/` is gitignored in the data repo — PDFs and photos stay on whichever filesystem they were uploaded to (PA or local Mac). Document metadata (filename, date, description) is stored in the agent's `knowledge.json` so both environments know what documents exist even if the file itself is remote.
 
 ---
 
 ## 3. Configuration Profile
 
-`config.json` lives at `/home/<pa_user>/.houseTracker/config.json` on PA. It is **never committed** to either repo. The code repo contains `config.json.example` with all keys and placeholder values.
+`config.json` lives at `~/.houseTracker/config.json` on **each environment separately**. It is never committed. Paths, secrets, and environment identity differ between PA and local.
+
+The code repo contains `config.json.example` with all keys and placeholder values.
 
 ### Schema
 
 ```json
 {
+  "env":                "pa",
   "default":            "ranch_house",
   "APP_SECRET_KEY":     "<flask signing key>",
-  "APP_GPG_PASSPHRASE": "<gpg passphrase — encrypts users.json.gpg>",
-  "twilio_account_sid": "<Twilio account SID>",
-  "twilio_auth_token":  "<Twilio auth token>",
+  "APP_GPG_PASSPHRASE": "<gpg passphrase>",
+  "data_repo_path":     "/home/<pa_user>/houseTracker-data",
+  "auto_push":          true,
+  "twilio_account_sid": "<Twilio SID>",
+  "twilio_auth_token":  "<Twilio token>",
   "twilio_phone_number": "+15125550100",
   "houses": [
     {
       "house_id":   "ranch_house",
       "house_name": "Westwood Ranch",
-      "top_folder": "/home/<pa_user>/houseTracker/ranch_house",
       "address":    "123 Ranch Rd, Austin TX 78701",
       "owner_id":   "frank"
     }
@@ -91,19 +124,29 @@ The data repo contains only `<house_id>/records/**/*.json`. Documents (PDFs, pho
 }
 ```
 
-`owner.phone` is the Twilio caller ID used for auto-login on incoming voice calls. If the inbound number matches a registered owner, the session is established without a spoken PIN.
+**Key fields:**
 
-`setup_paths.py` reads this file and exposes module-level constants (`TOP`, `RECORDS_DIR`, `DOCUMENTS_DIR`, `TWILIO_*`) to all other modules. No other module reads `config.json` directly.
+| Key | Notes |
+|---|---|
+| `env` | `"pa"` or `"local"` — controls whether `/voice` route is registered |
+| `data_repo_path` | Absolute path to the houseTracker-data Git checkout on this machine |
+| `auto_push` | If `true`, `house_records.py` pushes to Git after every write |
+| `twilio_*` | Only used when `env=pa`; ignored locally |
+| `owner.phone` | Twilio caller ID for auto-login on voice channel |
+
+`top_folder` is no longer in config.json — it is derived as `data_repo_path/<house_id>` by `setup_paths.py`.
 
 ---
 
 ## 4. Authentication & Login Layer
 
-Follows the `llcRentalTracker` pattern (`llcLogin_auth.py`), adapted for voice caller-ID auto-login.
+Follows the `llcRentalTracker` pattern, adapted for three channels and caller-ID auto-login.
 
 ### User DB
 
-A single GPG-encrypted file at `/home/<pa_user>/.houseTracker/users.json.gpg`. Decrypted in-memory only; never written to disk as plaintext. Passphrase from `config.json → APP_GPG_PASSPHRASE`.
+GPG-encrypted at `~/.houseTracker/users.json.gpg` — one copy per environment (PA and local Mac). Decrypted in-memory only; never plaintext on disk. Passphrase from `config.json → APP_GPG_PASSPHRASE`.
+
+The two copies are independent; `wsCmd.py --setup` initializes each. If users are added on PA, they must be manually replicated to local (or exported/imported via `wsCmd.py --export-users / --import-users`).
 
 ### Roles
 
@@ -111,17 +154,17 @@ A single GPG-encrypted file at `/home/<pa_user>/.houseTracker/users.json.gpg`. D
 |---|---|
 | `houseMgr` | Full admin — all houses, user management, configurator |
 | `owner` | Full access to their associated house(s) |
-| `viewer` | Read-only access to a house (e.g., family member) |
+| `viewer` | Read-only access to a house |
 
 ### Routes (`ui/houseLogin_auth.py`)
 
-| Route | Method | Description |
+| Route | Channel | Description |
 |---|---|---|
-| `/login` | GET/POST | Credential check against GPG user DB; sets session context |
-| `/logout` | GET | Clears session, redirects to `/login` |
-| `/register` | GET/POST | `houseMgr` role only — creates new user |
-| `/select_house` | GET/POST | Multi-house owners pick the active house after login |
-| `/voice` | POST | Twilio webhook — caller ID lookup → auto-login or PIN challenge |
+| `/login` | B, C | Credential check; sets session |
+| `/logout` | B, C | Clears session |
+| `/register` | B, C | `houseMgr` only — creates new user |
+| `/select_house` | B, C | Multi-house owners pick active house |
+| `/voice` | A | Twilio webhook — caller ID → auto-login or PIN; PA only |
 
 ### Flask Session
 
@@ -131,40 +174,46 @@ session["username"]   = "frank"
 session["role"]       = "owner"
 session["house_id"]   = "ranch_house"
 session["owner_id"]   = "frank"
-session["via_voice"]  = True          # set when entry is via Twilio /voice
+session["channel"]    = "voice"    # "voice" | "web_pa" | "web_local"
 ```
 
-`login_required` decorator (from `ui/houseLogin_auth.py`) protects all routes except `/login`, `/logout`, `/register`, and `/voice` (voice handles its own auth). Flask secret key loaded from `config.json → APP_SECRET_KEY` at startup.
+`channel` drives `ResponseSynthesizer` output format: `voice` → ≤ 3 spoken sentences (TwiML); `web_*` → full HTML.
 
 ---
 
 ## 5. `setup_paths.py` Contract
 
-Every module that needs a path imports from `setup_paths`:
-
 ```python
-from setup_paths import TOP, RECORDS_DIR, DOCUMENTS_DIR, TWILIO_SID, TWILIO_TOKEN
+from setup_paths import (
+    ENV,           # "pa" | "local"
+    DATA_REPO,     # absolute path to houseTracker-data checkout
+    RECORDS_DIR,   # DATA_REPO/<house_id>/records/
+    DOCUMENTS_DIR, # DATA_REPO/<house_id>/documents/
+    TWILIO_SID, TWILIO_TOKEN, TWILIO_NUMBER,  # None when env=local
+)
 ```
 
-`setup_paths.py` is the only module that reads `config.json`. It fails loudly if the file is missing — no silent fallback to default paths.
+`setup_paths.py` is the only module that reads `config.json`. It fails loudly if `config.json` is missing or `data_repo_path` does not exist. No silent fallbacks.
 
 ---
 
 ## 6. Implementation Plan (Data Scope)
 
-### Phase 0 — Config & Auth Scaffold
+### Phase 0 — Data Repo + Config Scaffold
 
-- [ ] `config.json.example` in repo root — all keys, placeholder values, inline comments
-- [ ] `setup_paths.py` — reads `~/.houseTracker/config.json`; fails with clear error if missing
-- [ ] `wsCmd.py --setup` — interactive wizard on PA console: writes config.json, creates records tree, initializes GPG user DB with first `houseMgr` user
-- [ ] `ui/houseLogin_auth.py` — GPG user DB, `make_auth_routes()`, `login_required`, caller-ID auto-login in `/voice` handler
+- [ ] Create private `houseTracker-data` repo on GitHub; add `.gitignore` (`documents/`)
+- [ ] `config.json.example` in code repo — all keys, inline comments
+- [ ] `wsCmd.py --setup` (run on each environment): writes `~/.houseTracker/config.json`, clones data repo to `data_repo_path`, initializes GPG user DB
+- [ ] `setup_paths.py`: reads config.json; derives all paths; registers Twilio constants only when `env=pa`
 
-### Phase 1 — Records Scaffold
+### Phase 1 — HouseRecords with Git Sync
 
-- [ ] `agents/house_records.py` — `read_json(path)`, `write_json(path, data)`, `append_action_item(agent, item)`, `get_action_items(agent)`
-- [ ] Bootstrap records directories on `wsCmd.py --setup`
+- [ ] `agents/house_records.py`: `read_json(path)`, `write_json(path, data)` — write calls `git add + commit + push` when `auto_push=true`
+- [ ] `wsCmd.py --pull`: manual `git pull` from data repo
+- [ ] `wsCmd.py --push`: manual `git add/commit/push` to data repo
+- [ ] `wsCmd.py --sync`: `git pull --rebase + push` for conflict resolution
 
-### Phase 2 — Git Backup
+### Phase 2 — Document Metadata Bridge
 
-- [ ] PA always-on task: nightly `git add records/ && git commit && git push` to private data repo
-- [ ] `wsCmd.py --backup` — manual trigger for the same push
+- [ ] Agent `knowledge.json` stores document metadata (`{filename, date, description, env_uploaded}`) so both PA and local know what documents exist even if the file is on the other machine's filesystem
+- [ ] Future: optional rsync of documents between PA and local for full local copies

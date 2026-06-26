@@ -1,6 +1,6 @@
 # HouseMgr Agent — Design Index
 
-**Version:** 0.3
+**Version:** 0.4
 **Date:** June 2026
 **Status:** Design — pre-implementation
 
@@ -8,23 +8,38 @@
 
 ## System Overview
 
-HouseMgr is a voice-first home management assistant hosted on **PythonAnywhere (PA)**. The owner interacts by **phone only — voice**; records, reports, and check-in summaries are viewed in a browser at the PA-hosted web URL. The phone never displays records — it speaks them or routes the owner to the web view.
+HouseMgr is a voice-first home management assistant with **three communication channels** and a **Git-as-master records model**. The private Git data repo is the single source of truth for all house records; both the PA-hosted instance and the local Mac instance sync against it.
 
 ```
-Phone (voice only)
-     │
-     ▼  Twilio STT/TTS (webhook)
-PythonAnywhere — Hosted Flask App
-     ├── HouseMgr Orchestrator  ← routes intent to agents
-     ├── Discipline Agents      ← domain expertise
-     ├── HouseRecords           ← PA filesystem
-     │       └── Git backup     ← private repo (JSON records)
-     └── Web UI                 ← browser: records, reports, check-in
-          ↑
-     Browser (any device — phone, tablet, desktop)
+┌──────────────────────────────────────────────────────────────────┐
+│  COMMUNICATION CHANNELS                                          │
+│                                                                  │
+│  (A) iPhone (voice)    (B) PA Web UI          (C) Local Mac UI  │
+│  ─────────────────     ────────────────        ───────────────── │
+│  Call Twilio number    Browser → PA URL        Browser → :5000  │
+│  Speak / listen        Full web UI             Same web UI      │
+│  No record display     Records, check-in       Records, check-in│
+└───────┬────────────────────────┬────────────────────────┬───────┘
+        │ Twilio webhook         │ HTTPS                  │ HTTP
+        ▼                        ▼                        ▼
+┌───────────────────────┐   ┌────────────────────────────────────┐
+│ PythonAnywhere (PA)   │   │ Local Mac (Flask, same codebase)   │
+│ Flask WSGI — public   │   │ wsCmd.py --start — localhost:5000  │
+│ /voice + all web UIs  │   │ web UIs only (no Twilio /voice)    │
+└───────────┬───────────┘   └──────────────┬─────────────────────┘
+            │ git pull / push               │ git pull / push
+            └──────────────┬───────────────┘
+                           ▼
+            ┌──────────────────────────────┐
+            │  Git Data Repo (private)     │
+            │  github.com/<user>/          │
+            │  houseTracker-data           │
+            │  ← master records store →   │
+            │  <house_id>/records/**/*.json│
+            └──────────────────────────────┘
 ```
 
-**Microservice boundary:** The phone is a dumb voice terminal. All logic, all records, and all intelligence live on PA. The only thing the phone does is carry speech in and speech out.
+**Records master:** Git data repo. PA and Local Mac both maintain a local checkout; both pull before a session and push immediately after any write. Voice calls only reach PA (Twilio requires a public HTTPS endpoint).
 
 ---
 
@@ -32,10 +47,10 @@ PythonAnywhere — Hosted Flask App
 
 | Document | Scope |
 |---|---|
-| [Architecture & Deployment](./houseMgrAgent_arch.md) | PA hosting, Twilio voice, component map, H×O model, config profile |
+| [Architecture & Deployment](./houseMgrAgent_arch.md) | 3-channel model, PA + local deployment, Twilio voice, component map, H×O model |
 | [Agent Catalog](./houseMgrAgent_agents.md) | Agent interface contract, LLM usage, build tiers, dependency graph |
-| [Data & Auth](./houseMgrAgent_data.md) | HouseRecords layout on PA, config.json schema, GPG auth, Git backup |
-| [Implementation Plan](./houseMgrAgent_impl.md) | Phase-by-phase build from PA scaffold through full agent suite |
+| [Data & Auth](./houseMgrAgent_data.md) | Git as master records store, sync model, config schema, GPG auth |
+| [Implementation Plan](./houseMgrAgent_impl.md) | Phase-by-phase build from scaffold through full agent suite |
 
 ---
 
@@ -43,11 +58,12 @@ PythonAnywhere — Hosted Flask App
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| **Hosting** | PythonAnywhere (PA) | Managed Python WSGI; persistent filesystem; no ops burden |
-| **Voice interface** | Phone → Twilio → PA `/voice` route | Owner never types; voice is the primary interaction channel |
-| **Visual interface** | Browser → PA web URL | Records/reports read on screen, not dictated; separates read vs. speak |
-| **Records storage** | PA filesystem; private Git backup | Persistent on PA; Git provides version history and off-host redundancy |
+| **Records master** | Private Git data repo | Version history, off-host redundancy, sync between PA and local without a separate DB or cloud service |
+| **Channel A — voice** | iPhone → Twilio → PA `/voice` | Twilio requires public HTTPS; PA is always-on; no app install on phone |
+| **Channel B — remote web** | Browser → PA hosted web UI | Full record viewing and check-in from any device, anywhere |
+| **Channel C — local web** | Browser → localhost Mac Flask | Same codebase run locally; fast for at-home admin and record editing |
+| **Sync model** | git pull on startup; git push on each write | No separate sync daemon; Git is the sync bus; conflicts surface as merge errors |
 | **Orchestrator** | Thin router — zero domain logic in HouseMgr | Domain bugs stay in agents; HouseMgr stays stable as agents are added |
 | **LLM** | Haiku for intent parsing; Sonnet for synthesis | Cost-efficient routing; quality response generation |
 | **Auth** | GPG-encrypted user DB; Flask session `(house_id, owner_id)` | Sensitive data never on disk as plaintext; follows llcRentalTracker pattern |
-| **Multi-house** | H × O — any number of homes × owners per PA instance | Config-driven; no code change to add a new house or owner |
+| **Multi-house** | H × O — any number of homes × owners per instance | Config-driven; no code change to add a new house or owner |
