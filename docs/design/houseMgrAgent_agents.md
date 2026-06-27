@@ -157,6 +157,29 @@ Agents within a tier can be built in parallel. Each tier depends on the tier abo
 | Landscaping | Architecture, Plumbing | Financing |
 | Decoration | Architecture | Financing |
 
+### 5.1 Agent Records Ownership
+
+Every JSON file in `records/agents/` belongs to exactly one agent — the sole writer. HouseRecords provides the read/write interface; agents never touch the filesystem directly. See [houseRecordsData.md §4](./houseRecords/houseRecordsData.md#4-records-directory-structure) for the full directory tree.
+
+| Agent | Records Dir | Owned JSON Files |
+|---|---|---|
+| HouseRecords | `agents/house_records/` | `legal_records` · `insurance` · `utilities` · `contractors` · `documents_index` · `action_items` |
+| House Profile | `agents/house_profile/` | `house_profile` · `action_items` |
+| Communication | `agents/communication/` | `check_in_log` · `action_items` |
+| Architecture | `agents/architecture/` | `floor_plan` · `structural_notes` · `action_items` |
+| Security & Safety | `agents/security_safety/` | `systems` · `action_items` |
+| Accessibility | `agents/accessibility/` | `assessment` · `action_items` |
+| HVAC | `agents/hvac/` | `systems` · `maintenance_log` · `action_items` |
+| Electrical | `agents/electrical/` | `panel` · `circuits` · `maintenance_log` · `action_items` |
+| Plumbing | `agents/plumbing/` | `systems` · `sewer_diagram` · `maintenance_log` · `action_items` |
+| Roofing | `agents/roofing/` | `systems` · `maintenance_log` · `action_items` |
+| Financing | `agents/financing/` | `capital_improvements` · `budget` · `action_items` |
+| Tax | `agents/tax/` | `basis_log` · `action_items` |
+| Investment | `agents/investment/` | `valuation` · `action_items` |
+| Appliances | `agents/appliances/` | `registry` · `maintenance_log` · `action_items` |
+| Landscaping | `agents/landscaping/` | `site_map` · `maintenance_log` · `action_items` |
+| Decoration | `agents/decoration/` | `rooms` · `action_items` |
+
 ---
 
 ## 6. Implementation Plan (Agents Scope)
