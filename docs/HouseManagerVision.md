@@ -1,6 +1,6 @@
 # HouseMgr Vision
 
-**Version:** 0.3 (Draft for iteration)
+**Version:** 0.4 (Draft for iteration)
 **Author:** Frank Rojas
 **Date:** June 2026
 
@@ -148,30 +148,83 @@ This registry powers the proactive maintenance calendar and the financial planni
 
 ---
 
+## 3.5 Universal Agent Naming Schema (UANS)
+
+Every agent, record, and file in HouseMgr follows a 4-segment dot-notation identifier:
+
+```
+house.<category>.<agent>.<record>
+```
+
+| Segment | Values | Purpose |
+|---|---|---|
+| `house` | always `house` | top-level namespace; all records belong to this property |
+| `<category>` | `core` · `systems` · `designs` · `finance` · `life` | functional grouping of agents |
+| `<agent>` | short name (hvac, plumbing, budget, …) | the discipline agent that owns this data |
+| `<record>` | file stem (log, floor_plan, basis_log, …) | specific record type; omit when referring to the agent itself |
+
+**Why UANS matters:** A named agent is also a named record path. There is no ambiguity about who owns a file or where it lives. The name alone identifies expertise domain, ownership, and storage location. Adding an agent means adding a name; the directory path, registry entry, and data schemas all derive from it automatically.
+
+**Examples:**
+
+| UANS identifier | Meaning | File path |
+|---|---|---|
+| `house.systems.hvac` | HVAC agent | `records/agents/systems/hvac/` |
+| `house.systems.hvac.log` | HVAC maintenance log | `records/agents/systems/hvac/log.json` |
+| `house.designs.architecture.floor_plan` | architecture floor plan | `records/agents/designs/architecture/floor_plan.json` |
+| `house.finance.budget.capital_improvements` | capital improvements list | `records/agents/finance/budget/capital_improvements.json` |
+| `house.core.records.legal` | legal records index | `records/agents/core/records/legal.json` |
+
+The directory path under `records/agents/` mirrors the UANS: `<category>/<agent>/`. File names use only the `<record>` segment. The UANS is the connective tissue that ties the agent catalog, records directory, and data schemas into one coherent system.
+
+---
+
 \newpage
 
 ## 4. Discipline Agents
 
-Each discipline agent is an expert in its domain with a persistent memory of the house's specific configuration, history, and owner preferences. Full agent detail is in **Appendix A**.
+Each discipline agent is an expert in its domain with a persistent memory of the house's specific configuration, history, and owner preferences. Agent names follow the [Universal Agent Naming Schema §3.5](#35-universal-agent-naming-schema-uans). Full agent detail is in **Appendix A**.
 
-| # | Agent | Synopsis |
+### Core Infrastructure
+
+| UANS | Agent | Synopsis |
 |---|---|---|
-| A.1 | **Architecture** | Structural integrity, load-bearing analysis, space planning, additions, remodels, and permits. Backed by a Structural Engineer sub-agent. |
-| A.2 | **Plumbing** | Water supply, drain/waste/vent system, water heater, fixtures, and irrigation. Tracks pipe age and failure risk. |
-| A.3 | **Electrical** | Service panel, wiring, outlets, lighting, EV charging, solar readiness, and smart home circuits. |
-| A.4 | **HVAC** | Heating, cooling, ventilation, ductwork, and indoor air quality. Monitors filter schedules and system end-of-life. |
-| A.5 | **Landscaping** | Lawn, trees, plants, hardscape, drainage, and outdoor living. Plans, seasonal calendars, and low-maintenance conversions. |
-| A.6 | **Decoration & Interior Design** | Interior finishes, color, furniture, lighting design, and space aesthetics. Coordinates with remodel agents for finish selection. |
-| A.7 | **Roofing & Building Envelope** | Roof, gutters, siding, windows, doors, insulation, and weatherproofing. Energy envelope audits and storm response. |
-| A.8 | **Appliances** | All major appliances — lifecycle tracking, failure diagnosis, energy efficiency, and smart integration. |
-| A.9 | **Security & Safety** | Locks, cameras, smoke/CO detectors, exterior lighting, and emergency preparedness. Annual safety audits. |
-| A.10 | **Financing** | Project budgets, HELOCs, insurance claims, contractor bid evaluation, and rebate/incentive tracking. |
-| A.11 | **Tax** | Property taxes, capital improvements log, basis tracking, pre-sale tax planning, and energy efficiency credits. |
-| A.12 | **Investment & Value** | Home value tracking, project ROI, neighborhood trends, and estate/legacy planning. |
-| A.13 | **Accessibility & Aging-in-Place** | Fall prevention, mobility modifications, smart home independence, and medicalTracker integration. |
-| A.14 | **HouseRecords** | Authoritative document store and knowledge base for all agents. Local data residency; single source of truth. |
-| A.15 | **House Profile** | Living narrative description of the house — always current, as if going to market tomorrow. Briefs every new agent. |
-| A.16 | **Communication** | Monthly check-ins, urgent alerts, voice interface, and contractor outreach coordination. |
+| `house.core.records` | **HouseRecords** | Authoritative document store and knowledge base for all agents. Owns the `records/agents/` tree; sole read/write interface for all agent data. |
+| `house.core.profile` | **House Profile** | Living narrative description of the house — always current, as if going to market tomorrow. Briefs every new agent. |
+| `house.core.comm` | **Communication** | Monthly check-ins, urgent alerts, voice interface, and contractor outreach coordination. |
+
+### Systems
+
+| UANS | Agent | Synopsis |
+|---|---|---|
+| `house.systems.hvac` | **HVAC** | Heating, cooling, ventilation, ductwork, and indoor air quality. Monitors filter schedules and system end-of-life. |
+| `house.systems.electrical` | **Electrical** | Service panel, wiring, outlets, lighting, EV charging, solar readiness, and smart home circuits. |
+| `house.systems.plumbing` | **Plumbing** | Water supply, drain/waste/vent system, water heater, fixtures, and irrigation. Tracks pipe age and failure risk. |
+| `house.systems.roofing` | **Roofing** | Roof, gutters, siding, windows, doors, insulation, and weatherproofing. Energy envelope audits and storm response. |
+| `house.systems.security` | **Security & Safety** | Locks, cameras, smoke/CO detectors, exterior lighting, and emergency preparedness. Annual safety audits. |
+| `house.systems.appliances` | **Appliances** | All major appliances — lifecycle tracking, failure diagnosis, energy efficiency, and smart integration. |
+
+### Designs
+
+| UANS | Agent | Synopsis |
+|---|---|---|
+| `house.designs.architecture` | **Architecture** | Structural integrity, load-bearing analysis, space planning, additions, remodels, and permits. Backed by a Structural Engineer sub-agent. |
+| `house.designs.landscaping` | **Landscaping** | Lawn, trees, plants, hardscape, drainage, and outdoor living. Plans, seasonal calendars, and low-maintenance conversions. |
+| `house.designs.interior` | **Interior Design** | Interior finishes, color, furniture, lighting design, and space aesthetics. Coordinates with remodel agents for finish selection. |
+
+### Finance
+
+| UANS | Agent | Synopsis |
+|---|---|---|
+| `house.finance.budget` | **Financing** | Project budgets, HELOCs, insurance claims, contractor bid evaluation, and rebate/incentive tracking. |
+| `house.finance.tax` | **Tax** | Property taxes, capital improvements log, basis tracking, pre-sale tax planning, and energy efficiency credits. |
+| `house.finance.investment` | **Investment & Value** | Home value tracking, project ROI, neighborhood trends, and estate/legacy planning. |
+
+### Life Stage
+
+| UANS | Agent | Synopsis |
+|---|---|---|
+| `house.life.accessibility` | **Accessibility & Aging-in-Place** | Fall prevention, mobility modifications, smart home independence, and medicalTracker integration. |
 
 ---
 
@@ -181,7 +234,7 @@ The most valuable scenarios involve multiple agents working together. The HouseM
 
 ### 5.1 Bathroom Remodel
 
-**Agents involved:** Architecture · Structural Engineer · Plumbing · Electrical · Decoration · Accessibility · Financing · Tax
+**Agents involved:** Architecture · Structural Engineer · Plumbing · Electrical · Interior Design · Accessibility · Financing · Tax
 
 The HouseMgr scopes the project:
 
@@ -215,7 +268,7 @@ When the existing unit ages into its replacement window:
 
 ### 5.4 Pre-Sale Preparation
 
-**Agents involved:** Architecture · All discipline agents · House Profile · Investment · Tax · Financing
+**Agents involved:** Architecture · All agents · House Profile · Investment · Tax · Financing
 
 A full house health assessment:
 
@@ -257,6 +310,8 @@ Post-storm damage assessment workflow:
 
 8. **DIY-first, quality-conscious.** The owner is hands-on and frugal — recommendations default to the best quality-for-cost solution, not the fastest or most expensive. Contractor involvement is the exception, sized correctly when needed.
 
+9. **Universal Agent Naming Schema as the connective tissue.** Every agent name, every record file, and every data schema path share the same 4-segment dot-notation hierarchy: `house.<category>.<agent>.<record>`. The category is always explicit — `systems.hvac` is distinct from `designs.architecture` is distinct from `finance.budget` — so the name alone identifies ownership, location, and expertise domain without any lookup table. Adding a new agent means adding a new name; the directory path, registry entry, and data schema derive from it automatically.
+
 ---
 
 ## 7. Resolved Design Decisions
@@ -289,7 +344,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.1 Architecture Agent
+### A.1 Architecture Agent (`house.designs.architecture`)
 
 **Domain:** Structural integrity, space planning, additions, remodels, permits.
 
@@ -314,7 +369,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.2 Plumbing Agent
+### A.2 Plumbing Agent (`house.systems.plumbing`)
 
 **Domain:** Water supply, drain/waste/vent system, water heater, fixtures, irrigation.
 
@@ -338,7 +393,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.3 Electrical Agent
+### A.3 Electrical Agent (`house.systems.electrical`)
 
 **Domain:** Service panel, wiring, outlets, fixtures, lighting, EV charging, solar, generator.
 
@@ -363,7 +418,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.4 HVAC Agent
+### A.4 HVAC Agent (`house.systems.hvac`)
 
 **Domain:** Heating, ventilation, air conditioning, indoor air quality, ductwork.
 
@@ -388,7 +443,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.5 Landscaping Agent
+### A.5 Landscaping Agent (`house.designs.landscaping`)
 
 **Domain:** Lawn, trees, shrubs, garden beds, hardscape (patios, walkways, retaining walls), drainage, outdoor living.
 
@@ -413,7 +468,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.6 Decoration & Interior Design Agent
+### A.6 Interior Design Agent (`house.designs.interior`)
 
 **Domain:** Interior finishes, color, furniture, lighting design, window treatments, space aesthetics.
 
@@ -436,7 +491,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.7 Roofing & Building Envelope Agent
+### A.7 Roofing Agent (`house.systems.roofing`)
 
 **Domain:** Roof covering, gutters, fascia, soffits, exterior siding, windows, doors, insulation, weatherproofing.
 
@@ -454,13 +509,13 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 - *Energy envelope audit:* Identify the highest-impact insulation and air-sealing opportunities; coordinate with HVAC agent to model utility bill impact
 - *Window replacement planning:* Prioritize windows by seal failure, comfort impact, and cost — produce a phased replacement plan with energy rebate research
 - *Storm preparation:* Pre-storm checklist (gutters clear, loose items secured, sump operational); post-storm damage assessment workflow
-- *Exterior refresh:* Siding, paint, and trim — coordinate with Decoration agent for color scheme, with Architecture agent for material selection
+- *Exterior refresh:* Siding, paint, and trim — coordinate with Interior Design agent for color scheme, with Architecture agent for material selection
 
 \newpage
 
 ---
 
-### A.8 Appliances Agent
+### A.8 Appliances Agent (`house.systems.appliances`)
 
 **Domain:** Kitchen appliances, laundry, water treatment, sump pump, backup systems.
 
@@ -483,7 +538,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.9 Security & Safety Agent
+### A.9 Security & Safety Agent (`house.systems.security`)
 
 **Domain:** Locks, alarm systems, cameras, smoke/CO detectors, fire suppression, exterior lighting, emergency preparedness.
 
@@ -507,7 +562,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.10 Financing Agent
+### A.10 Financing Agent (`house.finance.budget`)
 
 **Domain:** Project budgeting, HELOCs, home equity loans, contractor payment structures, insurance claims, grants/rebates.
 
@@ -530,7 +585,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.11 Tax Agent
+### A.11 Tax Agent (`house.finance.tax`)
 
 **Domain:** Property taxes, capital improvements tracking, home office, rental income (if any), sale tax planning.
 
@@ -553,7 +608,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.12 Investment & Value Agent
+### A.12 Investment & Value Agent (`house.finance.investment`)
 
 **Domain:** Home value tracking, ROI on improvements, neighborhood trends, rent-vs-sell analysis, estate/legacy planning.
 
@@ -575,7 +630,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.13 Accessibility & Aging-in-Place Agent
+### A.13 Accessibility & Aging-in-Place Agent (`house.life.accessibility`)
 
 **Domain:** Mobility, fall prevention, independence-preserving modifications, medical equipment integration.
 
@@ -598,7 +653,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.14 HouseRecords Agent
+### A.14 HouseRecords Agent (`house.core.records`)
 
 **Domain:** Document management, record-keeping, and the house's persistent knowledge base — the county records office for your home.
 
@@ -620,7 +675,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.15 House Profile Agent
+### A.15 House Profile Agent (`house.core.profile`)
 
 **Domain:** Authoritative, living description of the house — its identity, character, and market narrative. Always current, as if going to market tomorrow.
 
@@ -643,7 +698,7 @@ Each agent section is one page. Agents A.2–A.5 are the baseline for length and
 
 ---
 
-### A.16 Communication Agent
+### A.16 Communication Agent (`house.core.comm`)
 
 **Domain:** All owner-facing communication — notifications, check-ins, summaries, and voice interaction.
 

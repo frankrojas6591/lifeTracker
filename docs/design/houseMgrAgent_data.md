@@ -66,16 +66,26 @@ Simultaneous writes from both PA and local are unlikely in normal use (single ow
 houseTracker-data/
 └── <house_id>/
     ├── records/
-    │   ├── house_profile.json
-    │   ├── systems_registry.json
-    │   └── agents/
-    │       ├── architecture/
-    │       │   ├── knowledge.json
-    │       │   └── action_items.json
-    │       ├── hvac/
-    │       │   ├── knowledge.json
-    │       │   └── action_items.json
-    │       └── ...                    ← one directory per agent
+    │   └── agents/                    ← UANS path: agents/<category>/<agent>/
+    │       ├── core/
+    │       │   ├── records/           ← house.core.records
+    │       │   ├── profile/           ← house.core.profile
+    │       │   └── comm/              ← house.core.comm
+    │       ├── systems/
+    │       │   ├── hvac/              ← house.systems.hvac
+    │       │   ├── electrical/        ← house.systems.electrical
+    │       │   ├── plumbing/          ← house.systems.plumbing
+    │       │   └── ...                ← roofing, security, appliances
+    │       ├── designs/
+    │       │   ├── architecture/      ← house.designs.architecture
+    │       │   ├── landscaping/       ← house.designs.landscaping
+    │       │   └── interior/          ← house.designs.interior
+    │       ├── finance/
+    │       │   ├── budget/            ← house.finance.budget
+    │       │   ├── tax/               ← house.finance.tax
+    │       │   └── investment/        ← house.finance.investment
+    │       └── life/
+    │           └── accessibility/     ← house.life.accessibility
     └── documents/                     ← NOT committed; filesystem only
         ├── permits/
         ├── invoices/

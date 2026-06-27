@@ -1,6 +1,6 @@
 # HouseRecords Agent — Data Design
 
-**Version:** 0.3
+**Version:** 0.4
 **Date:** June 2026
 **Parent:** [Design Index](../houseMgrAgent.md)
 
@@ -53,75 +53,80 @@ Best-practice property management requires knowing not just where the local file
 
 ## 4. Records Directory Structure
 
-Each discipline agent owns a subdirectory under `records/agents/`. HouseRecords creates the tree; agents read/write only their own directory via the HouseRecords interface.
+Each agent owns a subdirectory under `records/agents/` organized by UANS category. The path derives directly from the UANS: `agents/<category>/<agent>/`. HouseRecords creates the full tree on first run; agents read/write only their own directory via the HouseRecords interface.
 
 ```
 houseTracker-data/kingsway_dr/
 ├── records/
 │   └── agents/
-│       ├── house_records/        ← property-wide index (HouseRecords agent)
-│       │   ├── legal_records.json
-│       │   ├── insurance.json
-│       │   ├── utilities.json
-│       │   ├── contractors.json
-│       │   ├── documents_index.json
-│       │   └── action_items.json
-│       ├── house_profile/        ← House Profile agent
-│       │   ├── house_profile.json
-│       │   └── action_items.json
-│       ├── communication/        ← Communication agent
-│       │   ├── check_in_log.json
-│       │   └── action_items.json
-│       ├── architecture/         ← Architecture agent
-│       │   ├── floor_plan.json
-│       │   ├── structural_notes.json
-│       │   └── action_items.json
-│       ├── security_safety/      ← Security & Safety agent
-│       │   ├── systems.json
-│       │   └── action_items.json
-│       ├── accessibility/        ← Accessibility agent
-│       │   ├── assessment.json
-│       │   └── action_items.json
-│       ├── hvac/                 ← HVAC agent
-│       │   ├── systems.json
-│       │   ├── maintenance_log.json
-│       │   └── action_items.json
-│       ├── electrical/           ← Electrical agent
-│       │   ├── panel.json
-│       │   ├── circuits.json
-│       │   ├── maintenance_log.json
-│       │   └── action_items.json
-│       ├── plumbing/             ← Plumbing agent
-│       │   ├── systems.json
-│       │   ├── sewer_diagram.json
-│       │   ├── maintenance_log.json
-│       │   └── action_items.json
-│       ├── roofing/              ← Roofing agent
-│       │   ├── systems.json
-│       │   ├── maintenance_log.json
-│       │   └── action_items.json
-│       ├── financing/            ← Financing agent
-│       │   ├── capital_improvements.json
-│       │   ├── budget.json
-│       │   └── action_items.json
-│       ├── tax/                  ← Tax agent
-│       │   ├── basis_log.json
-│       │   └── action_items.json
-│       ├── investment/           ← Investment agent
-│       │   ├── valuation.json
-│       │   └── action_items.json
-│       ├── appliances/           ← Appliances agent
-│       │   ├── registry.json
-│       │   ├── maintenance_log.json
-│       │   └── action_items.json
-│       ├── landscaping/          ← Landscaping agent
-│       │   ├── site_map.json
-│       │   ├── maintenance_log.json
-│       │   └── action_items.json
-│       └── decoration/           ← Decoration agent
-│           ├── rooms.json
-│           └── action_items.json
-└── documents/                    ← not committed to Git; filesystem only
+│       ├── core/
+│       │   ├── records/              ← house.core.records (HouseRecords agent)
+│       │   │   ├── legal_records.json
+│       │   │   ├── insurance.json
+│       │   │   ├── utilities.json
+│       │   │   ├── contractors.json
+│       │   │   ├── documents_index.json
+│       │   │   └── action_items.json
+│       │   ├── profile/              ← house.core.profile (House Profile agent)
+│       │   │   ├── house_profile.json
+│       │   │   └── action_items.json
+│       │   └── comm/                 ← house.core.comm (Communication agent)
+│       │       ├── check_in_log.json
+│       │       └── action_items.json
+│       ├── systems/
+│       │   ├── hvac/                 ← house.systems.hvac
+│       │   │   ├── systems.json
+│       │   │   ├── maintenance_log.json
+│       │   │   └── action_items.json
+│       │   ├── electrical/           ← house.systems.electrical
+│       │   │   ├── panel.json
+│       │   │   ├── circuits.json
+│       │   │   ├── maintenance_log.json
+│       │   │   └── action_items.json
+│       │   ├── plumbing/             ← house.systems.plumbing
+│       │   │   ├── systems.json
+│       │   │   ├── sewer_diagram.json
+│       │   │   ├── maintenance_log.json
+│       │   │   └── action_items.json
+│       │   ├── roofing/              ← house.systems.roofing
+│       │   │   ├── systems.json
+│       │   │   ├── maintenance_log.json
+│       │   │   └── action_items.json
+│       │   ├── security/             ← house.systems.security
+│       │   │   ├── systems.json
+│       │   │   └── action_items.json
+│       │   └── appliances/           ← house.systems.appliances
+│       │       ├── registry.json
+│       │       ├── maintenance_log.json
+│       │       └── action_items.json
+│       ├── designs/
+│       │   ├── architecture/         ← house.designs.architecture
+│       │   │   ├── floor_plan.json
+│       │   │   ├── structural_notes.json
+│       │   │   └── action_items.json
+│       │   ├── landscaping/          ← house.designs.landscaping
+│       │   │   ├── site_map.json
+│       │   │   ├── maintenance_log.json
+│       │   │   └── action_items.json
+│       │   └── interior/             ← house.designs.interior
+│       │       ├── rooms.json
+│       │       └── action_items.json
+│       ├── finance/
+│       │   ├── budget/               ← house.finance.budget (Financing agent)
+│       │   │   ├── capital_improvements.json
+│       │   │   ├── budget.json
+│       │   │   └── action_items.json
+│       │   ├── tax/                  ← house.finance.tax
+│       │   │   ├── basis_log.json
+│       │   │   └── action_items.json
+│       │   └── investment/           ← house.finance.investment
+│       │       ├── valuation.json
+│       │       └── action_items.json
+│       └── life/
+│           └── accessibility/        ← house.life.accessibility
+│               ├── assessment.json
+│               └── action_items.json
+└── documents/                        ← not committed to Git; filesystem only
     ├── legal/
     ├── inspection/
     ├── insurance/
@@ -139,26 +144,26 @@ houseTracker-data/kingsway_dr/
 
 ### 4.1 Agent Records Ownership
 
-Every JSON file belongs to exactly one agent. The owning agent is the sole writer; other agents may read via HouseRecords query interface but never write outside their own directory.
+Every JSON file belongs to exactly one agent. The owning agent is the sole writer; other agents may read via the HouseRecords query interface but never write outside their own directory. Path derives from UANS: `agents/<category>/<agent>/`.
 
-| Agent | Records Dir | Owned JSON Files |
-|---|---|---|
-| HouseRecords | `agents/house_records/` | legal_records · insurance · utilities · contractors · documents_index · action_items |
-| House Profile | `agents/house_profile/` | house_profile · action_items |
-| Communication | `agents/communication/` | check_in_log · action_items |
-| Architecture | `agents/architecture/` | floor_plan · structural_notes · action_items |
-| Security & Safety | `agents/security_safety/` | systems · action_items |
-| Accessibility | `agents/accessibility/` | assessment · action_items |
-| HVAC | `agents/hvac/` | systems · maintenance_log · action_items |
-| Electrical | `agents/electrical/` | panel · circuits · maintenance_log · action_items |
-| Plumbing | `agents/plumbing/` | systems · sewer_diagram · maintenance_log · action_items |
-| Roofing | `agents/roofing/` | systems · maintenance_log · action_items |
-| Financing | `agents/financing/` | capital_improvements · budget · action_items |
-| Tax | `agents/tax/` | basis_log · action_items |
-| Investment | `agents/investment/` | valuation · action_items |
-| Appliances | `agents/appliances/` | registry · maintenance_log · action_items |
-| Landscaping | `agents/landscaping/` | site_map · maintenance_log · action_items |
-| Decoration | `agents/decoration/` | rooms · action_items |
+| UANS | Agent | Records Dir | Owned JSON Files |
+|---|---|---|---|
+| `house.core.records` | HouseRecords | `agents/core/records/` | legal_records · insurance · utilities · contractors · documents_index · action_items |
+| `house.core.profile` | House Profile | `agents/core/profile/` | house_profile · action_items |
+| `house.core.comm` | Communication | `agents/core/comm/` | check_in_log · action_items |
+| `house.systems.hvac` | HVAC | `agents/systems/hvac/` | systems · maintenance_log · action_items |
+| `house.systems.electrical` | Electrical | `agents/systems/electrical/` | panel · circuits · maintenance_log · action_items |
+| `house.systems.plumbing` | Plumbing | `agents/systems/plumbing/` | systems · sewer_diagram · maintenance_log · action_items |
+| `house.systems.roofing` | Roofing | `agents/systems/roofing/` | systems · maintenance_log · action_items |
+| `house.systems.security` | Security & Safety | `agents/systems/security/` | systems · action_items |
+| `house.systems.appliances` | Appliances | `agents/systems/appliances/` | registry · maintenance_log · action_items |
+| `house.designs.architecture` | Architecture | `agents/designs/architecture/` | floor_plan · structural_notes · action_items |
+| `house.designs.landscaping` | Landscaping | `agents/designs/landscaping/` | site_map · maintenance_log · action_items |
+| `house.designs.interior` | Interior Design | `agents/designs/interior/` | rooms · action_items |
+| `house.finance.budget` | Financing | `agents/finance/budget/` | capital_improvements · budget · action_items |
+| `house.finance.tax` | Tax | `agents/finance/tax/` | basis_log · action_items |
+| `house.finance.investment` | Investment | `agents/finance/investment/` | valuation · action_items |
+| `house.life.accessibility` | Accessibility | `agents/life/accessibility/` | assessment · action_items |
 
 ---
 
@@ -196,7 +201,7 @@ Schemas are grouped by the agent that owns them. Each agent is the sole writer o
 
 ---
 
-### A.1 HouseRecords Agent — `agents/house_records/`
+### A.1 HouseRecords Agent — `agents/core/records/` (`house.core.records`)
 
 #### `legal_records.json`
 
@@ -292,7 +297,7 @@ Schemas are grouped by the agent that owns them. Each agent is the sole writer o
 
 ---
 
-### A.2 House Profile Agent — `agents/house_profile/`
+### A.2 House Profile Agent — `agents/core/profile/` (`house.core.profile`)
 
 #### `house_profile.json`
 
@@ -318,7 +323,7 @@ Schemas are grouped by the agent that owns them. Each agent is the sole writer o
 
 ---
 
-### A.3 Plumbing Agent — `agents/plumbing/`
+### A.3 Plumbing Agent — `agents/systems/plumbing/` (`house.systems.plumbing`)
 
 #### `systems.json`
 
@@ -379,7 +384,7 @@ Schemas are grouped by the agent that owns them. Each agent is the sole writer o
 
 ---
 
-### A.4 Financing Agent — `agents/financing/`
+### A.4 Financing Agent — `agents/finance/budget/` (`house.finance.budget`)
 
 #### `capital_improvements.json`
 
@@ -398,7 +403,7 @@ Schemas are grouped by the agent that owns them. Each agent is the sole writer o
 
 ---
 
-### A.5 Appliances Agent — `agents/appliances/`
+### A.5 Appliances Agent — `agents/systems/appliances/` (`house.systems.appliances`)
 
 #### `registry.json`
 
@@ -417,7 +422,7 @@ Schemas are grouped by the agent that owns them. Each agent is the sole writer o
 
 ---
 
-### A.6 Architecture Agent — `agents/architecture/`
+### A.6 Architecture Agent — `agents/designs/architecture/` (`house.designs.architecture`)
 
 #### `structural_notes.json`
 
@@ -482,30 +487,30 @@ Each GDrive item has **two destinations**: the physical file is copied to `docum
 
 | GDrive Source | `→ documents/` | `→ records/agents/` |
 |---|---|---|
-| `Home Docs/Deed.pdf` | `legal/` | `house_records/legal_records.json` |
-| `Home Docs/20221106-SellersDisclosureNotice.pdf` | `legal/` | `house_records/legal_records.json` |
-| `Home Docs/Survey-*.pdf / .tiff` | `legal/` | `house_records/legal_records.json` |
-| `Home Docs/20230117-HUD Settlement Statement-Final.pdf` | `legal/` | `house_records/legal_records.json` |
-| `Home Docs/20230201-TitleInsurance.pdf` | `legal/` | `house_records/legal_records.json` |
-| `Home Docs/20221231-Contract-Closing-335k_Cash/` | `legal/` | `house_records/legal_records.json` |
-| `20230501-HomesteadExemptionForm.pdf` | `legal/` | `house_records/legal_records.json` |
-| `20240329-PropTaxPayment.pdf` | `legal/` | `house_records/legal_records.json` |
-| `History of Events with Neighbor D.gdoc` | `neighbor/` | `house_records/legal_records.json` |
-| `20221113-Inspection/` (full report) | `inspection/` | `house_records/documents_index.json` |
-| `Reciepts/20221112-HomeInspection.pdf` | `inspection/` | `house_records/documents_index.json` |
-| `HomeInsurance/` (policy docs) | `insurance/` | `house_records/insurance.json` |
-| `Reciepts/20250402-Cancel-Choice Home Warranty.pdf` | `insurance/` | `house_records/insurance.json` |
-| `Morg-checklist/` (income, tax, ID docs) | `financial/` | `house_records/documents_index.json` (archive) |
-| `Home Docs/20230105-10KLoan-Amplify.pdf` | `financial/` | `house_records/documents_index.json` |
-| `HouseMaintainanceReciepts/Plumbing/` (invoices, notes) | `plumbing/` | `plumbing/maintenance_log.json` |
-| `HouseMaintainanceReciepts/Plumbing/kingswaySewer2D.ipynb` | `plumbing/` | `plumbing/sewer_diagram.json` *(data extraction — not just file copy)* |
-| `HouseMaintainanceReciepts/Plumbing/photos/` | `plumbing/photos/` | `plumbing/maintenance_log.json` (file refs) |
-| `HouseMaintainanceReciepts/Water Softner-Filtration.gdoc` | `plumbing/` | `plumbing/systems.json` |
-| `HouseMaintainanceReciepts/20241130-ElectricalWork.gdoc` | `electrical/` | `electrical/maintenance_log.json` |
-| `HouseMaintainanceReciepts/20160516-AC_Service_*.pdf` | `hvac/` | `hvac/systems.json` |
-| `HouseMaintainanceReciepts/20161212-Roof_Metal-decking.pdf` | `roofing/` | `roofing/systems.json` |
-| `HouseMaintainanceReciepts/20250215-LivingKitchenFloors/` (photos, notes) | `structural/` | `architecture/structural_notes.json` + `financing/capital_improvements.json` |
-| `HomeImprovements/` (window contract, cancelled) | `structural/` | `architecture/structural_notes.json` |
-| `PierMorter2Slab/` (research notebooks) | `structural/` | `architecture/structural_notes.json` (open project) |
-| `Home Docs/2016-2017 Celebrity Owners Manual.pdf` | `outdoor/` | `appliances/registry.json` |
-| `Notebooks/HotTubInfo.ipynb` | `outdoor/` | `appliances/registry.json` |
+| `Home Docs/Deed.pdf` | `legal/` | `core/records/legal_records.json` |
+| `Home Docs/20221106-SellersDisclosureNotice.pdf` | `legal/` | `core/records/legal_records.json` |
+| `Home Docs/Survey-*.pdf / .tiff` | `legal/` | `core/records/legal_records.json` |
+| `Home Docs/20230117-HUD Settlement Statement-Final.pdf` | `legal/` | `core/records/legal_records.json` |
+| `Home Docs/20230201-TitleInsurance.pdf` | `legal/` | `core/records/legal_records.json` |
+| `Home Docs/20221231-Contract-Closing-335k_Cash/` | `legal/` | `core/records/legal_records.json` |
+| `20230501-HomesteadExemptionForm.pdf` | `legal/` | `core/records/legal_records.json` |
+| `20240329-PropTaxPayment.pdf` | `legal/` | `core/records/legal_records.json` |
+| `History of Events with Neighbor D.gdoc` | `neighbor/` | `core/records/legal_records.json` |
+| `20221113-Inspection/` (full report) | `inspection/` | `core/records/documents_index.json` |
+| `Reciepts/20221112-HomeInspection.pdf` | `inspection/` | `core/records/documents_index.json` |
+| `HomeInsurance/` (policy docs) | `insurance/` | `core/records/insurance.json` |
+| `Reciepts/20250402-Cancel-Choice Home Warranty.pdf` | `insurance/` | `core/records/insurance.json` |
+| `Morg-checklist/` (income, tax, ID docs) | `financial/` | `core/records/documents_index.json` (archive) |
+| `Home Docs/20230105-10KLoan-Amplify.pdf` | `financial/` | `core/records/documents_index.json` |
+| `HouseMaintainanceReciepts/Plumbing/` (invoices, notes) | `plumbing/` | `systems/plumbing/maintenance_log.json` |
+| `HouseMaintainanceReciepts/Plumbing/kingswaySewer2D.ipynb` | `plumbing/` | `systems/plumbing/sewer_diagram.json` *(data extraction — not just file copy)* |
+| `HouseMaintainanceReciepts/Plumbing/photos/` | `plumbing/photos/` | `systems/plumbing/maintenance_log.json` (file refs) |
+| `HouseMaintainanceReciepts/Water Softner-Filtration.gdoc` | `plumbing/` | `systems/plumbing/systems.json` |
+| `HouseMaintainanceReciepts/20241130-ElectricalWork.gdoc` | `electrical/` | `systems/electrical/maintenance_log.json` |
+| `HouseMaintainanceReciepts/20160516-AC_Service_*.pdf` | `hvac/` | `systems/hvac/systems.json` |
+| `HouseMaintainanceReciepts/20161212-Roof_Metal-decking.pdf` | `roofing/` | `systems/roofing/systems.json` |
+| `HouseMaintainanceReciepts/20250215-LivingKitchenFloors/` (photos, notes) | `structural/` | `designs/architecture/structural_notes.json` + `finance/budget/capital_improvements.json` |
+| `HomeImprovements/` (window contract, cancelled) | `structural/` | `designs/architecture/structural_notes.json` |
+| `PierMorter2Slab/` (research notebooks) | `structural/` | `designs/architecture/structural_notes.json` (open project) |
+| `Home Docs/2016-2017 Celebrity Owners Manual.pdf` | `outdoor/` | `systems/appliances/registry.json` |
+| `Notebooks/HotTubInfo.ipynb` | `outdoor/` | `systems/appliances/registry.json` |

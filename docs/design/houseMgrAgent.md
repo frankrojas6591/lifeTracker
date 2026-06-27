@@ -67,3 +67,4 @@ HouseMgr is a voice-first home management assistant with **three communication c
 | **LLM** | Haiku for intent parsing; Sonnet for synthesis | Cost-efficient routing; quality response generation |
 | **Auth** | GPG-encrypted user DB; Flask session `(house_id, owner_id)` | Sensitive data never on disk as plaintext; follows llcRentalTracker pattern |
 | **Multi-house** | H × O — any number of homes × owners per instance | Config-driven; no code change to add a new house or owner |
+| **Agent naming** | Universal Agent Naming Schema (UANS): `house.<category>.<agent>.<record>` | Every agent name maps directly to a records path; no separate lookup table; `systems.*`, `designs.*`, `finance.*`, `core.*`, `life.*` are the five categories |
