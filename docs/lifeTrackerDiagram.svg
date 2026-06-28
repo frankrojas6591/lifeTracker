@@ -187,26 +187,24 @@
   ══════════════════════════════════════════════════════════════════════════ -->
 
   <!-- Outer container shadow/border -->
-  <rect x="20"  y="398" width="1026" height="180" rx="10" fill="#141e28" stroke="#405870" stroke-width="1.2" filter="url(#shadow)"/>
+  <rect x="20"  y="398" width="1026" height="180" rx="10" fill="#edeae2" stroke="#b0a888" stroke-width="1.2" filter="url(#shadow)"/>
 
-  <!-- Layer 1 background (disk section): slightly lighter -->
-  <rect x="20"  y="398" width="1026" height="100" rx="10" fill="#1a2c3e"/>
-  <!-- Re-fill bottom corners to remove rounded corners at internal boundary -->
-  <rect x="20"  y="448" width="1026" height="50"  fill="#1a2c3e"/>
+  <!-- Layer 1 background (disk section): light, near diagram bg -->
+  <rect x="20"  y="398" width="1026" height="100" rx="10" fill="#edeae2"/>
+  <!-- Re-fill bottom corners of Layer 1 (remove internal rounded corners) -->
+  <rect x="20"  y="448" width="1026" height="50"  fill="#edeae2"/>
 
   <!-- Layer 1 top accent bar -->
-  <rect x="20"  y="398" width="1026" height="4" rx="2" fill="#5888a8"/>
+  <rect x="20"  y="398" width="1026" height="4" rx="2" fill="#a09070"/>
 
   <!-- RecordAgent container label -->
-  <text x="550" y="418" text-anchor="middle" font-size="12" font-weight="bold" fill="#90b8d0" letter-spacing="0.5">RecordAgent</text>
+  <text x="550" y="418" text-anchor="middle" font-size="12" font-weight="bold" fill="#4a6070" letter-spacing="0.5">RecordAgent</text>
 
   <!-- Layer divider -->
-  <line x1="20" y1="498" x2="1046" y2="498" stroke="#304858" stroke-width="1.2"/>
+  <line x1="20" y1="498" x2="1046" y2="498" stroke="#a09070" stroke-width="1.2"/>
 
-  <!-- Layer 2 background (service bar) -->
-  <rect x="20"  y="498" width="1026" height="80"  fill="#12202c"/>
-  <!-- Re-round bottom corners -->
-  <rect x="20"  y="498" width="1026" height="68"  fill="#12202c"/>
+  <!-- Layer 2 background (service bar) — rounded bottom corners match outer box -->
+  <path d="M 20,498 H 1046 V 568 a 10,10 0 0 1 -10,10 H 30 a 10,10 0 0 1 -10,-10 Z" fill="#12202c"/>
 
   <!-- ── DATA DISKS ─────────────────────────────────────────────────────────
        Cylinder: rx=64, ry=8, body h=40
@@ -269,14 +267,14 @@
   <text x="550" y="536" text-anchor="middle" font-size="10.5" fill="#8ab0c8">life.core.records  ·  git-as-master  ·  auto_push=true  ·  lifeTracker-data (private repo)</text>
   <text x="550" y="552" text-anchor="middle" font-size="9.5"  fill="#6890a8" font-style="italic">Read · Write · Append · Register Document · Get Action Items  —  no agent touches the filesystem directly</text>
 
-  <!-- ══ PYTRACKER.CORE ═════════════════════════════════════════════════════
-       y=588–648
+  <!-- ══ COMMUNICATION AGENT ══════════════════════════════════════════════
+       y=600–658
   ══════════════════════════════════════════════════════════════════════════ -->
   <line x1="550" y1="578" x2="550" y2="600" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
   <rect x="200" y="600" width="700" height="58" rx="8" fill="url(#commGrad)" filter="url(#softShadow)"/>
   <rect x="200" y="600" width="700" height="4"  rx="2" fill="#a0c088"/>
-  <text x="550" y="624" text-anchor="middle" font-size="13"  font-weight="bold" fill="#f0f8ee">pytracker.core</text>
-  <text x="550" y="642" text-anchor="middle" font-size="10.5" fill="#c8e0b8">comm  ·  auth  ·  records  ·  llm  ·  models  ·  Shared Python package</text>
+  <text x="550" y="624" text-anchor="middle" font-size="13"  font-weight="bold" fill="#f0f8ee">Communication Agent</text>
+  <text x="550" y="642" text-anchor="middle" font-size="10.5" fill="#c8e0b8">Twilio  ·  Flask  ·  CrewAI  ·  LangGraph  ·  auth  ·  LLM routing</text>
 
   <!-- ══ COMMUNICATION CHANNELS ════════════════════════════════════════════
        Horiz: y=676.  Boxes: y=684–746.  Centers: 200, 550, 900.  w=200
