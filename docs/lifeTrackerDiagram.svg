@@ -51,7 +51,7 @@
 
   <!-- ══ TITLE ══════════════════════════════════════════════════ -->
   <text x="550" y="36" text-anchor="middle" font-size="22" font-weight="bold" letter-spacing="1" fill="#2c3e50">lifeTracker</text>
-  <text x="550" y="55" text-anchor="middle" font-size="12" font-style="italic" fill="#6b5a3e">One Trusted Advisor/Advocate backed by Expert Agents</text>
+  <text x="550" y="55" text-anchor="middle" font-size="12" font-style="italic" fill="#6b5a3e">My Personal Assistant Ecosystem, One Trusted Advisor/Advocate backed by Expert Agents</text>
   <line x1="80" y1="64" x2="1020" y2="64" stroke="#c8b89a" stroke-width="1"/>
 
   <!-- ══ PERSONAL ASSISTANT ════════════════════════════════════ -->
@@ -247,18 +247,18 @@
   <!-- ══ REPOS + FOOTER ════════════════════════════════════════ -->
   <line x1="80" y1="782" x2="1020" y2="782" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
   <text x="550" y="799" text-anchor="middle" font-size="10" font-style="italic" fill="#8e7b5e">Data Repositories  ·  Private Git  ·  All records local / on-premises</text>
-  <rect x="80" y="807" width="265" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="212" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker-data  (JSON records)</text>
-  <rect x="293" y="807" width="265" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="425" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker  (code · docs)</text>
-  <rect x="486" y="807" width="261" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="616" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">frankrojas6591 / GitHub</text>
-  <rect x="679" y="807" width="265" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="811" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">SSH alias: github.com-fxr</text>
-  <rect x="882" y="807" width="230" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="997" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">id_ed25519_fxr</text>
+  <rect x="20" y="807" width="204" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="122" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker-data  (JSON records)</text>
+  <rect x="234" y="807" width="204" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="336" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker  (code · docs)</text>
+  <rect x="448" y="807" width="204" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="550" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">userID@GitHub</text>
+  <rect x="662" y="807" width="204" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="764" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">SSH alias: github.com-fxr</text>
+  <rect x="876" y="807" width="204" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="978" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">id_#######_abc</text>
   <line x1="80" y1="850" x2="1020" y2="850" stroke="#c8b89a" stroke-width="0.5"/>
-  <text x="550" y="868" text-anchor="middle" font-size="9" fill="#a09080">lifeTracker  ·  pyTrackers ecosystem  ·  Frank Rojas  ·  June 2026  ·  v1.6</text>
+  <text x="550" y="868" text-anchor="middle" font-size="9" fill="#a09080">lifeTracker  ·  lifeTrackers ecosystem  ·  My Name  ·  June 2026  ·  v1.6</text>
   <text x="550" y="884" text-anchor="middle" font-size="9" font-style="italic" fill="#b8a888">"Your wisest counselor, always available — chief of staff and trusted friend."</text>
 
 </svg>

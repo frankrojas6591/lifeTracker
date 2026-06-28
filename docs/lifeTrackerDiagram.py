@@ -11,7 +11,7 @@ OUT = Path(__file__).with_suffix(".svg")
 
 # ── titles ─────────────────────────────────────────────────────────────────────
 TITLE    = "lifeTracker"
-SUBTITLE = "One Trusted Advisor/Advocate backed by Expert Agents"
+SUBTITLE = "My Personal Assistant Ecosystem, One Trusted Advisor/Advocate backed by Expert Agents"
 
 # ── layout ─────────────────────────────────────────────────────────────────────
 W, H   = 1100, 920          # viewBox width × height
@@ -342,11 +342,12 @@ def channels_block():
 
 
 REPOS = [
-    ("lifeTracker-data  (JSON records)", 80,  265),
-    ("lifeTracker  (code · docs)",       293, 265),
-    ("frankrojas6591 / GitHub",          486, 261),
-    ("SSH alias: github.com-fxr",        679, 265),
-    ("id_ed25519_fxr",                   882, 230),
+    # (label, x, width) — 5 pills, w=204, gap=10, margins=20 each side → right edge=1080
+    ("lifeTracker-data  (JSON records)", 20,  204),
+    ("lifeTracker  (code · docs)",       234, 204),
+    ("userID@GitHub",                    448, 204),
+    ("SSH alias: github.com-fxr",        662, 204),
+    ("id_#######_abc",                   876, 204),
 ]
 
 
@@ -371,7 +372,7 @@ def footer_block():
     ver = "v1.6"
     return "\n".join([
         f'  {hline(FOOT_SEP, sw=0.5)}',
-        f'  {tline(W//2, FOOT_SEP+18, f"lifeTracker  ·  pyTrackers ecosystem  ·  Frank Rojas  ·  June 2026  ·  {ver}", 9, "#a09080")}',
+        f'  {tline(W//2, FOOT_SEP+18, f"lifeTracker  ·  lifeTrackers ecosystem  ·  My Name  ·  June 2026  ·  {ver}", 9, "#a09080")}',
         f'  {tline(W//2, FOOT_SEP+34, chr(34)+"Your wisest counselor, always available — chief of staff and trusted friend."+chr(34), 9, "#b8a888", italic=True)}',
     ])
 
