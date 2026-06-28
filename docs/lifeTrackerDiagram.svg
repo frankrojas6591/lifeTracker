@@ -1,333 +1,264 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 1100 920" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
+<svg viewBox="0 0 1100 920" xmlns="http://www.w3.org/2000/svg"
+     font-family="Georgia, 'Times New Roman', serif">
 
-  <defs>
-    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f5f0e8"/>
-      <stop offset="100%" stop-color="#faf8f5"/>
-    </linearGradient>
-    <linearGradient id="paGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2c3e50"/>
-      <stop offset="100%" stop-color="#1a252f"/>
-    </linearGradient>
-    <linearGradient id="houseGrad"  x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#5b7fa6"/>
-      <stop offset="100%" stop-color="#3d5c7a"/>
-    </linearGradient>
-    <linearGradient id="medGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#7a5b8a"/>
-      <stop offset="100%" stop-color="#5a3d6a"/>
-    </linearGradient>
-    <linearGradient id="moneyGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4a7a5b"/>
-      <stop offset="100%" stop-color="#2d5c3d"/>
-    </linearGradient>
-    <linearGradient id="estateGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#7a6040"/>
-      <stop offset="100%" stop-color="#5a4428"/>
-    </linearGradient>
-    <linearGradient id="faithGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#8a6060"/>
-      <stop offset="100%" stop-color="#6a4040"/>
-    </linearGradient>
-    <linearGradient id="emotGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#6a7a50"/>
-      <stop offset="100%" stop-color="#4a5a38"/>
-    </linearGradient>
-    <linearGradient id="commGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#607050"/>
-      <stop offset="100%" stop-color="#404e30"/>
-    </linearGradient>
-    <filter id="shadow">
-      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#00000028"/>
-    </filter>
-    <filter id="softShadow">
-      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#0000001a"/>
-    </filter>
-  </defs>
+<defs>
+  <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f5f0e8"/>
+    <stop offset="100%" stop-color="#faf8f5"/>
+  </linearGradient>
+  <linearGradient id="paGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2c3e50"/>
+    <stop offset="100%" stop-color="#1a252f"/>
+  </linearGradient>
+  <linearGradient id="houseGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#5b7fa6"/>
+    <stop offset="100%" stop-color="#3d5c7a"/>
+  </linearGradient>
+  <linearGradient id="medGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#7a5b8a"/>
+    <stop offset="100%" stop-color="#5a3d6a"/>
+  </linearGradient>
+  <linearGradient id="moneyGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#4a7a5b"/>
+    <stop offset="100%" stop-color="#2d5c3d"/>
+  </linearGradient>
+  <linearGradient id="estateGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#7a6040"/>
+    <stop offset="100%" stop-color="#5a4428"/>
+  </linearGradient>
+  <linearGradient id="faithGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#8a6060"/>
+    <stop offset="100%" stop-color="#6a4040"/>
+  </linearGradient>
+  <linearGradient id="emotGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#6a7a50"/>
+    <stop offset="100%" stop-color="#4a5a38"/>
+  </linearGradient>
+  <linearGradient id="commGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#607050"/>
+    <stop offset="100%" stop-color="#404e30"/>
+  </linearGradient>
+  <filter id="shadow">
+    <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#00000028"/>
+  </filter>
+  <filter id="softShadow">
+    <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#0000001a"/>
+  </filter>
+</defs>
 
-  <rect width="1100" height="920" fill="url(#bgGrad)"/>
+  <rect x="0" y="0" width="1100" height="920" rx="0" fill="url(#bgGrad)"/>
 
-  <!-- ══ TITLE ══════════════════════════════════════════════════════════════ -->
-  <text x="550" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#2c3e50" letter-spacing="1">lifeTracker</text>
-  <text x="550" y="55" text-anchor="middle" font-size="12" fill="#6b5a3e" font-style="italic">Personal Assistance Ecosystem  ·  One Tracker, Six Discipline Agents</text>
+  <!-- ══ TITLE ══════════════════════════════════════════════════ -->
+  <text x="550" y="36" text-anchor="middle" font-size="22" font-weight="bold" letter-spacing="1" fill="#2c3e50">lifeTracker</text>
+  <text x="550" y="55" text-anchor="middle" font-size="12" font-style="italic" fill="#6b5a3e">One Trusted Advisor/Advocate backed by Expert Agents</text>
   <line x1="80" y1="64" x2="1020" y2="64" stroke="#c8b89a" stroke-width="1"/>
 
-  <!-- ══ PERSONAL ASSISTANT ═════════════════════════════════════════════════
-       Box: y=76–152
-  ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- ══ PERSONAL ASSISTANT ════════════════════════════════════ -->
   <rect x="330" y="76" width="440" height="76" rx="10" fill="url(#paGrad)" filter="url(#shadow)"/>
-  <rect x="330" y="76" width="440" height="4"  rx="2"  fill="#c8a96e"/>
-  <text x="550" y="105" text-anchor="middle" font-size="15" font-weight="bold" fill="#f5f0e8" letter-spacing="0.5">🧭 Personal Assistant  (PA)</text>
+  <rect x="330" y="76" width="440" height="4" rx="2" fill="#c8a96e"/>
+  <text x="550" y="105" text-anchor="middle" font-size="15" font-weight="bold" letter-spacing="0.5" fill="#f5f0e8">🧭 Personal Assistant  (PA)</text>
   <text x="550" y="123" text-anchor="middle" font-size="11" fill="#c8b89a">life.pa.*  ·  Chief of Staff + Wise Counsel</text>
-  <text x="550" y="141" text-anchor="middle" font-size="10" fill="#a09080" font-style="italic">Routes all cross-domain queries  ·  Knows your whole life, not just one domain</text>
-
-  <!-- PA → agent row connectors -->
+  <text x="550" y="141" text-anchor="middle" font-size="10" font-style="italic" fill="#a09080">Routes all cross-domain queries  ·  Knows your whole life, not just one domain</text>
   <line x1="550" y1="152" x2="550" y2="192" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <line x1="108"  y1="192" x2="958"  y2="192" stroke="#8e7b5e" stroke-width="1.5"/>
+  <line x1="108" y1="192" x2="958" y2="192" stroke="#8e7b5e" stroke-width="1.5"/>
 
-  <!-- ══ 6 DISCIPLINE AGENTS ════════════════════════════════════════════════
-       Boxes: y=200–308 (h=108).  Centers cx: 108, 278, 448, 618, 788, 958
-  ══════════════════════════════════════════════════════════════════════════ -->
-
+  <!-- ══ 6 DISCIPLINE AGENTS ══════════════════════════════════ -->
   <!-- houseAgent -->
   <line x1="108" y1="192" x2="108" y2="200" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="32"  y="200" width="152" height="108" rx="8" fill="url(#houseGrad)"  filter="url(#softShadow)"/>
-  <rect x="32"  y="200" width="152" height="4"   rx="2" fill="#a8c4e0"/>
+  <rect x="32" y="200" width="152" height="108" rx="8" fill="url(#houseGrad)" filter="url(#softShadow)"/>
+  <rect x="32" y="200" width="152" height="4" rx="2" fill="#a8c4e0"/>
   <text x="108" y="224" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f4f8">🏠 houseAgent</text>
   <text x="108" y="241" text-anchor="middle" font-size="10" fill="#c8d8ea">house.*</text>
-  <line x1="48"  y1="250" x2="168" y2="250" stroke="#7090b0" stroke-width="0.5" opacity="0.5"/>
+  <line x1="48" y1="250" x2="168" y2="250" stroke="#c8d8ea" stroke-width="0.5" opacity="0.5"/>
   <text x="108" y="263" text-anchor="middle" font-size="9" fill="#b0c8e0">16 sub-agents</text>
   <text x="108" y="276" text-anchor="middle" font-size="9" fill="#b0c8e0">systems · designs</text>
   <text x="108" y="289" text-anchor="middle" font-size="9" fill="#b0c8e0">finance · life · core</text>
-
   <!-- medicalAgent -->
   <line x1="278" y1="192" x2="278" y2="200" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="202" y="200" width="152" height="108" rx="8" fill="url(#medGrad)"    filter="url(#softShadow)"/>
-  <rect x="202" y="200" width="152" height="4"   rx="2" fill="#c4a8d8"/>
+  <rect x="202" y="200" width="152" height="108" rx="8" fill="url(#medGrad)" filter="url(#softShadow)"/>
+  <rect x="202" y="200" width="152" height="4" rx="2" fill="#c4a8d8"/>
   <text x="278" y="224" text-anchor="middle" font-size="13" font-weight="bold" fill="#f4f0f8">🏥 medicalAgent</text>
   <text x="278" y="241" text-anchor="middle" font-size="10" fill="#d8c8ea">medical.*</text>
-  <line x1="218" y1="250" x2="338" y2="250" stroke="#906090" stroke-width="0.5" opacity="0.5"/>
+  <line x1="218" y1="250" x2="338" y2="250" stroke="#d8c8ea" stroke-width="0.5" opacity="0.5"/>
   <text x="278" y="263" text-anchor="middle" font-size="9" fill="#d0b8e8">FHIR R4  ·  5M's</text>
   <text x="278" y="276" text-anchor="middle" font-size="9" fill="#d0b8e8">Epic / ARC  ·  UHC</text>
   <text x="278" y="289" text-anchor="middle" font-size="9" fill="#d0b8e8">CPAP  ·  BP  ·  Labs</text>
-
   <!-- moneyAgent -->
   <line x1="448" y1="192" x2="448" y2="200" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="372" y="200" width="152" height="108" rx="8" fill="url(#moneyGrad)"  filter="url(#softShadow)"/>
-  <rect x="372" y="200" width="152" height="4"   rx="2" fill="#a8d8b8"/>
+  <rect x="372" y="200" width="152" height="108" rx="8" fill="url(#moneyGrad)" filter="url(#softShadow)"/>
+  <rect x="372" y="200" width="152" height="4" rx="2" fill="#a8d8b8"/>
   <text x="448" y="224" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8f2">💰 moneyAgent</text>
   <text x="448" y="241" text-anchor="middle" font-size="10" fill="#c8e8d0">money.*</text>
-  <line x1="388" y1="250" x2="508" y2="250" stroke="#509060" stroke-width="0.5" opacity="0.5"/>
+  <line x1="388" y1="250" x2="508" y2="250" stroke="#c8e8d0" stroke-width="0.5" opacity="0.5"/>
   <text x="448" y="263" text-anchor="middle" font-size="9" fill="#b8e0c8">Beancount  ·  OFX</text>
   <text x="448" y="276" text-anchor="middle" font-size="9" fill="#b8e0c8">RMDs  ·  IRMAA</text>
   <text x="448" y="289" text-anchor="middle" font-size="9" fill="#b8e0c8">Owl runway model</text>
-
   <!-- estateAgent -->
   <line x1="618" y1="192" x2="618" y2="200" stroke="#8e7b5e" stroke-width="1.5"/>
   <rect x="542" y="200" width="152" height="108" rx="8" fill="url(#estateGrad)" filter="url(#softShadow)"/>
-  <rect x="542" y="200" width="152" height="4"   rx="2" fill="#d8b888"/>
+  <rect x="542" y="200" width="152" height="4" rx="2" fill="#d8b888"/>
   <text x="618" y="224" text-anchor="middle" font-size="13" font-weight="bold" fill="#f8f4ee">⚖ estateAgent</text>
   <text x="618" y="241" text-anchor="middle" font-size="10" fill="#e8d0a8">estate.*</text>
-  <line x1="558" y1="250" x2="678" y2="250" stroke="#907040" stroke-width="0.5" opacity="0.5"/>
+  <line x1="558" y1="250" x2="678" y2="250" stroke="#e8d0a8" stroke-width="0.5" opacity="0.5"/>
   <text x="618" y="263" text-anchor="middle" font-size="9" fill="#e0c890">7 legal pillars</text>
   <text x="618" y="276" text-anchor="middle" font-size="9" fill="#e0c890">§121 · step-up basis</text>
   <text x="618" y="289" text-anchor="middle" font-size="9" fill="#e0c890">RLT · DPOA · POLST</text>
-
   <!-- faithAgent -->
   <line x1="788" y1="192" x2="788" y2="200" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="712" y="200" width="152" height="108" rx="8" fill="url(#faithGrad)"  filter="url(#softShadow)"/>
-  <rect x="712" y="200" width="152" height="4"   rx="2" fill="#d8a8a8"/>
+  <rect x="712" y="200" width="152" height="108" rx="8" fill="url(#faithGrad)" filter="url(#softShadow)"/>
+  <rect x="712" y="200" width="152" height="4" rx="2" fill="#d8a8a8"/>
   <text x="788" y="224" text-anchor="middle" font-size="13" font-weight="bold" fill="#f8f0f0">✝ faithAgent</text>
   <text x="788" y="241" text-anchor="middle" font-size="10" fill="#e8c8c8">faith.*</text>
-  <line x1="728" y1="250" x2="848" y2="250" stroke="#906060" stroke-width="0.5" opacity="0.5"/>
+  <line x1="728" y1="250" x2="848" y2="250" stroke="#e8c8c8" stroke-width="0.5" opacity="0.5"/>
   <text x="788" y="263" text-anchor="middle" font-size="9" fill="#e0b8b8">Ignatian Examen</text>
   <text x="788" y="276" text-anchor="middle" font-size="9" fill="#e0b8b8">consolation / desolation</text>
   <text x="788" y="289" text-anchor="middle" font-size="9" fill="#e0b8b8">Catholic practice</text>
-
   <!-- emotionalAgent -->
   <line x1="958" y1="192" x2="958" y2="200" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="882" y="200" width="152" height="108" rx="8" fill="url(#emotGrad)"   filter="url(#softShadow)"/>
-  <rect x="882" y="200" width="152" height="4"   rx="2" fill="#b0c890"/>
+  <rect x="882" y="200" width="152" height="108" rx="8" fill="url(#emotGrad)" filter="url(#softShadow)"/>
+  <rect x="882" y="200" width="152" height="4" rx="2" fill="#b0c890"/>
   <text x="958" y="224" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8e8">🤝 emotionalAgent</text>
   <text x="958" y="241" text-anchor="middle" font-size="10" fill="#d0e0b0">emotional.*</text>
-  <line x1="898" y1="250" x2="1018" y2="250" stroke="#708050" stroke-width="0.5" opacity="0.5"/>
+  <line x1="898" y1="250" x2="1018" y2="250" stroke="#d0e0b0" stroke-width="0.5" opacity="0.5"/>
   <text x="958" y="263" text-anchor="middle" font-size="9" fill="#c8d8a0">Relationships · Connection</text>
   <text x="958" y="276" text-anchor="middle" font-size="9" fill="#c8d8a0">PERMA · CBT · Grief</text>
   <text x="958" y="289" text-anchor="middle" font-size="9" fill="#c8d8a0">Erikson · Wellbeing</text>
 
-  <!-- ══ INGESTION PILLS ════════════════════════════════════════════════════
-       Short connectors from agent bottom (y=308) → pill top (y=318), h=48 → bottom y=366
-  ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- ══ INGESTION PILLS ═══════════════════════════════════════ -->
   <line x1="108" y1="308" x2="108" y2="318" stroke="#7090a0" stroke-width="1" stroke-dasharray="3,2" opacity="0.8"/>
+  <rect x="32" y="318" width="152" height="48" rx="6" fill="#2a3848" filter="url(#softShadow)" opacity="0.92"/>
+  <text x="108" y="332" text-anchor="middle" font-size="7.5" font-style="italic" fill="#7898b0">ingests from</text>
+  <text x="108" y="345" text-anchor="middle" font-size="8.5" fill="#a8c4e0">Hays CAD · AVM comps</text>
+  <text x="108" y="357" text-anchor="middle" font-size="8.5" fill="#a8c4e0">County records · Photos</text>
   <line x1="278" y1="308" x2="278" y2="318" stroke="#7090a0" stroke-width="1" stroke-dasharray="3,2" opacity="0.8"/>
+  <rect x="202" y="318" width="152" height="48" rx="6" fill="#2a2838" filter="url(#softShadow)" opacity="0.92"/>
+  <text x="278" y="332" text-anchor="middle" font-size="7.5" font-style="italic" fill="#9888b0">ingests from</text>
+  <text x="278" y="345" text-anchor="middle" font-size="8.5" fill="#d0b8e8">Epic FHIR · ARC portal</text>
+  <text x="278" y="357" text-anchor="middle" font-size="8.5" fill="#d0b8e8">ResMed myAir · Apple Health</text>
   <line x1="448" y1="308" x2="448" y2="318" stroke="#7090a0" stroke-width="1" stroke-dasharray="3,2" opacity="0.8"/>
+  <rect x="372" y="318" width="152" height="48" rx="6" fill="#283828" filter="url(#softShadow)" opacity="0.92"/>
+  <text x="448" y="332" text-anchor="middle" font-size="7.5" font-style="italic" fill="#80a888">ingests from</text>
+  <text x="448" y="345" text-anchor="middle" font-size="8.5" fill="#b8e0c8">OFX/QFX · Plaid API</text>
+  <text x="448" y="357" text-anchor="middle" font-size="8.5" fill="#b8e0c8">Schwab · Vanguard feeds</text>
   <line x1="618" y1="308" x2="618" y2="318" stroke="#7090a0" stroke-width="1" stroke-dasharray="3,2" opacity="0.8"/>
+  <rect x="542" y="318" width="152" height="48" rx="6" fill="#382a18" filter="url(#softShadow)" opacity="0.92"/>
+  <text x="618" y="332" text-anchor="middle" font-size="7.5" font-style="italic" fill="#a08058">ingests from</text>
+  <text x="618" y="345" text-anchor="middle" font-size="8.5" fill="#e0c890">County deed · Brokerage</text>
+  <text x="618" y="357" text-anchor="middle" font-size="8.5" fill="#e0c890">Owl planner · Ghostfolio</text>
   <line x1="788" y1="308" x2="788" y2="318" stroke="#7090a0" stroke-width="1" stroke-dasharray="3,2" opacity="0.8"/>
+  <rect x="712" y="318" width="152" height="48" rx="6" fill="#381818" filter="url(#softShadow)" opacity="0.92"/>
+  <text x="788" y="332" text-anchor="middle" font-size="7.5" font-style="italic" fill="#a07878">ingests from</text>
+  <text x="788" y="345" text-anchor="middle" font-size="8.5" fill="#e0b8b8">LiturgicalCalendar API</text>
+  <text x="788" y="357" text-anchor="middle" font-size="8.5" fill="#e0b8b8">Magisterium AI · Diocese</text>
   <line x1="958" y1="308" x2="958" y2="318" stroke="#7090a0" stroke-width="1" stroke-dasharray="3,2" opacity="0.8"/>
+  <rect x="882" y="318" width="152" height="48" rx="6" fill="#283018" filter="url(#softShadow)" opacity="0.92"/>
+  <text x="958" y="332" text-anchor="middle" font-size="7.5" font-style="italic" fill="#809858">ingests from</text>
+  <text x="958" y="345" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Apple Health · Wearable</text>
+  <text x="958" y="357" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Daily check-in · Journals</text>
 
-  <rect x="32"  y="318" width="152" height="48" rx="6" fill="#2a3848" opacity="0.92" filter="url(#softShadow)"/>
-  <text x="108" y="332" text-anchor="middle" font-size="7.5" fill="#7898b0" font-style="italic">ingests from</text>
-  <text x="108" y="347" text-anchor="middle" font-size="8.5" fill="#a8c4e0">Hays CAD · AVM comps</text>
-  <text x="108" y="359" text-anchor="middle" font-size="8.5" fill="#a8c4e0">County records · Photos</text>
+  <!-- ══ CROSS-AGENT SIGNALS ══════════════════════════════════ -->
+  <text x="550" y="380" text-anchor="middle" font-size="10" font-style="italic" fill="#8e7b5e">↔  cross-agent signals  (consolation/desolation · wellness · financial runway · home accessibility · relationship health)</text>
+  <line x1="80" y1="387" x2="1020" y2="387" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
 
-  <rect x="202" y="318" width="152" height="48" rx="6" fill="#2a2838" opacity="0.92" filter="url(#softShadow)"/>
-  <text x="278" y="332" text-anchor="middle" font-size="7.5" fill="#9888b0" font-style="italic">ingests from</text>
-  <text x="278" y="347" text-anchor="middle" font-size="8.5" fill="#d0b8e8">Epic FHIR · ARC portal</text>
-  <text x="278" y="359" text-anchor="middle" font-size="8.5" fill="#d0b8e8">ResMed myAir · Apple Health</text>
-
-  <rect x="372" y="318" width="152" height="48" rx="6" fill="#283828" opacity="0.92" filter="url(#softShadow)"/>
-  <text x="448" y="332" text-anchor="middle" font-size="7.5" fill="#80a888" font-style="italic">ingests from</text>
-  <text x="448" y="347" text-anchor="middle" font-size="8.5" fill="#b8e0c8">OFX/QFX · Plaid API</text>
-  <text x="448" y="359" text-anchor="middle" font-size="8.5" fill="#b8e0c8">Schwab · Vanguard feeds</text>
-
-  <rect x="542" y="318" width="152" height="48" rx="6" fill="#382a18" opacity="0.92" filter="url(#softShadow)"/>
-  <text x="618" y="332" text-anchor="middle" font-size="7.5" fill="#a08058" font-style="italic">ingests from</text>
-  <text x="618" y="347" text-anchor="middle" font-size="8.5" fill="#e0c890">County deed · Brokerage</text>
-  <text x="618" y="359" text-anchor="middle" font-size="8.5" fill="#e0c890">Owl planner · Ghostfolio</text>
-
-  <rect x="712" y="318" width="152" height="48" rx="6" fill="#381818" opacity="0.92" filter="url(#softShadow)"/>
-  <text x="788" y="332" text-anchor="middle" font-size="7.5" fill="#a07878" font-style="italic">ingests from</text>
-  <text x="788" y="347" text-anchor="middle" font-size="8.5" fill="#e0b8b8">LiturgicalCalendar API</text>
-  <text x="788" y="359" text-anchor="middle" font-size="8.5" fill="#e0b8b8">Magisterium AI · Diocese</text>
-
-  <rect x="882" y="318" width="152" height="48" rx="6" fill="#283018" opacity="0.92" filter="url(#softShadow)"/>
-  <text x="958" y="332" text-anchor="middle" font-size="7.5" fill="#809858" font-style="italic">ingests from</text>
-  <text x="958" y="347" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Apple Health · Wearable</text>
-  <text x="958" y="359" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Daily check-in · Journals</text>
-
-  <!-- ══ CROSS-AGENT SIGNALS ════════════════════════════════════════════════ -->
-  <text x="550" y="380" text-anchor="middle" font-size="10" fill="#8e7b5e" font-style="italic">↔  cross-agent signals  (consolation/desolation · wellness · financial runway · home accessibility · relationship health)</text>
-  <line x1="80"  y1="387" x2="1020" y2="387" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
-
-  <!-- ══ RECORD AGENT — 2-LAYER SECTION ════════════════════════════════════
-       Outer container: y=398–578  x=20  w=1026
-         Layer 1 — data disks:  y=398–498
-         Layer 2 — service bar: y=498–578
-  ══════════════════════════════════════════════════════════════════════════ -->
-
-  <!-- Outer container shadow/border -->
-  <rect x="20"  y="398" width="1026" height="180" rx="10" fill="#c8d6e2" stroke="#7890a4" stroke-width="1.2" filter="url(#shadow)"/>
-
-  <!-- Layer 1 background (disk section): light blue-gray — same tone as service bar -->
-  <rect x="20"  y="398" width="1026" height="100" rx="10" fill="#c8d6e2"/>
-  <!-- Re-fill bottom corners of Layer 1 (remove internal rounded corners) -->
-  <rect x="20"  y="448" width="1026" height="50"  fill="#c8d6e2"/>
-
-  <!-- Layer 1 top accent bar -->
-  <rect x="20"  y="398" width="1026" height="4" rx="2" fill="#5878a0"/>
-
-  <!-- RecordAgent container label -->
-  <text x="550" y="418" text-anchor="middle" font-size="12" font-weight="bold" fill="#1c3048" letter-spacing="0.5">🗄 RecordAgent</text>
-
-  <!-- Layer divider -->
+  <!-- ══ RECORD AGENT ════════════════════════════════════════ -->
+  <rect x="20" y="398" width="1026" height="180" rx="10" fill="#c8d6e2" stroke="#7890a4" stroke-width="1.2" filter="url(#shadow)"/>
+  <rect x="20" y="398" width="1026" height="100" rx="10" fill="#c8d6e2"/>
+  <rect x="20" y="448" width="1026" height="50" rx="0" fill="#c8d6e2"/>
+  <rect x="20" y="398" width="1026" height="4" rx="2" fill="#5878a0"/>
+  <text x="550" y="418" text-anchor="middle" font-size="12" font-weight="bold" letter-spacing="0.5" fill="#1c3048">🗄 RecordAgent</text>
   <line x1="20" y1="498" x2="1046" y2="498" stroke="#5878a0" stroke-width="1.2"/>
-
-  <!-- Layer 2 background (service bar) — rounded bottom corners match outer box -->
   <path d="M 20,498 H 1046 V 568 a 10,10 0 0 1 -10,10 H 30 a 10,10 0 0 1 -10,-10 Z" fill="#12202c"/>
-
-  <!-- ── DATA DISKS ─────────────────────────────────────────────────────────
-       Cylinder: rx=64, ry=8, body h=40
-         cy_top = 438  →  top cap top  y=430
-         cy_bot = 478  →  bot cap bot  y=486
-       Text: label y=450, row1 y=462, row2 y=474
-       Draw order per disk: body rect → bottom ellipse → top ellipse → text
-  ──────────────────────────────────────────────────────────────────────── -->
-
-  <!-- houseAgent disk -->
-  <rect x="44"  y="438" width="128" height="40" fill="url(#houseGrad)"/>
+  <!-- disk: houseAgent -->
+  <rect x="44" y="438" width="128" height="40" rx="0" fill="url(#houseGrad)"/>
   <ellipse cx="108" cy="478" rx="64" ry="8" fill="#2a4868"/>
   <ellipse cx="108" cy="438" rx="64" ry="8" fill="#7aaac8"/>
-  <text x="108" y="443" text-anchor="middle" font-size="8"   font-weight="bold" fill="#f0f4f8">house data</text>
+  <text x="108" y="443" text-anchor="middle" font-size="8" font-weight="bold" fill="#f0f4f8">house data</text>
   <text x="108" y="456" text-anchor="middle" font-size="7.5" fill="#a8c4e0">legal · ins · permits · basis</text>
   <text x="108" y="468" text-anchor="middle" font-size="7.5" fill="#a8c4e0">hvac · plumb · floor_plan</text>
-
-  <!-- medicalAgent disk -->
-  <rect x="214" y="438" width="128" height="40" fill="url(#medGrad)"/>
+  <!-- disk: medicalAgent -->
+  <rect x="214" y="438" width="128" height="40" rx="0" fill="url(#medGrad)"/>
   <ellipse cx="278" cy="478" rx="64" ry="8" fill="#402058"/>
   <ellipse cx="278" cy="438" rx="64" ry="8" fill="#9878b8"/>
-  <text x="278" y="443" text-anchor="middle" font-size="8"   font-weight="bold" fill="#f4f0f8">medical data</text>
+  <text x="278" y="443" text-anchor="middle" font-size="8" font-weight="bold" fill="#f4f0f8">medical data</text>
   <text x="278" y="456" text-anchor="middle" font-size="7.5" fill="#c4a8d8">conditions · medications</text>
   <text x="278" y="468" text-anchor="middle" font-size="7.5" fill="#c4a8d8">labs · BP · CPAP</text>
-
-  <!-- moneyAgent disk -->
-  <rect x="384" y="438" width="128" height="40" fill="url(#moneyGrad)"/>
+  <!-- disk: moneyAgent -->
+  <rect x="384" y="438" width="128" height="40" rx="0" fill="url(#moneyGrad)"/>
   <ellipse cx="448" cy="478" rx="64" ry="8" fill="#1e4830"/>
   <ellipse cx="448" cy="438" rx="64" ry="8" fill="#68a880"/>
-  <text x="448" y="443" text-anchor="middle" font-size="8"   font-weight="bold" fill="#f0f8f2">money data</text>
+  <text x="448" y="443" text-anchor="middle" font-size="8" font-weight="bold" fill="#f0f8f2">money data</text>
   <text x="448" y="456" text-anchor="middle" font-size="7.5" fill="#a8d8b8">accounts · transactions</text>
   <text x="448" y="468" text-anchor="middle" font-size="7.5" fill="#a8d8b8">rmd · runway · beancount</text>
-
-  <!-- estateAgent disk -->
-  <rect x="554" y="438" width="128" height="40" fill="url(#estateGrad)"/>
+  <!-- disk: estateAgent -->
+  <rect x="554" y="438" width="128" height="40" rx="0" fill="url(#estateGrad)"/>
   <ellipse cx="618" cy="478" rx="64" ry="8" fill="#3e2a14"/>
   <ellipse cx="618" cy="438" rx="64" ry="8" fill="#9a7a50"/>
-  <text x="618" y="443" text-anchor="middle" font-size="8"   font-weight="bold" fill="#f8f4ee">estate data</text>
+  <text x="618" y="443" text-anchor="middle" font-size="8" font-weight="bold" fill="#f8f4ee">estate data</text>
   <text x="618" y="456" text-anchor="middle" font-size="7.5" fill="#d8b888">asset_registry · deeds</text>
   <text x="618" y="468" text-anchor="middle" font-size="7.5" fill="#d8b888">trust · DPOA · beneficiaries</text>
-
-  <!-- faithAgent disk -->
-  <rect x="724" y="438" width="128" height="40" fill="url(#faithGrad)"/>
+  <!-- disk: faithAgent -->
+  <rect x="724" y="438" width="128" height="40" rx="0" fill="url(#faithGrad)"/>
   <ellipse cx="788" cy="478" rx="64" ry="8" fill="#4a2828"/>
   <ellipse cx="788" cy="438" rx="64" ry="8" fill="#a87888"/>
-  <text x="788" y="443" text-anchor="middle" font-size="8"   font-weight="bold" fill="#f8f0f0">faith data</text>
+  <text x="788" y="443" text-anchor="middle" font-size="8" font-weight="bold" fill="#f8f0f0">faith data</text>
   <text x="788" y="456" text-anchor="middle" font-size="7.5" fill="#d8a8a8">practice · examen</text>
   <text x="788" y="468" text-anchor="middle" font-size="7.5" fill="#d8a8a8">sacraments · ethical_will</text>
-
-  <!-- emotionalAgent disk -->
-  <rect x="894" y="438" width="128" height="40" fill="url(#emotGrad)"/>
+  <!-- disk: emotionalAgent -->
+  <rect x="894" y="438" width="128" height="40" rx="0" fill="url(#emotGrad)"/>
   <ellipse cx="958" cy="478" rx="64" ry="8" fill="#2a3e1e"/>
   <ellipse cx="958" cy="438" rx="64" ry="8" fill="#8aa068"/>
-  <text x="958" y="443" text-anchor="middle" font-size="8"   font-weight="bold" fill="#f0f8e8">emotional data</text>
+  <text x="958" y="443" text-anchor="middle" font-size="8" font-weight="bold" fill="#f0f8e8">emotional data</text>
   <text x="958" y="456" text-anchor="middle" font-size="7.5" fill="#b0c890">checkin · relationships</text>
   <text x="958" y="468" text-anchor="middle" font-size="7.5" fill="#b0c890">grief · review · contacts</text>
-
-  <!-- ── SERVICE BAR TEXT ────────────────────────────────────────────────── -->
-  <text x="550" y="519" text-anchor="middle" font-size="13"  font-weight="bold" fill="#b8d0e0">Common Records Service</text>
+  <text x="550" y="519" text-anchor="middle" font-size="13" font-weight="bold" fill="#b8d0e0">Common Records Service</text>
   <text x="550" y="536" text-anchor="middle" font-size="10.5" fill="#8ab0c8">life.core.records  ·  git-as-master  ·  auto_push=true  ·  lifeTracker-data (private repo)</text>
-  <text x="550" y="552" text-anchor="middle" font-size="9.5"  fill="#6890a8" font-style="italic">Read · Write · Append · Register Document · Get Action Items  —  no agent touches the filesystem directly</text>
+  <text x="550" y="552" text-anchor="middle" font-size="9.5" font-style="italic" fill="#6890a8">Read · Write · Append · Register Document · Get Action Items  —  no agent touches the filesystem directly</text>
 
-  <!-- ══ COMMUNICATION AGENT ══════════════════════════════════════════════
-       y=600–658
-  ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- ══ COMMUNICATION AGENT ══════════════════════════════════ -->
   <line x1="550" y1="578" x2="550" y2="600" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
   <rect x="200" y="600" width="700" height="58" rx="8" fill="url(#commGrad)" filter="url(#softShadow)"/>
-  <rect x="200" y="600" width="700" height="4"  rx="2" fill="#a0c088"/>
-  <text x="550" y="624" text-anchor="middle" font-size="13"  font-weight="bold" fill="#f0f8ee">📡 Communication Agent</text>
+  <rect x="200" y="600" width="700" height="4" rx="2" fill="#a0c088"/>
+  <text x="550" y="624" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8ee">📡 Communication Agent</text>
   <text x="550" y="642" text-anchor="middle" font-size="10.5" fill="#c8e0b8">Twilio  ·  Flask  ·  CrewAI  ·  LangGraph  ·  auth  ·  LLM routing</text>
 
-  <!-- ══ COMMUNICATION CHANNELS ════════════════════════════════════════════
-       Horiz: y=676.  Boxes: y=684–746.  Centers: 200, 550, 900.  w=200
-  ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- ══ COMMUNICATION CHANNELS ═══════════════════════════════ -->
   <line x1="550" y1="658" x2="550" y2="676" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
   <line x1="200" y1="676" x2="900" y2="676" stroke="#8e7b5e" stroke-width="1.5"/>
-
-  <!-- Voice / Local Mac -->
   <line x1="200" y1="676" x2="200" y2="684" stroke="#8e7b5e" stroke-width="1.5"/>
   <rect x="100" y="684" width="200" height="62" rx="7" fill="#4a4030" filter="url(#softShadow)"/>
-  <rect x="100" y="684" width="200" height="3"  rx="1.5" fill="#c8a870"/>
+  <rect x="100" y="684" width="200" height="3" rx="1.5" fill="#c8a870"/>
   <text x="200" y="706" text-anchor="middle" font-size="12" font-weight="bold" fill="#f5e8c8">📱 Voice  ·  iPhone/laptop</text>
   <text x="200" y="723" text-anchor="middle" font-size="9.5" fill="#c0a870">speech-to-speech</text>
   <text x="200" y="737" text-anchor="middle" font-size="9.5" fill="#c0a870">on-device LLM</text>
-
-  <!-- Web / Mobile -->
   <line x1="550" y1="676" x2="550" y2="684" stroke="#8e7b5e" stroke-width="1.5"/>
   <rect x="450" y="684" width="200" height="62" rx="7" fill="#303a4a" filter="url(#softShadow)"/>
-  <rect x="450" y="684" width="200" height="3"  rx="1.5" fill="#90a8c8"/>
+  <rect x="450" y="684" width="200" height="3" rx="1.5" fill="#90a8c8"/>
   <text x="550" y="706" text-anchor="middle" font-size="12" font-weight="bold" fill="#d8e8f8">🌐 Web  ·  Mobile</text>
   <text x="550" y="723" text-anchor="middle" font-size="9.5" fill="#a8c8e0">Flask UI (pyTrackers)</text>
   <text x="550" y="737" text-anchor="middle" font-size="9.5" fill="#a8c8e0">Jinja2 blueprints</text>
-
-  <!-- Notifications -->
   <line x1="900" y1="676" x2="900" y2="684" stroke="#8e7b5e" stroke-width="1.5"/>
   <rect x="800" y="684" width="200" height="62" rx="7" fill="#2a3a2a" filter="url(#softShadow)"/>
-  <rect x="800" y="684" width="200" height="3"  rx="1.5" fill="#88b888"/>
+  <rect x="800" y="684" width="200" height="3" rx="1.5" fill="#88b888"/>
   <text x="900" y="706" text-anchor="middle" font-size="12" font-weight="bold" fill="#d8f0d8">🔔 Notifications</text>
   <text x="900" y="723" text-anchor="middle" font-size="9.5" fill="#a8d8a8">Twilio SMS  ·  alerts</text>
   <text x="900" y="737" text-anchor="middle" font-size="9.5" fill="#a8d8a8">monthly check-in cadence</text>
 
-  <!-- ══ DATA REPOS ══════════════════════════════════════════════════════════ -->
-  <line x1="80"  y1="770" x2="1020" y2="770" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
-  <text x="550"  y="785" text-anchor="middle" font-size="10" fill="#8e7b5e" font-style="italic">Data Repositories  ·  Private Git  ·  All records local / on-premises</text>
-
-  <rect x="80"  y="794" width="185" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="172" y="813" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker-data  (JSON records)</text>
-
-  <rect x="283" y="794" width="185" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="375" y="813" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker  (code · docs)</text>
-
-  <rect x="486" y="794" width="175" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="573" y="813" text-anchor="middle" font-size="9.5" fill="#c8d8e8">frankrojas6591 / GitHub</text>
-
-  <rect x="679" y="794" width="185" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="771" y="813" text-anchor="middle" font-size="9.5" fill="#c8d8e8">SSH alias: github.com-fxr</text>
-
-  <rect x="882" y="794" width="148" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
-  <text x="956" y="813" text-anchor="middle" font-size="9.5" fill="#c8d8e8">id_ed25519_fxr</text>
-
-  <!-- ══ FOOTER ══════════════════════════════════════════════════════════════ -->
-  <line x1="80"  y1="850" x2="1020" y2="850" stroke="#c8b89a" stroke-width="0.5"/>
-  <text x="550"  y="868" text-anchor="middle" font-size="9" fill="#a09080">lifeTracker  ·  pyTrackers ecosystem  ·  Frank Rojas  ·  June 2026  ·  v1.3</text>
-  <text x="550"  y="884" text-anchor="middle" font-size="9" fill="#b8a888" font-style="italic">"Your wisest counselor, always available — chief of staff and trusted friend."</text>
+  <!-- ══ REPOS + FOOTER ════════════════════════════════════════ -->
+  <line x1="80" y1="782" x2="1020" y2="782" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
+  <text x="550" y="799" text-anchor="middle" font-size="10" font-style="italic" fill="#8e7b5e">Data Repositories  ·  Private Git  ·  All records local / on-premises</text>
+  <rect x="80" y="807" width="265" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="212" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker-data  (JSON records)</text>
+  <rect x="293" y="807" width="265" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="425" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker  (code · docs)</text>
+  <rect x="486" y="807" width="261" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="616" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">frankrojas6591 / GitHub</text>
+  <rect x="679" y="807" width="265" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="811" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">SSH alias: github.com-fxr</text>
+  <rect x="882" y="807" width="230" height="30" rx="15" fill="#2c3e50" opacity="0.85"/>
+  <text x="997" y="826" text-anchor="middle" font-size="9.5" fill="#c8d8e8">id_ed25519_fxr</text>
+  <line x1="80" y1="850" x2="1020" y2="850" stroke="#c8b89a" stroke-width="0.5"/>
+  <text x="550" y="868" text-anchor="middle" font-size="9" fill="#a09080">lifeTracker  ·  pyTrackers ecosystem  ·  Frank Rojas  ·  June 2026  ·  v1.6</text>
+  <text x="550" y="884" text-anchor="middle" font-size="9" font-style="italic" fill="#b8a888">"Your wisest counselor, always available — chief of staff and trusted friend."</text>
 
 </svg>
