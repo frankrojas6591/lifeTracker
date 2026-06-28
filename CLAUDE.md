@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 1. What This Project Is
 
-`houseTracker` is a new sub-project within the **pyTrackers** ecosystem (`~/GDrive/dev/pyTrackers/`). It is currently in the bootstrapping phase — no source files exist yet.
+`lifeTracker` is the single git repo for all personal discipline agents within the **pyTrackers** ecosystem (`~/GDrive/dev/pyTrackers/`). It is currently in the design phase — vision docs exist for all agents; source files are being established.
 
-Sibling projects for reference:
-- `../llcRentalTracker` — most mature; follow its conventions for Flask apps, ledger patterns, and project structure
-- `../medicalTracker` — domain-specific tracker, early stage
+**Design principle:** One tracker, N discipline agents. Each agent lives under `<agentName>/` at the repo root.
+
+Sibling project (separate repo, do NOT touch):
+- `../llcRentalTracker` — LLC rental business tracker on the work GitHub account (`wbgroupmgr`)
 
 ---
 
@@ -41,23 +42,31 @@ These conventions are shared across all pyTrackers sub-projects.
 - At session end, commit all changed source files (Python, JSON, Markdown — NOT `.DS_Store` or binary PDFs).
 - After every commit, `git push origin main` — pushing is required, not optional.
 - `.claude/sessionLogs/` is gitignored — do not commit session log files.
-- Remote: `git@github.com-fxr:frankrojas6591/houseTracker.git` (uses `~/.ssh/id_ed25519_fxr` via SSH alias `github.com-fxr`)
+- Remote: `git@github.com-fxr:frankrojas6591/lifeTracker.git` (uses `~/.ssh/id_ed25519_fxr` via SSH alias `github.com-fxr`)
 
 ---
 
-## 3. Project Structure (to be established)
-
-When source files are added, follow the llcRentalTracker package layout as a model:
+## 3. Project Structure
 
 ```
-houseTracker/
-├── ledger/       # Core data engine
-├── ui/           # Flask views + Jinja2 templates (if web UI is needed)
-├── util/         # Session management, working DB helpers
-├── tests/        # Test suite
-├── docs/         # Architecture and design docs
-├── wsCmd.py      # CLI entry point
-└── requirements.txt
+lifeTracker/                  ← this repo (was: houseTracker)
+├── docs/                     ← top-level tracker docs (personalAssistanceVision, gitStrategy)
+├── houseAgent/               ← House Manager discipline agent
+│   └── docs/
+│       ├── HouseManagerVision.md
+│       └── design/
+├── emotionalAgent/           ← Emotional Health discipline agent
+│   └── docs/
+├── estateAgent/              ← Estate Planning discipline agent
+│   └── docs/
+├── faithAgent/               ← Faith Practice discipline agent
+│   └── docs/
+├── medicalAgent/             ← Medical / Health Records discipline agent
+│   └── docs/
+├── moneyAgent/               ← Personal Finance discipline agent
+│   └── docs/
+├── CLAUDE.md
+└── README.md
 ```
 
 All Python source should use a `setup_paths.py` module at the package root to anchor all paths relative to the repo — no hardcoded absolute paths.
