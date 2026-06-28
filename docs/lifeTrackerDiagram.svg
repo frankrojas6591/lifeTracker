@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 1100 900" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
+<svg viewBox="0 0 1100 960" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, 'Times New Roman', serif">
 
   <defs>
     <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
@@ -42,221 +42,286 @@
       <stop offset="0%" stop-color="#607050"/>
       <stop offset="100%" stop-color="#404e30"/>
     </linearGradient>
-    <filter id="shadow" x="-5%" y="-5%" width="115%" height="120%">
+    <filter id="shadow">
       <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#00000025"/>
     </filter>
-    <filter id="softShadow" x="-5%" y="-5%" width="115%" height="120%">
+    <filter id="softShadow">
       <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="#00000018"/>
     </filter>
   </defs>
 
-  <rect width="1100" height="900" fill="url(#bgGrad)"/>
+  <rect width="1100" height="960" fill="url(#bgGrad)"/>
 
   <!-- ══ TITLE ══════════════════════════════════════════════ -->
-  <text x="550" y="38" text-anchor="middle" font-size="22" font-weight="bold" fill="#2c3e50" letter-spacing="1">lifeTracker</text>
-  <text x="550" y="58" text-anchor="middle" font-size="12" fill="#6b5a3e" font-style="italic">Personal Assistance Ecosystem  ·  One Tracker, Six Discipline Agents</text>
-  <line x1="80" y1="68" x2="1020" y2="68" stroke="#c8b89a" stroke-width="1"/>
+  <text x="550" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#2c3e50" letter-spacing="1">lifeTracker</text>
+  <text x="550" y="55" text-anchor="middle" font-size="12" fill="#6b5a3e" font-style="italic">Personal Assistance Ecosystem  ·  One Tracker, Six Discipline Agents</text>
+  <line x1="80" y1="64" x2="1020" y2="64" stroke="#c8b89a" stroke-width="1"/>
 
   <!-- ══ PERSONAL ASSISTANT ════════════════════════════════ -->
-  <rect x="330" y="80" width="440" height="78" rx="10" fill="url(#paGrad)" filter="url(#shadow)"/>
-  <rect x="330" y="80" width="440" height="4" rx="2" fill="#c8a96e"/>
-  <text x="550" y="110" text-anchor="middle" font-size="15" font-weight="bold" fill="#f5f0e8" letter-spacing="0.5">Personal Assistant  (PA)</text>
-  <text x="550" y="128" text-anchor="middle" font-size="11" fill="#c8b89a">life.pa.*  ·  Chief of Staff + Wise Counsel</text>
-  <text x="550" y="147" text-anchor="middle" font-size="10" fill="#a09080" font-style="italic">Routes all cross-domain queries  ·  Knows your whole life, not just one domain</text>
+  <rect x="330" y="76" width="440" height="76" rx="10" fill="url(#paGrad)" filter="url(#shadow)"/>
+  <rect x="330" y="76" width="440" height="4" rx="2" fill="#c8a96e"/>
+  <text x="550" y="106" text-anchor="middle" font-size="15" font-weight="bold" fill="#f5f0e8" letter-spacing="0.5">Personal Assistant  (PA)</text>
+  <text x="550" y="124" text-anchor="middle" font-size="11" fill="#c8b89a">life.pa.*  ·  Chief of Staff + Wise Counsel</text>
+  <text x="550" y="141" text-anchor="middle" font-size="10" fill="#a09080" font-style="italic">Routes all cross-domain queries  ·  Knows your whole life, not just one domain</text>
 
-  <!-- PA → agents connector -->
-  <line x1="550" y1="158" x2="550" y2="195" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <line x1="108" y1="195" x2="958" y2="195" stroke="#8e7b5e" stroke-width="1.5"/>
+  <!-- PA → agents connectors -->
+  <line x1="550" y1="152" x2="550" y2="194" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="108" y1="194" x2="958" y2="194" stroke="#8e7b5e" stroke-width="1.5"/>
 
-  <!-- ══ 6 DISCIPLINE AGENTS ════════════════════════════════
-       Centers: 108, 278, 448, 618, 788, 958
-       Box x:    32,  202,  372,  542,  712,  882   w=152 h=108
+  <!-- ══ 6 DISCIPLINE AGENTS (y=202–310) ═══════════════════
+       Centers: 108, 278, 448, 618, 788, 958  (w=152)
   ══════════════════════════════════════════════════════════ -->
 
   <!-- houseAgent -->
-  <line x1="108" y1="195" x2="108" y2="208" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="32" y="208" width="152" height="108" rx="8" fill="url(#houseGrad)" filter="url(#softShadow)"/>
-  <rect x="32" y="208" width="152" height="4" rx="2" fill="#a8c4e0"/>
-  <text x="108" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f4f8">houseAgent</text>
-  <text x="108" y="249" text-anchor="middle" font-size="10" fill="#c8d8ea">house.*</text>
-  <line x1="48" y1="258" x2="168" y2="258" stroke="#7090b0" stroke-width="0.5" opacity="0.5"/>
-  <text x="108" y="271" text-anchor="middle" font-size="9" fill="#b0c8e0">16 sub-agents</text>
-  <text x="108" y="284" text-anchor="middle" font-size="9" fill="#b0c8e0">systems · designs</text>
-  <text x="108" y="297" text-anchor="middle" font-size="9" fill="#b0c8e0">finance · life · core</text>
-  <!-- houseAgent ingestion pill -->
-  <rect x="32" y="322" width="152" height="46" rx="6" fill="#2a3848" opacity="0.88" filter="url(#softShadow)"/>
-  <text x="108" y="336" text-anchor="middle" font-size="7.5" fill="#7898b0" font-style="italic">ingests from</text>
-  <text x="108" y="349" text-anchor="middle" font-size="8.5" fill="#a8c4e0">Hays CAD · AVM comps</text>
-  <text x="108" y="361" text-anchor="middle" font-size="8.5" fill="#a8c4e0">County records · Photos</text>
-  <line x1="108" y1="316" x2="108" y2="322" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="108" y1="194" x2="108" y2="202" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="32" y="202" width="152" height="108" rx="8" fill="url(#houseGrad)" filter="url(#softShadow)"/>
+  <rect x="32" y="202" width="152" height="4" rx="2" fill="#a8c4e0"/>
+  <text x="108" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f4f8">houseAgent</text>
+  <text x="108" y="243" text-anchor="middle" font-size="10" fill="#c8d8ea">house.*</text>
+  <line x1="48" y1="252" x2="168" y2="252" stroke="#7090b0" stroke-width="0.5" opacity="0.5"/>
+  <text x="108" y="265" text-anchor="middle" font-size="9" fill="#b0c8e0">16 sub-agents</text>
+  <text x="108" y="278" text-anchor="middle" font-size="9" fill="#b0c8e0">systems · designs</text>
+  <text x="108" y="291" text-anchor="middle" font-size="9" fill="#b0c8e0">finance · life · core</text>
 
   <!-- medicalAgent -->
-  <line x1="278" y1="195" x2="278" y2="208" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="202" y="208" width="152" height="108" rx="8" fill="url(#medGrad)" filter="url(#softShadow)"/>
-  <rect x="202" y="208" width="152" height="4" rx="2" fill="#c4a8d8"/>
-  <text x="278" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#f4f0f8">medicalAgent</text>
-  <text x="278" y="249" text-anchor="middle" font-size="10" fill="#d8c8ea">medical.*</text>
-  <line x1="218" y1="258" x2="338" y2="258" stroke="#906090" stroke-width="0.5" opacity="0.5"/>
-  <text x="278" y="271" text-anchor="middle" font-size="9" fill="#d0b8e8">FHIR R4  ·  5M's</text>
-  <text x="278" y="284" text-anchor="middle" font-size="9" fill="#d0b8e8">Epic / ARC  ·  UHC</text>
-  <text x="278" y="297" text-anchor="middle" font-size="9" fill="#d0b8e8">CPAP  ·  BP  ·  Labs</text>
-  <!-- medicalAgent ingestion pill -->
-  <rect x="202" y="322" width="152" height="46" rx="6" fill="#2a2838" opacity="0.88" filter="url(#softShadow)"/>
-  <text x="278" y="336" text-anchor="middle" font-size="7.5" fill="#9888b0" font-style="italic">ingests from</text>
-  <text x="278" y="349" text-anchor="middle" font-size="8.5" fill="#d0b8e8">Epic FHIR · ARC portal</text>
-  <text x="278" y="361" text-anchor="middle" font-size="8.5" fill="#d0b8e8">ResMed myAir · Apple Health</text>
-  <line x1="278" y1="316" x2="278" y2="322" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="278" y1="194" x2="278" y2="202" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="202" y="202" width="152" height="108" rx="8" fill="url(#medGrad)" filter="url(#softShadow)"/>
+  <rect x="202" y="202" width="152" height="4" rx="2" fill="#c4a8d8"/>
+  <text x="278" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#f4f0f8">medicalAgent</text>
+  <text x="278" y="243" text-anchor="middle" font-size="10" fill="#d8c8ea">medical.*</text>
+  <line x1="218" y1="252" x2="338" y2="252" stroke="#906090" stroke-width="0.5" opacity="0.5"/>
+  <text x="278" y="265" text-anchor="middle" font-size="9" fill="#d0b8e8">FHIR R4  ·  5M's</text>
+  <text x="278" y="278" text-anchor="middle" font-size="9" fill="#d0b8e8">Epic / ARC  ·  UHC</text>
+  <text x="278" y="291" text-anchor="middle" font-size="9" fill="#d0b8e8">CPAP  ·  BP  ·  Labs</text>
 
   <!-- moneyAgent -->
-  <line x1="448" y1="195" x2="448" y2="208" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="372" y="208" width="152" height="108" rx="8" fill="url(#moneyGrad)" filter="url(#softShadow)"/>
-  <rect x="372" y="208" width="152" height="4" rx="2" fill="#a8d8b8"/>
-  <text x="448" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8f2">moneyAgent</text>
-  <text x="448" y="249" text-anchor="middle" font-size="10" fill="#c8e8d0">money.*</text>
-  <line x1="388" y1="258" x2="508" y2="258" stroke="#509060" stroke-width="0.5" opacity="0.5"/>
-  <text x="448" y="271" text-anchor="middle" font-size="9" fill="#b8e0c8">Beancount  ·  OFX</text>
-  <text x="448" y="284" text-anchor="middle" font-size="9" fill="#b8e0c8">RMDs  ·  IRMAA</text>
-  <text x="448" y="297" text-anchor="middle" font-size="9" fill="#b8e0c8">Owl runway model</text>
-  <!-- moneyAgent ingestion pill -->
-  <rect x="372" y="322" width="152" height="46" rx="6" fill="#283828" opacity="0.88" filter="url(#softShadow)"/>
-  <text x="448" y="336" text-anchor="middle" font-size="7.5" fill="#80a888" font-style="italic">ingests from</text>
-  <text x="448" y="349" text-anchor="middle" font-size="8.5" fill="#b8e0c8">OFX/QFX · Plaid API</text>
-  <text x="448" y="361" text-anchor="middle" font-size="8.5" fill="#b8e0c8">Schwab · Vanguard feeds</text>
-  <line x1="448" y1="316" x2="448" y2="322" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="448" y1="194" x2="448" y2="202" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="372" y="202" width="152" height="108" rx="8" fill="url(#moneyGrad)" filter="url(#softShadow)"/>
+  <rect x="372" y="202" width="152" height="4" rx="2" fill="#a8d8b8"/>
+  <text x="448" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8f2">moneyAgent</text>
+  <text x="448" y="243" text-anchor="middle" font-size="10" fill="#c8e8d0">money.*</text>
+  <line x1="388" y1="252" x2="508" y2="252" stroke="#509060" stroke-width="0.5" opacity="0.5"/>
+  <text x="448" y="265" text-anchor="middle" font-size="9" fill="#b8e0c8">Beancount  ·  OFX</text>
+  <text x="448" y="278" text-anchor="middle" font-size="9" fill="#b8e0c8">RMDs  ·  IRMAA</text>
+  <text x="448" y="291" text-anchor="middle" font-size="9" fill="#b8e0c8">Owl runway model</text>
 
   <!-- estateAgent -->
-  <line x1="618" y1="195" x2="618" y2="208" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="542" y="208" width="152" height="108" rx="8" fill="url(#estateGrad)" filter="url(#softShadow)"/>
-  <rect x="542" y="208" width="152" height="4" rx="2" fill="#d8b888"/>
-  <text x="618" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#f8f4ee">estateAgent</text>
-  <text x="618" y="249" text-anchor="middle" font-size="10" fill="#e8d0a8">estate.*</text>
-  <line x1="558" y1="258" x2="678" y2="258" stroke="#907040" stroke-width="0.5" opacity="0.5"/>
-  <text x="618" y="271" text-anchor="middle" font-size="9" fill="#e0c890">7 legal pillars</text>
-  <text x="618" y="284" text-anchor="middle" font-size="9" fill="#e0c890">§121 · step-up basis</text>
-  <text x="618" y="297" text-anchor="middle" font-size="9" fill="#e0c890">RLT · DPOA · POLST</text>
-  <!-- estateAgent ingestion pill -->
-  <rect x="542" y="322" width="152" height="46" rx="6" fill="#382a18" opacity="0.88" filter="url(#softShadow)"/>
-  <text x="618" y="336" text-anchor="middle" font-size="7.5" fill="#a08058" font-style="italic">ingests from</text>
-  <text x="618" y="349" text-anchor="middle" font-size="8.5" fill="#e0c890">County deed · Brokerage</text>
-  <text x="618" y="361" text-anchor="middle" font-size="8.5" fill="#e0c890">Owl planner · Ghostfolio</text>
-  <line x1="618" y1="316" x2="618" y2="322" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="618" y1="194" x2="618" y2="202" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="542" y="202" width="152" height="108" rx="8" fill="url(#estateGrad)" filter="url(#softShadow)"/>
+  <rect x="542" y="202" width="152" height="4" rx="2" fill="#d8b888"/>
+  <text x="618" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#f8f4ee">estateAgent</text>
+  <text x="618" y="243" text-anchor="middle" font-size="10" fill="#e8d0a8">estate.*</text>
+  <line x1="558" y1="252" x2="678" y2="252" stroke="#907040" stroke-width="0.5" opacity="0.5"/>
+  <text x="618" y="265" text-anchor="middle" font-size="9" fill="#e0c890">7 legal pillars</text>
+  <text x="618" y="278" text-anchor="middle" font-size="9" fill="#e0c890">§121 · step-up basis</text>
+  <text x="618" y="291" text-anchor="middle" font-size="9" fill="#e0c890">RLT · DPOA · POLST</text>
 
   <!-- faithAgent -->
-  <line x1="788" y1="195" x2="788" y2="208" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="712" y="208" width="152" height="108" rx="8" fill="url(#faithGrad)" filter="url(#softShadow)"/>
-  <rect x="712" y="208" width="152" height="4" rx="2" fill="#d8a8a8"/>
-  <text x="788" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#f8f0f0">faithAgent</text>
-  <text x="788" y="249" text-anchor="middle" font-size="10" fill="#e8c8c8">faith.*</text>
-  <line x1="728" y1="258" x2="848" y2="258" stroke="#906060" stroke-width="0.5" opacity="0.5"/>
-  <text x="788" y="271" text-anchor="middle" font-size="9" fill="#e0b8b8">Ignatian Examen</text>
-  <text x="788" y="284" text-anchor="middle" font-size="9" fill="#e0b8b8">consolation / desolation</text>
-  <text x="788" y="297" text-anchor="middle" font-size="9" fill="#e0b8b8">Catholic practice</text>
-  <!-- faithAgent ingestion pill -->
-  <rect x="712" y="322" width="152" height="46" rx="6" fill="#381818" opacity="0.88" filter="url(#softShadow)"/>
-  <text x="788" y="336" text-anchor="middle" font-size="7.5" fill="#a07878" font-style="italic">ingests from</text>
-  <text x="788" y="349" text-anchor="middle" font-size="8.5" fill="#e0b8b8">LiturgicalCalendar API</text>
-  <text x="788" y="361" text-anchor="middle" font-size="8.5" fill="#e0b8b8">Magisterium AI · Diocese</text>
-  <line x1="788" y1="316" x2="788" y2="322" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="788" y1="194" x2="788" y2="202" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="712" y="202" width="152" height="108" rx="8" fill="url(#faithGrad)" filter="url(#softShadow)"/>
+  <rect x="712" y="202" width="152" height="4" rx="2" fill="#d8a8a8"/>
+  <text x="788" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#f8f0f0">faithAgent</text>
+  <text x="788" y="243" text-anchor="middle" font-size="10" fill="#e8c8c8">faith.*</text>
+  <line x1="728" y1="252" x2="848" y2="252" stroke="#906060" stroke-width="0.5" opacity="0.5"/>
+  <text x="788" y="265" text-anchor="middle" font-size="9" fill="#e0b8b8">Ignatian Examen</text>
+  <text x="788" y="278" text-anchor="middle" font-size="9" fill="#e0b8b8">consolation / desolation</text>
+  <text x="788" y="291" text-anchor="middle" font-size="9" fill="#e0b8b8">Catholic practice</text>
 
   <!-- emotionalAgent -->
-  <line x1="958" y1="195" x2="958" y2="208" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="882" y="208" width="152" height="108" rx="8" fill="url(#emotGrad)" filter="url(#softShadow)"/>
-  <rect x="882" y="208" width="152" height="4" rx="2" fill="#b0c890"/>
-  <text x="958" y="232" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8e8">emotionalAgent</text>
-  <text x="958" y="249" text-anchor="middle" font-size="10" fill="#d0e0b0">emotional.*</text>
-  <line x1="898" y1="258" x2="1018" y2="258" stroke="#708050" stroke-width="0.5" opacity="0.5"/>
-  <text x="958" y="271" text-anchor="middle" font-size="9" fill="#c8d8a0">Relationships · Connection</text>
-  <text x="958" y="284" text-anchor="middle" font-size="9" fill="#c8d8a0">PERMA · CBT · Grief</text>
-  <text x="958" y="297" text-anchor="middle" font-size="9" fill="#c8d8a0">Erikson · Wellbeing</text>
+  <line x1="958" y1="194" x2="958" y2="202" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="882" y="202" width="152" height="108" rx="8" fill="url(#emotGrad)" filter="url(#softShadow)"/>
+  <rect x="882" y="202" width="152" height="4" rx="2" fill="#b0c890"/>
+  <text x="958" y="226" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8e8">emotionalAgent</text>
+  <text x="958" y="243" text-anchor="middle" font-size="10" fill="#d0e0b0">emotional.*</text>
+  <line x1="898" y1="252" x2="1018" y2="252" stroke="#708050" stroke-width="0.5" opacity="0.5"/>
+  <text x="958" y="265" text-anchor="middle" font-size="9" fill="#c8d8a0">Relationships · Connection</text>
+  <text x="958" y="278" text-anchor="middle" font-size="9" fill="#c8d8a0">PERMA · CBT · Grief</text>
+  <text x="958" y="291" text-anchor="middle" font-size="9" fill="#c8d8a0">Erikson · Wellbeing</text>
+
+  <!-- ══ DATA DISKS — one per agent, y=310–396 ═══════════
+       Cylinder shape: body rect + top ellipse + bottom ellipse
+       Body:  x=cx-76, y=318, w=152, h=52  (bottom y=370)
+       Top ellipse:    cx, cy=318, rx=76, ry=11
+       Bottom ellipse: cx, cy=370, rx=76, ry=11
+       Visible extent: y=307 (top of cap) to y=381 (bottom of base)
+       Text lines: y=336 (label), y=350 (row1), y=363 (row2)
+
+       Draw order per disk: body → bottom_ellipse → top_ellipse → text
+  ══════════════════════════════════════════════════════════ -->
+
+  <!-- DISK: houseAgent (steel-blue) -->
+  <rect x="32" y="318" width="152" height="52" fill="#1e3048"/>
+  <ellipse cx="108" cy="370" rx="76" ry="11" fill="#162438"/>
+  <ellipse cx="108" cy="318" rx="76" ry="11" fill="#2c4870"/>
+  <text x="108" y="334" text-anchor="middle" font-size="7" fill="#6890b0" font-style="italic">records/agents/house/</text>
+  <text x="108" y="349" text-anchor="middle" font-size="8.5" fill="#90bcd8">legal · ins · permits · basis</text>
+  <text x="108" y="362" text-anchor="middle" font-size="8.5" fill="#90bcd8">hvac · plumb · elec · floor_plan</text>
+
+  <!-- DISK: medicalAgent (purple) -->
+  <rect x="202" y="318" width="152" height="52" fill="#1e1030"/>
+  <ellipse cx="278" cy="370" rx="76" ry="11" fill="#160820"/>
+  <ellipse cx="278" cy="318" rx="76" ry="11" fill="#2c1848"/>
+  <text x="278" y="334" text-anchor="middle" font-size="7" fill="#7060a0" font-style="italic">records/agents/medical/</text>
+  <text x="278" y="349" text-anchor="middle" font-size="8.5" fill="#b090d8">conditions · medications</text>
+  <text x="278" y="362" text-anchor="middle" font-size="8.5" fill="#b090d8">labs · BP · CPAP · directives</text>
+
+  <!-- DISK: moneyAgent (forest green) -->
+  <rect x="372" y="318" width="152" height="52" fill="#102018"/>
+  <ellipse cx="448" cy="370" rx="76" ry="11" fill="#081408"/>
+  <ellipse cx="448" cy="318" rx="76" ry="11" fill="#183028"/>
+  <text x="448" y="334" text-anchor="middle" font-size="7" fill="#508070" font-style="italic">records/agents/money/</text>
+  <text x="448" y="349" text-anchor="middle" font-size="8.5" fill="#80c8a0">accounts · transactions</text>
+  <text x="448" y="362" text-anchor="middle" font-size="8.5" fill="#80c8a0">rmd · runway · beancount</text>
+
+  <!-- DISK: estateAgent (warm brown) -->
+  <rect x="542" y="318" width="152" height="52" fill="#201408"/>
+  <ellipse cx="618" cy="370" rx="76" ry="11" fill="#140c04"/>
+  <ellipse cx="618" cy="318" rx="76" ry="11" fill="#302010"/>
+  <text x="618" y="334" text-anchor="middle" font-size="7" fill="#806040" font-style="italic">records/agents/estate/</text>
+  <text x="618" y="349" text-anchor="middle" font-size="8.5" fill="#c09858">asset_registry · deeds</text>
+  <text x="618" y="362" text-anchor="middle" font-size="8.5" fill="#c09858">trust · DPOA · beneficiaries</text>
+
+  <!-- DISK: faithAgent (burgundy) -->
+  <rect x="712" y="318" width="152" height="52" fill="#200808"/>
+  <ellipse cx="788" cy="370" rx="76" ry="11" fill="#140404"/>
+  <ellipse cx="788" cy="318" rx="76" ry="11" fill="#301010"/>
+  <text x="788" y="334" text-anchor="middle" font-size="7" fill="#804040" font-style="italic">records/agents/faith/</text>
+  <text x="788" y="349" text-anchor="middle" font-size="8.5" fill="#d09090">practice_log · examen</text>
+  <text x="788" y="362" text-anchor="middle" font-size="8.5" fill="#d09090">sacraments · ethical_will</text>
+
+  <!-- DISK: emotionalAgent (sage green) -->
+  <rect x="882" y="318" width="152" height="52" fill="#182010"/>
+  <ellipse cx="958" cy="370" rx="76" ry="11" fill="#101408"/>
+  <ellipse cx="958" cy="318" rx="76" ry="11" fill="#283018"/>
+  <text x="958" y="334" text-anchor="middle" font-size="7" fill="#607840" font-style="italic">records/agents/emotional/</text>
+  <text x="958" y="349" text-anchor="middle" font-size="8.5" fill="#a8c880">checkin · relationships</text>
+  <text x="958" y="362" text-anchor="middle" font-size="8.5" fill="#a8c880">grief · review · contacts</text>
+
+  <!-- ══ INGESTION PILLS (y=392–440) ═══════════════════════
+       Short connector: disk bottom (y=381) → pill top (y=392)
+  ══════════════════════════════════════════════════════════ -->
+  <line x1="108" y1="381" x2="108" y2="392" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="278" y1="381" x2="278" y2="392" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="448" y1="381" x2="448" y2="392" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="618" y1="381" x2="618" y2="392" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="788" y1="381" x2="788" y2="392" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="958" y1="381" x2="958" y2="392" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+
+  <!-- houseAgent ingestion pill -->
+  <rect x="32" y="392" width="152" height="48" rx="6" fill="#2a3848" opacity="0.90" filter="url(#softShadow)"/>
+  <text x="108" y="406" text-anchor="middle" font-size="7.5" fill="#7898b0" font-style="italic">ingests from</text>
+  <text x="108" y="420" text-anchor="middle" font-size="8.5" fill="#a8c4e0">Hays CAD · AVM comps</text>
+  <text x="108" y="433" text-anchor="middle" font-size="8.5" fill="#a8c4e0">County records · Photos</text>
+
+  <!-- medicalAgent ingestion pill -->
+  <rect x="202" y="392" width="152" height="48" rx="6" fill="#2a2838" opacity="0.90" filter="url(#softShadow)"/>
+  <text x="278" y="406" text-anchor="middle" font-size="7.5" fill="#9888b0" font-style="italic">ingests from</text>
+  <text x="278" y="420" text-anchor="middle" font-size="8.5" fill="#d0b8e8">Epic FHIR · ARC portal</text>
+  <text x="278" y="433" text-anchor="middle" font-size="8.5" fill="#d0b8e8">ResMed myAir · Apple Health</text>
+
+  <!-- moneyAgent ingestion pill -->
+  <rect x="372" y="392" width="152" height="48" rx="6" fill="#283828" opacity="0.90" filter="url(#softShadow)"/>
+  <text x="448" y="406" text-anchor="middle" font-size="7.5" fill="#80a888" font-style="italic">ingests from</text>
+  <text x="448" y="420" text-anchor="middle" font-size="8.5" fill="#b8e0c8">OFX/QFX · Plaid API</text>
+  <text x="448" y="433" text-anchor="middle" font-size="8.5" fill="#b8e0c8">Schwab · Vanguard feeds</text>
+
+  <!-- estateAgent ingestion pill -->
+  <rect x="542" y="392" width="152" height="48" rx="6" fill="#382a18" opacity="0.90" filter="url(#softShadow)"/>
+  <text x="618" y="406" text-anchor="middle" font-size="7.5" fill="#a08058" font-style="italic">ingests from</text>
+  <text x="618" y="420" text-anchor="middle" font-size="8.5" fill="#e0c890">County deed · Brokerage</text>
+  <text x="618" y="433" text-anchor="middle" font-size="8.5" fill="#e0c890">Owl planner · Ghostfolio</text>
+
+  <!-- faithAgent ingestion pill -->
+  <rect x="712" y="392" width="152" height="48" rx="6" fill="#381818" opacity="0.90" filter="url(#softShadow)"/>
+  <text x="788" y="406" text-anchor="middle" font-size="7.5" fill="#a07878" font-style="italic">ingests from</text>
+  <text x="788" y="420" text-anchor="middle" font-size="8.5" fill="#e0b8b8">LiturgicalCalendar API</text>
+  <text x="788" y="433" text-anchor="middle" font-size="8.5" fill="#e0b8b8">Magisterium AI · Diocese</text>
+
   <!-- emotionalAgent ingestion pill -->
-  <rect x="882" y="322" width="152" height="46" rx="6" fill="#283018" opacity="0.88" filter="url(#softShadow)"/>
-  <text x="958" y="336" text-anchor="middle" font-size="7.5" fill="#809858" font-style="italic">ingests from</text>
-  <text x="958" y="349" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Apple Health · Wearable</text>
-  <text x="958" y="361" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Daily check-in · Journals</text>
-  <line x1="958" y1="316" x2="958" y2="322" stroke="#506070" stroke-width="1" stroke-dasharray="3,2" opacity="0.7"/>
+  <rect x="882" y="392" width="152" height="48" rx="6" fill="#283018" opacity="0.90" filter="url(#softShadow)"/>
+  <text x="958" y="406" text-anchor="middle" font-size="7.5" fill="#809858" font-style="italic">ingests from</text>
+  <text x="958" y="420" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Apple Health · Wearable</text>
+  <text x="958" y="433" text-anchor="middle" font-size="8.5" fill="#c8d8a0">Daily check-in · Journals</text>
 
   <!-- ══ CROSS-AGENT SIGNALS ════════════════════════════════ -->
-  <text x="550" y="388" text-anchor="middle" font-size="10" fill="#8e7b5e" font-style="italic">↔  cross-agent signals  (consolation/desolation · wellness · financial runway · home accessibility · relationship health)</text>
-  <line x1="80" y1="396" x2="1020" y2="396" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
+  <text x="550" y="458" text-anchor="middle" font-size="10" fill="#8e7b5e" font-style="italic">↔  cross-agent signals  (consolation/desolation · wellness · financial runway · home accessibility · relationship health)</text>
+  <line x1="80" y1="465" x2="1020" y2="465" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
+
+  <!-- ══ CONNECTORS: ingestion pills → RecordAgent ══════════ -->
+  <line x1="108" y1="440" x2="108" y2="480" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="278" y1="440" x2="278" y2="480" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="448" y1="440" x2="448" y2="480" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="618" y1="440" x2="618" y2="480" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="788" y1="440" x2="788" y2="480" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="958" y1="440" x2="958" y2="480" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
 
   <!-- ══ RECORD AGENT ═══════════════════════════════════════ -->
-  <!-- connectors from ingestion pills → RecordAgent -->
-  <line x1="108" y1="368" x2="108" y2="410" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
-  <line x1="278" y1="368" x2="278" y2="410" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
-  <line x1="448" y1="368" x2="448" y2="410" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
-  <line x1="618" y1="368" x2="618" y2="410" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
-  <line x1="788" y1="368" x2="788" y2="410" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
-  <line x1="958" y1="368" x2="958" y2="410" stroke="#506070" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
-
-  <rect x="200" y="410" width="700" height="70" rx="8" fill="url(#recordGrad)" filter="url(#shadow)"/>
-  <rect x="200" y="410" width="700" height="4" rx="2" fill="#90a8b8"/>
-  <text x="550" y="434" text-anchor="middle" font-size="14" font-weight="bold" fill="#e8f0f4">RecordAgent  —  Common Records Service</text>
-  <text x="550" y="452" text-anchor="middle" font-size="10.5" fill="#b0c8d8">life.core.records  ·  git-as-master  ·  auto_push=true  ·  lifeTracker-data (private repo)</text>
-  <text x="550" y="470" text-anchor="middle" font-size="10" fill="#90aaba" font-style="italic">Read · Write · Append · Register Document · Get Action Items  —  no agent touches the filesystem directly</text>
+  <rect x="200" y="480" width="700" height="72" rx="8" fill="url(#recordGrad)" filter="url(#shadow)"/>
+  <rect x="200" y="480" width="700" height="4" rx="2" fill="#90a8b8"/>
+  <text x="550" y="506" text-anchor="middle" font-size="14" font-weight="bold" fill="#e8f0f4">RecordAgent  —  Common Records Service</text>
+  <text x="550" y="524" text-anchor="middle" font-size="10.5" fill="#b0c8d8">life.core.records  ·  git-as-master  ·  auto_push=true  ·  lifeTracker-data (private repo)</text>
+  <text x="550" y="542" text-anchor="middle" font-size="10" fill="#90aaba" font-style="italic">Read · Write · Append · Register Document · Get Action Items  —  no agent touches the filesystem directly</text>
 
   <!-- ══ PYTRACKER.CORE ═════════════════════════════════════ -->
-  <line x1="550" y1="480" x2="550" y2="504" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <rect x="200" y="504" width="700" height="62" rx="8" fill="url(#commGrad)" filter="url(#softShadow)"/>
-  <rect x="200" y="504" width="700" height="4" rx="2" fill="#a0c088"/>
-  <text x="550" y="529" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8ee">pytracker.core</text>
-  <text x="550" y="547" text-anchor="middle" font-size="10.5" fill="#c8e0b8">comm  ·  auth  ·  records  ·  llm  ·  models</text>
-  <text x="550" y="560" text-anchor="middle" font-size="9.5" fill="#a0c890" font-style="italic">Shared Python package  ·  used by all discipline agents</text>
+  <line x1="550" y1="552" x2="550" y2="576" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <rect x="200" y="576" width="700" height="60" rx="8" fill="url(#commGrad)" filter="url(#softShadow)"/>
+  <rect x="200" y="576" width="700" height="4" rx="2" fill="#a0c088"/>
+  <text x="550" y="600" text-anchor="middle" font-size="13" font-weight="bold" fill="#f0f8ee">pytracker.core</text>
+  <text x="550" y="617" text-anchor="middle" font-size="10.5" fill="#c8e0b8">comm  ·  auth  ·  records  ·  llm  ·  models</text>
+  <text x="550" y="630" text-anchor="middle" font-size="9.5" fill="#a0c890" font-style="italic">Shared Python package  ·  used by all discipline agents</text>
 
-  <!-- ══ COMMUNICATION CHANNELS (3) ═══════════════════════
-       Spacing: 3 boxes × 200px, centered in 1100px
-       Centers: 183, 550, 917   (gap = 367/2 = 183 from edges, 367 between centers)
-       Simplify: centers at 200, 550, 900
-       Box w=200, x: 100-300, 450-650, 800-1000
+  <!-- ══ COMMUNICATION CHANNELS (3 boxes) ══════════════════
+       Centers: 200, 550, 900  (w=200, x=100/450/800)
   ══════════════════════════════════════════════════════════ -->
-  <line x1="550" y1="566" x2="550" y2="596" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <line x1="200" y1="596" x2="900" y2="596" stroke="#8e7b5e" stroke-width="1.5"/>
+  <line x1="550" y1="636" x2="550" y2="666" stroke="#8e7b5e" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="200" y1="666" x2="900" y2="666" stroke="#8e7b5e" stroke-width="1.5"/>
 
   <!-- Voice / Local Mac -->
-  <line x1="200" y1="596" x2="200" y2="608" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="100" y="608" width="200" height="62" rx="7" fill="#4a4030" filter="url(#softShadow)"/>
-  <rect x="100" y="608" width="200" height="3" rx="1.5" fill="#c8a870"/>
-  <text x="200" y="630" text-anchor="middle" font-size="12" font-weight="bold" fill="#f5e8c8">Voice  ·  Local Mac</text>
-  <text x="200" y="648" text-anchor="middle" font-size="9.5" fill="#c0a870">speech-to-speech</text>
-  <text x="200" y="662" text-anchor="middle" font-size="9.5" fill="#c0a870">on-device LLM</text>
+  <line x1="200" y1="666" x2="200" y2="678" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="100" y="678" width="200" height="62" rx="7" fill="#4a4030" filter="url(#softShadow)"/>
+  <rect x="100" y="678" width="200" height="3" rx="1.5" fill="#c8a870"/>
+  <text x="200" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="#f5e8c8">Voice  ·  Local Mac</text>
+  <text x="200" y="717" text-anchor="middle" font-size="9.5" fill="#c0a870">speech-to-speech</text>
+  <text x="200" y="731" text-anchor="middle" font-size="9.5" fill="#c0a870">on-device LLM</text>
 
   <!-- Web / Mobile -->
-  <line x1="550" y1="596" x2="550" y2="608" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="450" y="608" width="200" height="62" rx="7" fill="#303a4a" filter="url(#softShadow)"/>
-  <rect x="450" y="608" width="200" height="3" rx="1.5" fill="#90a8c8"/>
-  <text x="550" y="630" text-anchor="middle" font-size="12" font-weight="bold" fill="#d8e8f8">Web  ·  Mobile</text>
-  <text x="550" y="648" text-anchor="middle" font-size="9.5" fill="#a8c8e0">Flask UI (pyTrackers)</text>
-  <text x="550" y="662" text-anchor="middle" font-size="9.5" fill="#a8c8e0">Jinja2 templates</text>
+  <line x1="550" y1="666" x2="550" y2="678" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="450" y="678" width="200" height="62" rx="7" fill="#303a4a" filter="url(#softShadow)"/>
+  <rect x="450" y="678" width="200" height="3" rx="1.5" fill="#90a8c8"/>
+  <text x="550" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="#d8e8f8">Web  ·  Mobile</text>
+  <text x="550" y="717" text-anchor="middle" font-size="9.5" fill="#a8c8e0">Flask UI (pyTrackers)</text>
+  <text x="550" y="731" text-anchor="middle" font-size="9.5" fill="#a8c8e0">Jinja2 blueprints</text>
 
   <!-- Notifications -->
-  <line x1="900" y1="596" x2="900" y2="608" stroke="#8e7b5e" stroke-width="1.5"/>
-  <rect x="800" y="608" width="200" height="62" rx="7" fill="#2a3a2a" filter="url(#softShadow)"/>
-  <rect x="800" y="608" width="200" height="3" rx="1.5" fill="#88b888"/>
-  <text x="900" y="630" text-anchor="middle" font-size="12" font-weight="bold" fill="#d8f0d8">Notifications</text>
-  <text x="900" y="648" text-anchor="middle" font-size="9.5" fill="#a8d8a8">Twilio SMS  ·  alerts</text>
-  <text x="900" y="662" text-anchor="middle" font-size="9.5" fill="#a8d8a8">monthly check-in cadence</text>
+  <line x1="900" y1="666" x2="900" y2="678" stroke="#8e7b5e" stroke-width="1.5"/>
+  <rect x="800" y="678" width="200" height="62" rx="7" fill="#2a3a2a" filter="url(#softShadow)"/>
+  <rect x="800" y="678" width="200" height="3" rx="1.5" fill="#88b888"/>
+  <text x="900" y="700" text-anchor="middle" font-size="12" font-weight="bold" fill="#d8f0d8">Notifications</text>
+  <text x="900" y="717" text-anchor="middle" font-size="9.5" fill="#a8d8a8">Twilio SMS  ·  alerts</text>
+  <text x="900" y="731" text-anchor="middle" font-size="9.5" fill="#a8d8a8">monthly check-in cadence</text>
 
   <!-- ══ DATA REPOS ══════════════════════════════════════════ -->
-  <line x1="80" y1="700" x2="1020" y2="700" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
-  <text x="550" y="718" text-anchor="middle" font-size="10" fill="#8e7b5e" font-style="italic">Data Repositories  ·  Private Git  ·  All records local / on-premises</text>
+  <line x1="80" y1="762" x2="1020" y2="762" stroke="#c8b89a" stroke-width="0.5" stroke-dasharray="6,4"/>
+  <text x="550" y="779" text-anchor="middle" font-size="10" fill="#8e7b5e" font-style="italic">Data Repositories  ·  Private Git  ·  All records local / on-premises</text>
 
-  <rect x="80" y="728" width="195" height="34" rx="17" fill="#2c3e50" opacity="0.85"/>
-  <text x="177" y="750" text-anchor="middle" font-size="10" fill="#c8d8e8">lifeTracker-data  (JSON records)</text>
+  <rect x="80" y="788" width="195" height="32" rx="16" fill="#2c3e50" opacity="0.85"/>
+  <text x="177" y="809" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker-data  (JSON records)</text>
 
-  <rect x="293" y="728" width="195" height="34" rx="17" fill="#2c3e50" opacity="0.85"/>
-  <text x="390" y="750" text-anchor="middle" font-size="10" fill="#c8d8e8">lifeTracker  (code · design docs)</text>
+  <rect x="293" y="788" width="195" height="32" rx="16" fill="#2c3e50" opacity="0.85"/>
+  <text x="390" y="809" text-anchor="middle" font-size="9.5" fill="#c8d8e8">lifeTracker  (code · design docs)</text>
 
-  <rect x="506" y="728" width="185" height="34" rx="17" fill="#2c3e50" opacity="0.85"/>
-  <text x="598" y="750" text-anchor="middle" font-size="10" fill="#c8d8e8">frankrojas6591 / GitHub</text>
+  <rect x="506" y="788" width="180" height="32" rx="16" fill="#2c3e50" opacity="0.85"/>
+  <text x="596" y="809" text-anchor="middle" font-size="9.5" fill="#c8d8e8">frankrojas6591 / GitHub</text>
 
-  <rect x="709" y="728" width="185" height="34" rx="17" fill="#2c3e50" opacity="0.85"/>
-  <text x="801" y="750" text-anchor="middle" font-size="10" fill="#c8d8e8">SSH alias: github.com-fxr</text>
+  <rect x="704" y="788" width="185" height="32" rx="16" fill="#2c3e50" opacity="0.85"/>
+  <text x="796" y="809" text-anchor="middle" font-size="9.5" fill="#c8d8e8">SSH alias: github.com-fxr</text>
 
-  <rect x="912" y="728" width="130" height="34" rx="17" fill="#2c3e50" opacity="0.85"/>
-  <text x="977" y="750" text-anchor="middle" font-size="10" fill="#c8d8e8">id_ed25519_fxr</text>
+  <rect x="907" y="788" width="130" height="32" rx="16" fill="#2c3e50" opacity="0.85"/>
+  <text x="972" y="809" text-anchor="middle" font-size="9.5" fill="#c8d8e8">id_ed25519_fxr</text>
 
   <!-- ══ FOOTER ══════════════════════════════════════════════ -->
-  <line x1="80" y1="796" x2="1020" y2="796" stroke="#c8b89a" stroke-width="0.5"/>
-  <text x="550" y="816" text-anchor="middle" font-size="9" fill="#a09080">lifeTracker  ·  pyTrackers ecosystem  ·  Frank Rojas  ·  June 2026  ·  v1.1</text>
-  <text x="550" y="834" text-anchor="middle" font-size="9" fill="#b8a888" font-style="italic">"Your wisest counselor, always available — chief of staff and trusted friend."</text>
+  <line x1="80" y1="848" x2="1020" y2="848" stroke="#c8b89a" stroke-width="0.5"/>
+  <text x="550" y="866" text-anchor="middle" font-size="9" fill="#a09080">lifeTracker  ·  pyTrackers ecosystem  ·  Frank Rojas  ·  June 2026  ·  v1.2</text>
+  <text x="550" y="882" text-anchor="middle" font-size="9" fill="#b8a888" font-style="italic">"Your wisest counselor, always available — chief of staff and trusted friend."</text>
 
 </svg>
