@@ -470,7 +470,8 @@ One voice channel, one web app, one user identity — all agents surface through
 
 | Component | Notes |
 |---|---|
-| Twilio voice number | One number — PA answers; routes to agent |
+| Twilio voice number | Fallback phone channel — PA answers; routes to agent |
+| iOS native app | Primary channel — `pyTrackers/mobileAudioIO`; on-device STT/TTS, text API |
 | PA Flask deployment | All agents registered as Flask blueprints |
 | Auth (GPG user DB) | One user DB; session carries `(owner_id, active_agent)` |
 | IntentParser (Haiku) | Parses intent + identifies which agent handles it |
@@ -629,3 +630,5 @@ Triggered annually or at a major life event (health change, death of spouse, lar
 ---
 
 *This document is v1.1 — authoritative ecosystem design. Supersedes `personalAssistanceVision.md` and `lifeVision.md`. See individual agent vision docs for per-discipline detail. Diagram: `docs/lifeTrackerDiagram.svg`.*
+
+*iOS voice client: `pyTrackers/mobileAudioIO` — see `docs/mobileAudioIOVision.md` and `docs/designAudioIO.md` in that repo.*
