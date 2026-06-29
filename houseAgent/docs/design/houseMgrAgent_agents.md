@@ -1,22 +1,22 @@
-# HouseMgr — Agent Catalog & Build Priority
+# houseAgent — Sub-Agent Catalog & Build Priority
 
-**Version:** 0.4
+**Version:** 1.0
 **Date:** June 2026
 **Parent:** [Design Index](./houseMgrAgent.md)
 
 ---
 
-## 1. Agent Interface Contract
+## 1. Sub-Agent Interface Contract
 
-Every discipline agent implements the same four methods. The HouseMgr only calls these — it never accesses agent internals.
+Every house sub-agent implements the same four methods. HouseMgr only calls these — never accesses sub-agent internals.
 
 ```python
-class DisciplineAgent:
+class HouseSubAgent:
     def brief(self) -> str:
-        """2-3 sentence summary of current domain status."""
+        """2-3 sentence domain status for house monthly summary."""
 
-    def query(self, question: str, context: dict) -> AgentResponse:
-        """Answer a domain question given house context."""
+    def query(self, question: str, house_context: dict) -> AgentResponse:
+        """Answer a domain question. house_context comes from HouseProfile."""
 
     def audit(self) -> list[ActionItem]:
         """Proactive scan — return items needing owner attention."""
@@ -25,17 +25,21 @@ class DisciplineAgent:
         """Log a domain event (repair, install, inspection, etc.)."""
 ```
 
-`AgentResponse` and `ActionItem` are shared dataclasses in `houseMgr/models.py` — the only shared contract between HouseMgr and agents. No agent imports from another agent.
+`AgentResponse` and `ActionItem` are defined in `life/models.py` — the shared lifeTracker contract. No sub-agent imports from another sub-agent or from any other discipline agent.
 
 ### Voice Response Constraint
 
-When the HouseMgr synthesizes a response destined for the phone (TTS), it instructs the Synthesizer to produce **≤ 3 sentences** of spoken prose — no markdown, no lists, no headers. The full structured response is always written to HouseRecords and available via the web view.
+When synthesizing for voice (Twilio or iOS), the ResponseSynthesizer produces **≤ 3 sentences** of spoken prose — no markdown, no lists, no headers. The full structured response is written to RecordAgent and available in the web UI.
 
 ---
 
-## 2. Universal Agent Naming Schema (UANS)
+## 2. UANS — `house.*` Namespace
 
-Every agent name follows the 4-segment dot-notation defined in [HouseManagerVision §3.5](../HouseManagerVision.md#35-universal-agent-naming-schema-uans):
+Every sub-agent name follows the 4-segment dot-notation of the lifeTracker UANS:
+
+```
+house.<category>.<agent>.<record>
+```
 
 ```
 house.<category>.<agent>.<record>
@@ -62,7 +66,7 @@ The five categories and their agents:
 | **finance** | `house.finance.investment` | Investment | `agents/finance/investment/` |
 | **life** | `house.life.accessibility` | Accessibility | `agents/life/accessibility/` |
 
-The `AgentRegistry` in `houseMgr/registry.py` keys agents by their UANS string. `HouseRecords` derives the filesystem path from UANS: `agents/<category>/<agent>/`.
+The `AgentRegistry` in `houseAgent/registry.py` keys agents by their UANS string. RecordAgent derives the filesystem path from UANS: `records/agents/<namespace>/<category>/<agent>/`.
 
 ---
 

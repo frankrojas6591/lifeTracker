@@ -1,6 +1,6 @@
-# HouseMgr — Architecture & Deployment
+# houseAgent — Architecture
 
-**Version:** 0.4
+**Version:** 1.0
 **Date:** June 2026
 **Parent:** [Design Index](./houseMgrAgent.md)
 
@@ -8,255 +8,214 @@
 
 ## 1. Design Goals
 
-### 1.1 Lightweight Orchestrator
+### 1.1 Thin Orchestrator
 
-The HouseMgr is a **thin router and response synthesizer** — it holds no domain knowledge. Every piece of expertise lives in a discipline agent. The HouseMgr's only jobs are:
+HouseMgr is a **thin router and response synthesizer** for house domain queries — it holds no domain knowledge. Every piece of expertise lives in a discipline sub-agent. HouseMgr's jobs:
 
-1. Parse owner intent from speech or text (via LLM)
-2. Identify which agents are relevant
-3. Query those agents with current house context
-4. Synthesize a unified spoken or written response
-5. Route stored outcomes back to HouseRecords → Git
+1. Receive a query from the PA via `query(text, context)`
+2. Parse intent to identify which sub-agents are relevant (house-scoped Haiku call)
+3. Query those sub-agents with current house context
+4. Synthesize a unified response to return to the PA
+5. Write outcomes back to RecordAgent (`house.*` UANS namespace)
 
-**Anti-pattern to avoid:** A "fat" HouseMgr that accumulates logic for specific domains (e.g., knows HVAC rules, knows tax codes). That logic belongs in the agent. The HouseMgr knows only the *agent registry* — never what the agents know.
+**Anti-pattern to avoid:** HouseMgr accumulating domain logic (knowing HVAC rules, knowing tax codes). That belongs in the sub-agent. HouseMgr knows only the sub-agent registry.
 
 ### 1.2 Design Principles
 
-- **Owner never tracks details** — agents do. HouseMgr surfaces; agents collect.
-- **Proactive over reactive** — agents push action items to the monthly check-in queue; HouseMgr presents them.
+- **Owner never tracks details** — sub-agents do. HouseMgr surfaces; agents collect.
+- **Proactive over reactive** — sub-agents push action items to the check-in queue; HouseMgr presents them via `audit()`.
 - **Recommendation, not menu** — synthesized output is "here's what to do," not a list of options.
-- **Voice-first** — spoken responses are ≤ 3 sentences; detail lives on the web UI.
+- **Voice-first** — spoken responses ≤ 3 sentences; detail lives in the web record view.
 - **DIY-first, frugal** — cost framing defaults to quality-for-budget, not premium-fastest.
-- **Aging-in-place thread** — every agent response considers the owner's current life stage.
+- **Aging-in-place thread** — every sub-agent response considers the 68yo owner's life stage.
 
 ---
 
-## 2. Communication Channels
+## 2. DisciplineAgent Interface
 
-HouseMgr has **three communication channels**. The same Flask codebase serves all three; channel detection sets the response format.
+HouseMgr implements the four-method interface that the lifeTracker PersonalAssistant calls. These are defined in `life/models.py`.
 
-### Channel A — iPhone Voice
+```python
+class HouseMgr:
+    """
+    lifeTracker discipline agent for the house domain.
+    The PA only calls these four methods — never accesses sub-agent internals.
+    """
 
-Owner calls a Twilio-owned phone number. No app install required. Twilio handles speech-to-text (STT) and text-to-speech (TTS); the PA Flask app receives and returns TwiML.
+    def brief(self) -> AgentBriefing:
+        """
+        2-3 sentence current house status.
+        Called by PA for monthly check-in. Aggregates sub-agent briefs.
+        """
 
+    def query(self, question: str, context: dict) -> AgentResponse:
+        """
+        Answer a house-domain question.
+        context: cross-agent data PA passes in (e.g., health state, liquidity).
+        Internally routes to sub-agents and synthesizes.
+        """
+
+    def audit(self) -> list[ActionItem]:
+        """
+        Proactive scan across all sub-agents.
+        Returns items needing owner attention for this month's check-in.
+        """
+
+    def record(self, event: dict) -> None:
+        """
+        Log a house event (repair completed, inspection, appliance installed, etc.).
+        Routes to appropriate sub-agent based on event type.
+        """
 ```
-iPhone ──(call)──► Twilio number
-                        │ STT transcript (HTTPS POST)
-                        ▼
-                   PA /voice route
-                        │ TwiML <Say> reply
-                        ▼
-                   Twilio ──(TTS audio)──► iPhone speaker
-```
-
-Voice responses are **≤ 3 spoken sentences**. Full detail is always written to HouseRecords and available on the web UI. Voice is the primary *interaction* channel — the owner speaks to query, record, or request action. The phone never displays data.
-
-**Voice only reaches PA.** Twilio requires a publicly reachable HTTPS endpoint. The local Mac instance does not handle voice.
-
-### Channel B — PA Web UI
-
-Browser connects to the PA-hosted Flask app over HTTPS. Full web experience: records browsing, monthly check-in dashboard, configurator, document upload.
-
-```
-Browser (any device) ──(HTTPS)──► PA Flask app
-                                       │
-                               HouseMgr web routes
-                               /chat /checkin /records /config
-```
-
-Available anywhere — phone browser, tablet, desktop. Same Flask app as local, just served from PA.
-
-### Channel C — Local Mac Web UI
-
-The same Flask codebase runs on the owner's Mac at `localhost:5000` via `wsCmd.py --start`. Identical routes and templates as PA. Used for at-home admin, bulk record editing, and development.
-
-```
-Browser (Mac) ──(HTTP)──► localhost:5000 (wsCmd.py --start)
-                                │
-                        Same Flask app, same routes
-                        /chat /checkin /records /config
-                        (no /voice — Twilio can't reach localhost)
-```
-
-Before starting the local app: `wsCmd.py --pull` (git pull from data repo). After edits: `wsCmd.py --push` (git commit + push). The local app can also auto-push after each agent write (configurable in `config.json`).
 
 ---
 
-## 3. Deployment Architecture
+## 3. LLM Usage
+
+HouseMgr uses Claude in two places:
+
+| Step | Input | Output | Model |
+|---|---|---|---|
+| **House IntentParser** | House query text | `{sub_agents: [...], question: str, mode: query/record}` | Haiku (fast, cheap) |
+| **House Synthesizer** | Collected sub-agent responses + mode | Spoken prose ≤3 sent. (voice) or structured text (web) | Sonnet |
+
+This is a **house-scoped** intent parse — separate from the top-level PA IntentParser. The PA IntentParser identifies that this is a house domain question and calls `HouseMgr.query()`. The HouseMgr then does a second, house-specific parse to identify which of the 18 sub-agents should answer.
+
+Each sub-agent also makes its own LLM calls internally using house-specific system prompts and UANS context from RecordAgent.
+
+### House IntentParser system prompt (abbreviated)
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  CHANNEL A: iPhone Voice                                            │
-│                                                                     │
-│  iPhone ──► Twilio ──► PA /voice ──► HouseMgr ──► Twilio ──► iPhone│
-└─────────────────────────────────────────────────────────────────────┘
+You are the intent parser for the house management agent. Given a house question,
+identify which of these sub-agents should answer:
+  house.core.records | house.core.profile | house.systems.hvac |
+  house.systems.electrical | house.systems.plumbing | house.systems.roofing |
+  house.systems.security | house.systems.appliances |
+  house.designs.architecture | house.designs.landscaping | house.designs.interior |
+  house.finance.budget | house.finance.tax | house.finance.investment |
+  house.life.accessibility
 
-┌─────────────────────────────────────────────────────────────────────┐
-│  CHANNEL B: PA Web UI                                               │
-│                                                                     │
-│  Browser ──HTTPS──► PythonAnywhere Flask App                        │
-│                     /chat /checkin /records /config /login          │
-│                            │                                        │
-│                     ┌──────▼──────────────────────────────────┐    │
-│                     │  HouseMgr Orchestrator                   │    │
-│                     │  IntentParser (Haiku) → AgentRouter      │    │
-│                     │  ResponseSynthesizer (Sonnet)            │    │
-│                     └──────┬──────────────────────────────────┘    │
-│                            │                                        │
-│                     Discipline Agents                               │
-│                            │                                        │
-│                     HouseRecords checkout                           │
-│                     /home/<pa_user>/houseTracker-data/              │
-│                            │ git push (on each write)               │
-│                            ▼                                        │
-│                     Git Data Repo (master)                          │
-└─────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────┐
-│  CHANNEL C: Local Mac Web UI                                        │
-│                                                                     │
-│  Browser ──HTTP──► localhost:5000 (wsCmd.py --start)                │
-│                     /chat /checkin /records /config /login          │
-│                            │                                        │
-│                     Same HouseMgr stack (identical codebase)       │
-│                            │                                        │
-│                     HouseRecords checkout                           │
-│                     ~/GDrive/dev/pyTrackers/houseTracker-data/      │
-│                            │ git pull (on startup)                  │
-│                            │ git push (on each write)               │
-│                            ▼                                        │
-│                     Git Data Repo (master)                          │
-└─────────────────────────────────────────────────────────────────────┘
+Return JSON: {"sub_agents": [...], "question": "...", "mode": "query|record|plan"}
 ```
 
-### 3.1 Why PythonAnywhere
+---
 
-| Factor | Rationale |
+## 4. Sub-Agent Interface
+
+Every house sub-agent implements the same four methods. HouseMgr calls only these.
+
+```python
+class HouseSubAgent:
+    def brief(self) -> str:
+        """2-3 sentence domain status for house monthly summary."""
+
+    def query(self, question: str, house_context: dict) -> AgentResponse:
+        """Answer a domain question. house_context comes from HouseProfile."""
+
+    def audit(self) -> list[ActionItem]:
+        """Proactive scan — return items needing attention this month."""
+
+    def record(self, event: dict) -> None:
+        """Log an event in this sub-agent's UANS record directory."""
+```
+
+`AgentResponse` and `ActionItem` come from `life/models.py` — the shared contract. No sub-agent imports from another sub-agent or from another discipline agent.
+
+---
+
+## 5. House Context
+
+Every sub-agent query receives a `house_context` dict populated from `house.core.profile`:
+
+```python
+house_context = {
+    "address": "177 Kingsway Dr, Wimberley TX 78676",
+    "purchase_date": "2022-12-31",
+    "purchase_price": 335000,
+    "sqft": 1232,
+    "construction": "pier-and-beam",
+    "year_built": 2006,
+    "county": "Hays",
+    "parcel_id": "R33204",
+    "owner_age": 68,
+    "owner_mobility_notes": "...",    # from medicalAgent cross-agent signal
+    "current_budget": "...",          # from house.finance.budget
+}
+```
+
+`HouseProfile` (Tier 1) is the sole owner and writer of this context. All other sub-agents read it; none write to it.
+
+---
+
+## 6. Sub-Agent Dependency Map
+
+```
+house.core.records  ◄── ALL sub-agents (every sub-agent reads/writes here)
+house.core.profile  ◄── ALL sub-agents (reads for house context)
+
+house.designs.architecture ◄── systems.plumbing, systems.electrical,
+                                systems.hvac, systems.roofing,
+                                designs.landscaping, designs.interior
+
+house.finance.budget  ◄── systems.hvac, systems.electrical, systems.plumbing,
+                           systems.roofing, designs.architecture
+
+house.finance.tax        ◄── finance.budget (capital improvement categorization)
+house.finance.investment ◄── finance.tax (basis), finance.budget (equity)
+
+house.life.accessibility ◄── designs.architecture (structural mods),
+                              systems.security (safety lighting)
+                              medicalAgent signal (mobility needs — via PA)
+
+house.systems.hvac        ◄── systems.electrical (panel capacity for heat pump)
+house.designs.landscaping ◄── designs.architecture (site map), systems.plumbing (irrigation)
+house.designs.interior    ◄── designs.architecture (floor plan, room dimensions)
+```
+
+---
+
+## 7. Flask Blueprint Registration
+
+houseAgent registers its own web views as a Flask blueprint. The lifeTracker Flask app (`wsgi.py`) imports and registers it:
+
+```python
+# wsgi.py
+from houseAgent.ui.house_views import house_bp
+app.register_blueprint(house_bp, url_prefix="/house")
+```
+
+House-specific routes (under `/house/`):
+
+| Route | Description |
 |---|---|
-| **Public HTTPS** | Required for Twilio voice webhook; PA provides SSL automatically |
-| **Always-on** | Voice calls work 24/7 without the owner's Mac being on |
-| **Managed WSGI** | No server ops; PA handles gunicorn, SSL, process restart |
-| **SSH console** | Admin tasks (`wsCmd.py --setup`, GPG key management) |
-| **Cost** | $5–12/mo for a personal always-on app |
+| `GET /house/profile` | View house profile (address, purchase info, systems inventory) |
+| `GET /house/records` | Browse all house UANS records |
+| `GET /house/checkin` | House-specific monthly detail (supplements PA `/checkin`) |
+| `POST /house/record` | Log a house event via web form |
 
-### 3.2 Why Twilio for Voice
-
-| Factor | Rationale |
-|---|---|
-| **Phone number ownership** | Owner calls a real number — no app install required |
-| **STT/TTS managed** | Twilio Gather (STT) + Say (TTS) — no audio processing on PA |
-| **Webhook model** | Each call is a POST to `/voice`; stateless on PA side |
-| **Caller ID** | Known numbers auto-login; unknown numbers hear a PIN challenge |
-
-### 3.3 Why Same Codebase for PA and Local
-
-- No divergence risk between environments
-- Local Mac is also a test environment for new agents before PA deploy
-- `setup_paths.py` detects environment from `config.json → env` key (`"pa"` vs `"local"`) to set paths; no other code branches on environment
-- The only functional difference: `env=pa` registers the `/voice` route; `env=local` skips it
+All routes are protected by the shared `@login_required` decorator from `core/auth/decorators.py`.
 
 ---
 
-## 4. Component Map
+## 8. Records Access Pattern
 
-```
-Voice (Twilio)    Web Browser (PA)    Web Browser (local)
-      │                  │                     │
-      ▼                  ▼                     ▼
-┌─────────────────────────────────────────────────────┐
-│  ConfigLoader + AuthLayer                           │
-│  ~/.houseTracker/config.json                        │
-│  session: (house_id, owner_id, role, channel)       │
-└──────────┬──────────────────────────────────────────┘
-           │ house context on every request
-           ▼
-┌─────────────────────────────────────────────────────┐
-│  HouseMgr Orchestrator (Flask WSGI)                 │
-│                                                     │
-│  IntentParser ──► AgentRouter                       │
-│       │                │                            │
-│  (Haiku API)     AgentRegistry                      │
-│                        │                            │
-│               ResponseSynthesizer (Sonnet)          │
-│                        │                            │
-│         ┌──────────────┴──────────┐                 │
-│         │ VoiceResponder          │                 │
-│         │ (TwiML TTS → Twilio)    │                 │
-│         │ WebResponder            │                 │
-│         │ (HTML → browser)        │                 │
-│         └─────────────────────────┘                 │
-└──────────┬──────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────────────────┐
-│  Discipline Agents (16 agents)                      │
-│  Architecture │ HVAC │ Plumbing │ ...               │
-└──────────┬──────────────────────────────────────────┘
-           │ read / write
-           ▼
-┌─────────────────────────────────────────────────────┐
-│  HouseRecords (local Git checkout)                  │
-│  agents commit + push to Git data repo after write  │
-└──────────┬──────────────────────────────────────────┘
-           │ git push / pull
-           ▼
-┌─────────────────────────────────────────────────────┐
-│  Git Data Repo — MASTER                             │
-│  github.com/<user>/houseTracker-data (private)      │
-│  <house_id>/records/**/*.json                       │
-└─────────────────────────────────────────────────────┘
+HouseMgr and all sub-agents access records **only through the shared RecordAgent** instance passed at construction. No direct file I/O.
+
+```python
+class HvacAgent(HouseSubAgent):
+    def __init__(self, record_agent: RecordAgent):
+        self._ra = record_agent
+
+    def record(self, event: dict) -> None:
+        log = self._ra.read("house.systems.hvac.maintenance_log") or {"events": []}
+        log["events"].append(event)
+        self._ra.write("house.systems.hvac.maintenance_log", log)
+        # write() → commits to lifeTracker-data → pushes to GitHub
+
+    def audit(self) -> list[ActionItem]:
+        log = self._ra.read("house.systems.hvac.maintenance_log") or {"events": []}
+        # inspect log → return overdue items
+        ...
 ```
 
----
-
-## 5. H × O Service Model
-
-The app supports **H homes × O owners** per instance (PA or local):
-
-- **H (homes):** One instance manages any number of houses. Each house has its own subdirectory in the data repo.
-- **O (owners):** Multiple owners authenticate separately and access only their associated houses.
-
-Active session context is `(house_id, owner_id)`. Multi-house owners pick the active house at login or via the house-switcher nav. Voice caller ID maps to `owner_id` for auto-login.
-
----
-
-## 6. Position Within pyTrackers
-
-```
-pyTrackers/
-├── llcRentalTracker/   ← LLC accounting & IRS (Flask, ledger engine, MCP)
-├── medicalTracker/     ← Personalized health (early stage)
-├── houseTracker/       ← THIS PROJECT (PA-hosted + local Mac)
-│   ├── houseMgr/       ← Orchestrator (thin router)
-│   ├── agents/         ← Discipline agents (one module per agent)
-│   ├── ui/             ← Flask views (voice + web routes)
-│   └── wsCmd.py        ← CLI: --setup, --start, --pull, --push
-└── financialTracker/   ← TBD
-```
-
-No shared infrastructure with sibling trackers. Cross-tracker integration will be explicit narrow API contracts, not shared code.
-
----
-
-## 7. Implementation Plan (Architecture Scope)
-
-### Phase 0 — Scaffold (both environments)
-
-- [ ] PA: create account; deploy Flask skeleton via `wsgi.py`; set `env=pa` in config.json
-- [ ] Local Mac: clone code repo; `wsCmd.py --setup`; set `env=local` in config.json
-- [ ] Data repo: create private `houseTracker-data` repo; clone to PA and to local Mac
-- [ ] `setup_paths.py`: detects env; sets `TOP`, `RECORDS_DIR`, `DATA_REPO_PATH`; registers `/voice` only when `env=pa`
-- [ ] Twilio: purchase number; webhook → `https://<app>.pa.com/voice`
-- [ ] Smoke test A: call Twilio → hear TTS "HouseMgr ready"
-- [ ] Smoke test B: `localhost:5000/login` → authenticated web session
-- [ ] Smoke test C: PA URL `/login` → authenticated web session
-
-### Phase 1 — Voice Loop + Web Shell
-
-- [ ] `VoiceResponder`: TwiML `<Say>` + `<Gather>` for multi-turn voice conversation
-- [ ] Caller ID auto-login; PIN challenge for unknown numbers
-- [ ] `WebResponder`: same HouseMgr response as HTML for web channels
-
-### Phase 2+ — Full Stack
-
-See [Implementation Plan](./houseMgrAgent_impl.md) for phase-by-phase agent build.
+Write → commit → push is automatic. The git history in `lifeTracker-data` IS the audit trail.

@@ -1,70 +1,119 @@
-# HouseMgr Agent — Design Index
+# houseAgent — Design Index
 
-**Version:** 0.4
+**Version:** 1.0
 **Date:** June 2026
 **Status:** Design — pre-implementation
 
 ---
 
-## System Overview
+## Overview
 
-HouseMgr is a voice-first home management assistant with **three communication channels** and a **Git-as-master records model**. The private Git data repo is the single source of truth for all house records; both the PA-hosted instance and the local Mac instance sync against it.
+houseAgent is the **House Manager discipline agent** within the lifeTracker Personal Assistant ecosystem. It is **Phase 4** in the build plan — built after the lifeTracker common services (auth, records, web UI, iOS API) are stable.
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  COMMUNICATION CHANNELS                                          │
-│                                                                  │
-│  (A) iPhone (voice)    (B) PA Web UI          (C) Local Mac UI  │
-│  ─────────────────     ────────────────        ───────────────── │
-│  Call Twilio number    Browser → PA URL        Browser → :5000  │
-│  Speak / listen        Full web UI             Same web UI      │
-│  No record display     Records, check-in       Records, check-in│
-└───────┬────────────────────────┬────────────────────────┬───────┘
-        │ Twilio webhook         │ HTTPS                  │ HTTP
-        ▼                        ▼                        ▼
-┌───────────────────────┐   ┌────────────────────────────────────┐
-│ PythonAnywhere (PA)   │   │ Local Mac (Flask, same codebase)   │
-│ Flask WSGI — public   │   │ wsCmd.py --start — localhost:5000  │
-│ /voice + all web UIs  │   │ web UIs only (no Twilio /voice)    │
-└───────────┬───────────┘   └──────────────┬─────────────────────┘
-            │ git pull / push               │ git pull / push
-            └──────────────┬───────────────┘
-                           ▼
-            ┌──────────────────────────────┐
-            │  Git Data Repo (private)     │
-            │  github.com/<user>/          │
-            │  houseTracker-data           │
-            │  ← master records store →   │
-            │  <house_id>/records/**/*.json│
-            └──────────────────────────────┘
-```
+houseAgent is not a standalone app. It is one of six discipline agents registered with the lifeTracker PersonalAssistant. It uses lifeTracker's shared auth, RecordAgent records service, and Flask web UI infrastructure.
 
-**Records master:** Git data repo. PA and Local Mac both maintain a local checkout; both pull before a session and push immediately after any write. Voice calls only reach PA (Twilio requires a public HTTPS endpoint).
+**Property:** 177 Kingsway Dr, Wimberley TX 78676 (Hays County R33204). Purchased 2022-12-31, $335K cash. Pier-and-beam, 1,232 sqft, 0.5 acres.
 
 ---
 
-## Design Documents
+## This Directory
 
-| Document | Scope |
+| Doc | What It Covers |
 |---|---|
-| [Architecture & Deployment](./houseMgrAgent_arch.md) | 3-channel model, PA + local deployment, Twilio voice, component map, H×O model |
-| [Agent Catalog](./houseMgrAgent_agents.md) | Agent interface contract, LLM usage, build tiers, dependency graph |
-| [Data & Auth](./houseMgrAgent_data.md) | Git as master records store, sync model, config schema, GPG auth |
-| [Implementation Plan](./houseMgrAgent_impl.md) | Phase-by-phase build from scaffold through full agent suite |
+| `houseMgrAgent.md` | This file — design index, role in lifeTracker, module structure |
+| `houseMgrAgent_arch.md` | HouseMgr architecture: agent interface, LLM usage, dependency map |
+| `houseMgrAgent_agents.md` | Full agent catalog: 18 sub-agents, UANS, build tiers |
+| `houseMgrAgent_data.md` | Data design: UANS paths, record schemas, config |
+| `houseMgrAgent_impl.md` | Implementation plan: phases, file structure, milestones |
+
+Vision doc: `houseAgent/docs/HouseManagerVision.md`
+Ecosystem context: `docs/lifeTrackerVision.md`
+Commons design: `docs/design/lifeTracker_design.md`
 
 ---
 
-## Key Design Decisions
+## houseAgent's Role in lifeTracker
 
-| Decision | Choice | Rationale |
-|---|---|---|
-| **Records master** | Private Git data repo | Version history, off-host redundancy, sync between PA and local without a separate DB or cloud service |
-| **Channel A — voice** | iPhone → Twilio → PA `/voice` | Twilio requires public HTTPS; PA is always-on; no app install on phone |
-| **Channel B — remote web** | Browser → PA hosted web UI | Full record viewing and check-in from any device, anywhere |
-| **Channel C — local web** | Browser → localhost Mac Flask | Same codebase run locally; fast for at-home admin and record editing |
-| **Sync model** | git pull on startup; git push on each write | No separate sync daemon; Git is the sync bus; conflicts surface as merge errors |
-| **Orchestrator** | Thin router — zero domain logic in HouseMgr | Domain bugs stay in agents; HouseMgr stays stable as agents are added |
-| **LLM** | Haiku for intent parsing; Sonnet for synthesis | Cost-efficient routing; quality response generation |
-| **Auth** | GPG-encrypted user DB; Flask session `(house_id, owner_id)` | Sensitive data never on disk as plaintext; follows llcRentalTracker pattern |
-| **Multi-house** | H × O — any number of homes × owners per instance | Config-driven; no code change to add a new house or owner |
-| **Agent naming** | Universal Agent Naming Schema (UANS): `house.<category>.<agent>.<record>` | Every agent name maps directly to a records path; no separate lookup table; `systems.*`, `designs.*`, `finance.*`, `core.*`, `life.*` are the five categories |
+houseAgent is one node in the PA's discipline agent graph. The PA calls it through the standard `DisciplineAgent` interface (defined in `life/models.py`). houseAgent never communicates directly with other discipline agents — all cross-agent signals route through the PA.
+
+```
+PersonalAssistant
+       │
+       ├─ query(text, context) ──→ HouseMgr
+       │                               │
+       │                    ┌──────────▼──────────────┐
+       │                    │  houseAgent router      │  ← house-scoped intent parsing
+       │                    │  AgentRegistry          │
+       │                    └──────────┬──────────────┘
+       │                               │
+       │               ┌───────────────┼───────────────┐
+       │               ▼               ▼               ▼
+       │          HouseRecords   HouseProfile    [systems/designs/
+       │          (Tier 1)       (Tier 1)         finance/life agents]
+       │               │
+       │           RecordAgent   ← shared lifeTracker RecordAgent (core/records/)
+       │               │
+       │       lifeTracker-data/records/agents/house/
+       │
+       └─ brief() ──→ HouseMgr.brief() → 2-3 sentence status for monthly PA check-in
+```
+
+**Cross-agent signals houseAgent sends (mediated by PA):**
+- `house.finance.investment` → estateAgent (home value, equity)
+- `house.life.accessibility` → medicalAgent (mobility gaps → home mods)
+- Requests liquidity check from moneyAgent before approving major projects
+
+---
+
+## Module Structure
+
+houseAgent code lives at `houseAgent/` in the lifeTracker repo root:
+
+```
+houseAgent/
+├── house_mgr.py            ← HouseMgr: implements DisciplineAgent; registers with PA
+├── router.py               ← house-scoped intent parser: maps question to sub-agents
+├── registry.py             ← AgentRegistry: UANS name → sub-agent instance
+├── models.py               ← house-specific models (e.g., House, System, MaintenanceLog)
+├── agents/
+│   ├── base.py             ← HouseAgent base class (extends life/models DisciplineAgent)
+│   ├── house_records.py    ← Tier 1
+│   ├── house_profile.py    ← Tier 1
+│   ├── communication.py    ← Tier 1
+│   ├── architecture.py     ← Tier 2
+│   ├── security.py         ← Tier 3
+│   ├── accessibility.py    ← Tier 3
+│   ├── hvac.py             ← Tier 3
+│   ├── electrical.py       ← Tier 4
+│   ├── plumbing.py         ← Tier 4
+│   ├── roofing.py          ← Tier 4
+│   ├── budget.py           ← Tier 5
+│   ├── tax.py              ← Tier 5
+│   ├── investment.py       ← Tier 5
+│   ├── appliances.py       ← Tier 6
+│   ├── landscaping.py      ← Tier 6
+│   └── interior.py         ← Tier 6
+├── ui/
+│   └── house_views.py      ← Flask blueprint: /house/records, /house/profile
+└── docs/
+    ├── HouseManagerVision.md
+    └── design/             ← this directory
+```
+
+---
+
+## Registration with PersonalAssistant
+
+In `wsgi.py`, after the app factory creates the PA:
+
+```python
+from houseAgent.house_mgr import HouseMgr
+from core.records.record_agent import RecordAgent
+
+record_agent = RecordAgent(config)
+pa = PersonalAssistant(config)
+pa.register("house", HouseMgr(config, record_agent))
+app.config["PA_INSTANCE"] = pa
+```
+
+`HouseMgr` receives the shared `RecordAgent` — it does not create its own. All sub-agents write through this shared instance using UANS `house.*` paths.

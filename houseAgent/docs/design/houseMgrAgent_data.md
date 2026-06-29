@@ -1,229 +1,202 @@
-# HouseMgr — Data, Config & Auth
+# houseAgent — Data Design
 
-**Version:** 0.4
+**Version:** 1.0
 **Date:** June 2026
 **Parent:** [Design Index](./houseMgrAgent.md)
 
 ---
 
-## 1. Storage Overview
+## 1. Storage Model
 
-The **private Git data repo** is the master store for all house records. PA and the local Mac each maintain a Git checkout of the data repo. Writes go to the local checkout first, then commit + push to Git immediately. Reads pull from Git at startup.
+houseAgent uses the **lifeTracker RecordAgent** for all data storage. No houseAgent-specific database, no direct file I/O. All house records live in `lifeTracker-data/records/agents/house/` under the `house.*` UANS namespace.
 
-| Data Type | Location | In Git? |
+Storage model: `docs/design/lifeTracker_records.md`
+
+houseAgent has no config of its own. It reads from `~/.lifeTracker/config.json` via `setup_paths.py`, the same config file used by all lifeTracker services.
+
+---
+
+## 2. UANS Directory Tree — `house.*`
+
+```
+lifeTracker-data/
+└── records/
+    └── agents/
+        └── house/
+            ├── core/
+            │   ├── records/          ← house.core.records.*
+            │   ├── profile/          ← house.core.profile.*
+            │   └── comm/             ← house.core.comm.*
+            ├── systems/
+            │   ├── hvac/             ← house.systems.hvac.*
+            │   ├── electrical/       ← house.systems.electrical.*
+            │   ├── plumbing/         ← house.systems.plumbing.*
+            │   ├── roofing/          ← house.systems.roofing.*
+            │   ├── security/         ← house.systems.security.*
+            │   └── appliances/       ← house.systems.appliances.*
+            ├── designs/
+            │   ├── architecture/     ← house.designs.architecture.*
+            │   ├── landscaping/      ← house.designs.landscaping.*
+            │   └── interior/         ← house.designs.interior.*
+            ├── finance/
+            │   ├── budget/           ← house.finance.budget.*
+            │   ├── tax/              ← house.finance.tax.*
+            │   └── investment/       ← house.finance.investment.*
+            └── life/
+                └── accessibility/    ← house.life.accessibility.*
+```
+
+All directories are provisioned by `RecordAgent.provision()` in Phase 1 before any houseAgent code runs.
+
+---
+
+## 3. Record Ownership
+
+Each JSON file is owned by exactly one sub-agent — the sole writer. All agents may read any file through RecordAgent, but only the owner writes.
+
+| UANS | Owner Agent | JSON Files |
 |---|---|---|
-| App code | `houseTracker/` (code repo, both PA and local) | Yes — code repo |
-| Config & secrets | `~/.houseTracker/config.json` (each environment) | No — never committed |
-| User auth DB | `~/.houseTracker/users.json.gpg` (each environment) | No — never committed |
-| **HouseRecords (JSON)** | **`houseTracker-data/<house_id>/records/`** | **Yes — data repo (master)** |
-| Documents (PDFs, photos) | `houseTracker-data/<house_id>/documents/` | No — too large; local filesystem only |
-
-Two repos, one environment apiece:
-
-```
-github.com/<user>/houseTracker        ← code (Flask app, agents, UI)
-github.com/<user>/houseTracker-data   ← records master (private)
-```
-
----
-
-## 2. Git Records Model
-
-### Why Git as Master
-
-Git gives records version history, branching for experiments, and a sync bus between PA and local Mac — with no additional infrastructure. Every record change is a commit; the log is the audit trail.
-
-### Checkout Paths
-
-| Environment | Data repo checkout path |
-|---|---|
-| PythonAnywhere | `/home/<pa_user>/houseTracker-data/` |
-| Local Mac | `~/GDrive/dev/pyTrackers/houseTracker-data/` |
-
-`config.json → data_repo_path` holds the environment-specific checkout path. `setup_paths.py` reads it and sets `DATA_REPO`, `RECORDS_DIR`, `DOCUMENTS_DIR`.
-
-### Sync Protocol
-
-```
-On startup (both environments):
-    git -C DATA_REPO pull --ff-only
-
-On each agent write (house_records.py):
-    git -C DATA_REPO add records/<house_id>/
-    git -C DATA_REPO commit -m "auto: <agent> <event> <timestamp>"
-    git -C DATA_REPO push origin main
-
-On conflict:
-    push fails → wsCmd.py --sync logs the error and halts
-    owner resolves via: wsCmd.py --resolve (git pull --rebase + push)
-```
-
-Simultaneous writes from both PA and local are unlikely in normal use (single owner, one active session). The protocol surfaces conflicts explicitly rather than silently merging.
-
-### What Lives in the Data Repo
-
-```
-houseTracker-data/
-└── <house_id>/
-    ├── records/
-    │   └── agents/                    ← UANS path: agents/<category>/<agent>/
-    │       ├── core/
-    │       │   ├── records/           ← house.core.records
-    │       │   ├── profile/           ← house.core.profile
-    │       │   └── comm/              ← house.core.comm
-    │       ├── systems/
-    │       │   ├── hvac/              ← house.systems.hvac
-    │       │   ├── electrical/        ← house.systems.electrical
-    │       │   ├── plumbing/          ← house.systems.plumbing
-    │       │   └── ...                ← roofing, security, appliances
-    │       ├── designs/
-    │       │   ├── architecture/      ← house.designs.architecture
-    │       │   ├── landscaping/       ← house.designs.landscaping
-    │       │   └── interior/          ← house.designs.interior
-    │       ├── finance/
-    │       │   ├── budget/            ← house.finance.budget
-    │       │   ├── tax/               ← house.finance.tax
-    │       │   └── investment/        ← house.finance.investment
-    │       └── life/
-    │           └── accessibility/     ← house.life.accessibility
-    └── documents/                     ← NOT committed; filesystem only
-        ├── permits/
-        ├── invoices/
-        └── photos/
-```
-
-`records/` is committed on every write. `documents/` is gitignored in the data repo — PDFs and photos stay on whichever filesystem they were uploaded to (PA or local Mac). Document metadata (filename, date, description) is stored in the agent's `knowledge.json` so both environments know what documents exist even if the file itself is remote.
+| `house.core.records` | HouseRecords | `legal_records.json` · `insurance.json` · `utilities.json` · `contractors.json` · `documents_index.json` · `action_items.json` |
+| `house.core.profile` | HouseProfile | `house_profile.json` · `action_items.json` |
+| `house.core.comm` | Communication | `checkin_log.json` · `action_items.json` |
+| `house.systems.hvac` | HVAC | `systems.json` · `maintenance_log.json` · `action_items.json` |
+| `house.systems.electrical` | Electrical | `panel.json` · `circuits.json` · `maintenance_log.json` · `action_items.json` |
+| `house.systems.plumbing` | Plumbing | `systems.json` · `sewer_diagram.json` · `maintenance_log.json` · `action_items.json` |
+| `house.systems.roofing` | Roofing | `systems.json` · `maintenance_log.json` · `action_items.json` |
+| `house.systems.security` | Security | `systems.json` · `action_items.json` |
+| `house.systems.appliances` | Appliances | `registry.json` · `maintenance_log.json` · `action_items.json` |
+| `house.designs.architecture` | Architecture | `floor_plan.json` · `structural_notes.json` · `action_items.json` |
+| `house.designs.landscaping` | Landscaping | `site_map.json` · `maintenance_log.json` · `action_items.json` |
+| `house.designs.interior` | Interior Design | `rooms.json` · `action_items.json` |
+| `house.finance.budget` | Financing | `capital_improvements.json` · `budget.json` · `action_items.json` |
+| `house.finance.tax` | Tax | `basis_log.json` · `action_items.json` |
+| `house.finance.investment` | Investment | `valuation.json` · `action_items.json` |
+| `house.life.accessibility` | Accessibility | `assessment.json` · `action_items.json` |
 
 ---
 
-## 3. Configuration Profile
+## 4. Key Record Schemas
 
-`config.json` lives at `~/.houseTracker/config.json` on **each environment separately**. It is never committed. Paths, secrets, and environment identity differ between PA and local.
-
-The code repo contains `config.json.example` with all keys and placeholder values.
-
-### Schema
+### `house.core.profile.house_profile`
 
 ```json
 {
-  "env":                "pa",
-  "default":            "ranch_house",
-  "APP_SECRET_KEY":     "<flask signing key>",
-  "APP_GPG_PASSPHRASE": "<gpg passphrase>",
-  "data_repo_path":     "/home/<pa_user>/houseTracker-data",
-  "auto_push":          true,
-  "twilio_account_sid": "<Twilio SID>",
-  "twilio_auth_token":  "<Twilio token>",
-  "twilio_phone_number": "+15125550100",
-  "houses": [
+  "address": "177 Kingsway Dr, Wimberley TX 78676",
+  "county": "Hays",
+  "parcel_id": "R33204",
+  "purchase_date": "2022-12-31",
+  "purchase_price": 335000,
+  "sqft": 1232,
+  "lot_acres": 0.5,
+  "construction_type": "pier-and-beam",
+  "year_built": 2006,
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "stories": 1,
+  "owner_id": "frankr6591",
+  "last_updated": "2026-06-28T00:00:00Z"
+}
+```
+
+### `house.systems.hvac.systems`
+
+```json
+{
+  "units": [
     {
-      "house_id":   "ranch_house",
-      "house_name": "Westwood Ranch",
-      "address":    "123 Ranch Rd, Austin TX 78701",
-      "owner_id":   "frank"
-    }
-  ],
-  "owners": [
-    {
-      "owner_id":   "frank",
-      "full_name":  "Frank Rojas",
-      "email":      "frankr6591@gmail.com",
-      "phone":      "+15125550101"
+      "id": "hvac_1",
+      "type": "heat_pump",
+      "brand": "...",
+      "model": "...",
+      "install_date": "...",
+      "location": "...",
+      "warranty_expires": "...",
+      "filter_size": "...",
+      "filter_change_interval_days": 90
     }
   ]
 }
 ```
 
-**Key fields:**
+### `house.systems.hvac.maintenance_log`
 
-| Key | Notes |
-|---|---|
-| `env` | `"pa"` or `"local"` — controls whether `/voice` route is registered |
-| `data_repo_path` | Absolute path to the houseTracker-data Git checkout on this machine |
-| `auto_push` | If `true`, `house_records.py` pushes to Git after every write |
-| `twilio_*` | Only used when `env=pa`; ignored locally |
-| `owner.phone` | Twilio caller ID for auto-login on voice channel |
+```json
+{
+  "events": [
+    {
+      "date": "2026-03-15",
+      "type": "filter_change",
+      "description": "Changed 16x25x1 filter",
+      "performed_by": "owner",
+      "cost": 12.00,
+      "next_due": "2026-06-15"
+    }
+  ]
+}
+```
 
-`top_folder` is no longer in config.json — it is derived as `data_repo_path/<house_id>` by `setup_paths.py`.
+### `house.core.records.action_items`
+
+```json
+{
+  "action_items": [
+    {
+      "id": "act_20260628_001",
+      "agent": "house.systems.hvac",
+      "summary": "HVAC filter overdue — last changed 2026-03-15",
+      "priority": "medium",
+      "created_at": "2026-06-28T00:00:00Z",
+      "resolved": false
+    }
+  ]
+}
+```
 
 ---
 
-## 4. Authentication & Login Layer
+## 5. Cross-Agent Data Signals
 
-Follows the `llcRentalTracker` pattern, adapted for three channels and caller-ID auto-login.
+These are records houseAgent writes that other agents (via PA) consume. houseAgent writes them; PA reads them and passes relevant context to the consuming agent.
 
-### User DB
-
-GPG-encrypted at `~/.houseTracker/users.json.gpg` — one copy per environment (PA and local Mac). Decrypted in-memory only; never plaintext on disk. Passphrase from `config.json → APP_GPG_PASSPHRASE`.
-
-The two copies are independent; `wsCmd.py --setup` initializes each. If users are added on PA, they must be manually replicated to local (or exported/imported via `wsCmd.py --export-users / --import-users`).
-
-### Roles
-
-| Role | Access |
-|---|---|
-| `houseMgr` | Full admin — all houses, user management, configurator |
-| `owner` | Full access to their associated house(s) |
-| `viewer` | Read-only access to a house |
-
-### Routes (`ui/houseLogin_auth.py`)
-
-| Route | Channel | Description |
+| houseAgent writes | Consuming agent | Signal |
 |---|---|---|
-| `/login` | B, C | Credential check; sets session |
-| `/logout` | B, C | Clears session |
-| `/register` | B, C | `houseMgr` only — creates new user |
-| `/select_house` | B, C | Multi-house owners pick active house |
-| `/voice` | A | Twilio webhook — caller ID → auto-login or PIN; PA only |
-
-### Flask Session
-
-```python
-session["logged_in"]  = True
-session["username"]   = "frank"
-session["role"]       = "owner"
-session["house_id"]   = "ranch_house"
-session["owner_id"]   = "frank"
-session["channel"]    = "voice"    # "voice" | "web_pa" | "web_local"
-```
-
-`channel` drives `ResponseSynthesizer` output format: `voice` → ≤ 3 spoken sentences (TwiML); `web_*` → full HTML.
+| `house.finance.investment.valuation` | estateAgent | Current home value, equity |
+| `house.life.accessibility.assessment` | medicalAgent | Mobility gap flags, recommended mods |
+| `house.finance.budget.capital_improvements` | moneyAgent | Project cost, liquidity request |
 
 ---
 
-## 5. `setup_paths.py` Contract
+## 6. Documents (not in Git)
 
-```python
-from setup_paths import (
-    ENV,           # "pa" | "local"
-    DATA_REPO,     # absolute path to houseTracker-data checkout
-    RECORDS_DIR,   # DATA_REPO/<house_id>/records/
-    DOCUMENTS_DIR, # DATA_REPO/<house_id>/documents/
-    TWILIO_SID, TWILIO_TOKEN, TWILIO_NUMBER,  # None when env=local
-)
+PDFs, photos, and scanned documents are large binary files — they are **not** stored in `lifeTracker-data`. They live in a local directory on each machine, not in git.
+
+```
+~/GDrive/dev/pyTrackers/lifeTracker-docs/house/
+├── deeds/
+│   └── warranty_deed_2022.pdf
+├── permits/
+├── inspection_reports/
+├── photos/
+└── insurance/
+    └── policy_2026.pdf
 ```
 
-`setup_paths.py` is the only module that reads `config.json`. It fails loudly if `config.json` is missing or `data_repo_path` does not exist. No silent fallbacks.
+The `house.core.records.documents_index` JSON file contains a pointer to each document:
 
----
+```json
+{
+  "documents": [
+    {
+      "id": "doc_deed_2022",
+      "type": "deed",
+      "filename": "warranty_deed_2022.pdf",
+      "local_path": "~/GDrive/dev/pyTrackers/lifeTracker-docs/house/deeds/warranty_deed_2022.pdf",
+      "date": "2022-12-31",
+      "description": "Warranty deed — 177 Kingsway Dr",
+      "custodian": "Hays County Clerk"
+    }
+  ]
+}
+```
 
-## 6. Implementation Plan (Data Scope)
-
-### Phase 0 — Data Repo + Config Scaffold
-
-- [ ] Create private `houseTracker-data` repo on GitHub; add `.gitignore` (`documents/`)
-- [ ] `config.json.example` in code repo — all keys, inline comments
-- [ ] `wsCmd.py --setup` (run on each environment): writes `~/.houseTracker/config.json`, clones data repo to `data_repo_path`, initializes GPG user DB
-- [ ] `setup_paths.py`: reads config.json; derives all paths; registers Twilio constants only when `env=pa`
-
-### Phase 1 — HouseRecords with Git Sync
-
-- [ ] `agents/house_records.py`: `read_json(path)`, `write_json(path, data)` — write calls `git add + commit + push` when `auto_push=true`
-- [ ] `wsCmd.py --pull`: manual `git pull` from data repo
-- [ ] `wsCmd.py --push`: manual `git add/commit/push` to data repo
-- [ ] `wsCmd.py --sync`: `git pull --rebase + push` for conflict resolution
-
-### Phase 2 — Document Metadata Bridge
-
-- [ ] Agent `knowledge.json` stores document metadata (`{filename, date, description, env_uploaded}`) so both PA and local know what documents exist even if the file is on the other machine's filesystem
-- [ ] Future: optional rsync of documents between PA and local for full local copies
+The index is in git (via RecordAgent); the PDFs are not.
