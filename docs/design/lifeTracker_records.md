@@ -21,7 +21,8 @@ This doc focuses on implementation design for the Phase 1 build.
 
 ---
 
-## 2. The UANS → Path Contract
+## 2. The Universal Agent Naming System (UANS) → Path Contract
+
 
 Every record is identified by a 4-segment dot-notation UANS. The root is `<userData>` from `config.json` (user-specific Google Drive folder). `UserContext` supplies the namespace-specific scope IDs.
 
@@ -56,6 +57,10 @@ For Frank: `~/GDrive/Family/PersonalAssistant/`, house `kingsway_dr`:
 <userData>/
 ├── profile.json                   ← UserProfile (core/profile/ service)
 └── agents/
+    ├── assistant/
+    │   └── life/
+    │       ├── briefings/
+    │       └── action_items/
     ├── house/
     │   └── kingsway_dr/           ← house_id from UserContext
     │       ├── core/records/
@@ -100,16 +105,12 @@ For Frank: `~/GDrive/Family/PersonalAssistant/`, house `kingsway_dr`:
     │   ├── grief/companion/
     │   ├── legacy/review/
     │   └── stress/monitor/
-    ├── faith/
-    │   ├── core/practice/
-    │   ├── examen/reflection/
-    │   ├── sacraments/history/
-    │   ├── community/life/
-    │   └── legacy/ethical_will/
-    └── life/
-        └── pa/
-            ├── briefings/
-            └── action_items/
+    └── faith/
+        ├── core/practice/
+        ├── examen/reflection/
+        ├── sacraments/history/
+        ├── community/life/
+        └── legacy/ethical_will/
 ```
 
 ---
@@ -189,6 +190,7 @@ from core.records.file_store import write_json, read_json
 from core.records.uans import uans_to_path, uans_to_dir
 
 AGENT_DIRECTORIES = [
+    "assistant.life.briefings", "assistant.life.action_items",
     "house.core.records", "house.core.profile", "house.core.comm",
     "house.systems.hvac", "house.systems.electrical", "house.systems.plumbing",
     "house.systems.roofing", "house.systems.security", "house.systems.appliances",
@@ -205,8 +207,7 @@ AGENT_DIRECTORIES = [
     "emotional.core.checkin", "emotional.relationships",
     "emotional.grief.companion", "emotional.legacy.review", "emotional.stress.monitor",
     "faith.core.practice", "faith.examen.reflection",
-    "faith.sacraments.history", "faith.community.life", "faith.legacy.ethical_will",
-    "life.pa.briefings", "life.pa.action_items",
+    "faith.sacraments.history", "faith.community.life", "faith.legacy.ethical_will"
 ]
 
 class RecordAgent:
@@ -241,13 +242,13 @@ Each JSON file belongs to exactly one agent — its sole writer. RecordAgent enf
 
 | UANS prefix | Owning agent | Record types |
 |---|---|---|
+| `assistant.*` | PersonalAssistant | monthly briefings, action items queue |
 | `house.*` | houseAgent sub-agents | systems, profiles, maintenance logs, budgets |
 | `medical.*` | medicalAgent sub-agents | health records, vitals, care history |
 | `money.*` | moneyAgent sub-agents | account registry, transactions, planning |
 | `estate.*` | estateAgent sub-agents | asset registry, legal documents, runway |
 | `emotional.*` | emotionalAgent sub-agents | check-ins, relationships, grief, stress |
 | `faith.*` | faithAgent sub-agents | practice log, examen, community |
-| `life.pa.*` | PersonalAssistant | monthly briefings, action items queue |
 
 ---
 

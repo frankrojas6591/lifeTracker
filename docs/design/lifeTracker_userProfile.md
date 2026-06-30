@@ -1,6 +1,6 @@
 # lifeTracker — User Profile Service Design
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** June 2026
 **Parent:** [Design Index](./lifeTracker_design.md)
 
@@ -8,7 +8,7 @@
 
 ## 1. Why User Profile Is a Separate Service
 
-lifeTracker is designed to operate for **U users, each with H houses, M medical team members, and F faith advisors**. This demands that what a user *is* (auth: identity + passphrase) be separated from what a user *has* (profile: their houses, practitioners, advisors).
+lifeTracker is designed to operate across a complex interrelated network of agents, ie **U users, each with H houses, M medical team members, and F faith advisors**. This demands that what a user *is* (auth: identity + passphrase) be separated from what a user *has* (profile: their houses, practitioners, advisors).
 
 | Service | Knows | Stored |
 |---|---|---|
@@ -353,3 +353,193 @@ Routes (added to `ui/auth.py` blueprint or a new `ui/profile.py`):
 | `POST /profile/houses` | Add a house |
 | `POST /profile/medical` | Add a practitioner |
 | `POST /profile/faith` | Add a faith advisor |
+
+---
+
+## 9. Adding a New Agent — Integration Checklist
+
+New agents fall into two types. Choose the right type first — it determines which steps are required.
+
+### Agent Types
+
+| Type | Description | Example |
+|---|---|---|
+| **Flat** | No sub-entities; records are not scoped beyond the agent namespace | `emotionalAgent`, `moneyAgent`, `faithAgent` |
+| **Scoped** | Has a list of sub-entities (vehicles, properties, accounts…); records are scoped by entity ID | `houseAgent` (house_id), `medicalAgent` (practitioner_id) |
+
+---
+
+### Type A — Flat Agent (5 steps, no profile schema change)
+
+> *Example: adding a `vehicleAgent` that treats all vehicles as one pool with no per-vehicle scoping.*
+
+**Step 1 — Register with PA** (`life/pa.py`)
+```python
+from vehicleAgent.vehicle_mgr import VehicleMgr
+pa.register("vehicle", VehicleMgr(config, record_agent))
+```
+
+**Step 2 — Add to `active_agents` in `profile.json`**
+```json
+"active_agents": ["house", "medical", "money", "estate", "emotional", "faith", "vehicle"]
+```
+
+**Step 3 — Add UANS directories** (`core/records/record_agent.py`, `AGENT_DIRECTORIES`)
+```python
+"vehicle.core.profile", "vehicle.core.records",
+"vehicle.maintenance.log", "vehicle.finance.insurance",
+```
+
+**Step 4 — Implement `DisciplineAgent`** (`vehicleAgent/vehicle_mgr.py`)
+```python
+class VehicleMgr(DisciplineAgent):
+    def brief(self) -> AgentBriefing: ...
+    def query(self, question, context) -> AgentResponse: ...
+    def audit(self) -> list[ActionItem]: ...
+    def record(self, event) -> None: ...
+```
+
+**Step 5 — Add `wsCmd.py --setup` prompt** (optional intro questions)
+```
+Vehicle agent: Track any vehicles? [Y/n]: Y
+  → records stored in <userData>/agents/vehicle/
+```
+
+No changes to `UserProfile` schema, `UserContext`, or `UserProfileService`. Done.
+
+---
+
+### Type B — Scoped Agent (9 steps, profile schema extended)
+
+> *Example: `vehicleAgent` where records are scoped per vehicle — `vehicle_id: "tacoma_2019"` — so Frank can track his Tacoma and a future RV separately.*
+
+**Step 1 — Add entity list to `profile.json` schema**
+```json
+"vehicles": [
+  {
+    "vehicle_id": "tacoma_2019",
+    "label": "Tacoma",
+    "make": "Toyota",
+    "model": "Tacoma TRD",
+    "year": 2019,
+    "vin": "...",
+    "is_primary": true,
+    "active": true
+  }
+]
+```
+
+**Step 2 — Add dataclass** (`core/profile/models.py`)
+```python
+@dataclass
+class VehicleEntry:
+    vehicle_id: str
+    label: str
+    make: str
+    model: str
+    year: int
+    vin: str
+    is_primary: bool
+    active: bool
+```
+
+**Step 3 — Extend `UserContext`** (`core/profile/models.py`)
+```python
+@dataclass
+class UserContext:
+    ...
+    vehicles: list[VehicleEntry] = field(default_factory=list)   # ← add
+
+    @property
+    def primary_vehicle(self) -> VehicleEntry | None:
+        return next((v for v in self.vehicles if v.is_primary and v.active), None)
+
+    @property
+    def active_vehicles(self) -> list[VehicleEntry]:
+        return [v for v in self.vehicles if v.active]
+```
+
+**Step 4 — Add `add_vehicle()` to `UserProfileService`** (`core/profile/user_profile.py`)
+```python
+def add_vehicle(self, user_id: str, vehicle: VehicleEntry) -> UserContext:
+    ctx = self.load(user_id)
+    ctx.vehicles.append(vehicle)
+    self.save(ctx)
+    return ctx
+```
+
+**Step 5 — Update `_hydrate()` and `_serialize()`** (`core/profile/user_profile.py`)
+```python
+def _hydrate(self, data):
+    return UserContext(
+        ...
+        vehicles=[VehicleEntry(**v) for v in data.get("vehicles", [])],
+    )
+
+def _serialize(self, ctx):
+    return {
+        ...
+        "vehicles": [v.__dict__ for v in ctx.vehicles],
+    }
+```
+
+**Step 6 — Handle scope_id in `uans_to_path()`** (`core/records/uans.py`)
+```python
+elif namespace == "vehicle" and scope_id:
+    base = base / scope_id
+```
+
+**Step 7 — Add UANS directories** (`core/records/record_agent.py`)
+```python
+"vehicle.core.profile", "vehicle.core.records",
+"vehicle.maintenance.log", "vehicle.finance.insurance",
+```
+
+**Step 8 — Implement `DisciplineAgent`** (`vehicleAgent/vehicle_mgr.py`)
+```python
+class VehicleMgr(DisciplineAgent):
+    def query(self, question, context):
+        vehicle_id = context.get("vehicle_id") or user_ctx.primary_vehicle.vehicle_id
+        records = self._record_agent.read("vehicle.core.profile.vehicle_profile",
+                                          scope_id=vehicle_id)
+        ...
+```
+
+**Step 9 — Extend `wsCmd.py --setup`** wizard
+```
+Vehicles: Add a vehicle? [Y/n]: Y
+  Vehicle ID [tacoma_2019]:
+  Label [Tacoma]:
+  Make: Toyota
+  Model: Tacoma TRD
+  Year: 2019
+  Primary vehicle? [Y/n]: Y
+  Add another? [y/N]: N
+```
+
+Web route: `POST /profile/vehicles` → `UserProfileService.add_vehicle()`
+
+---
+
+### Integration Decision Tree
+
+```
+Adding a new agent?
+        │
+        ▼
+Does it need sub-entities in the profile?
+(Multiple vehicles? Multiple clubs? Multiple properties?)
+        │
+   YES  │  NO
+        │──────► Type A (5 steps) — just register + UANS dirs
+        │
+        ▼
+  Type B (9 steps) — extend schema + models + service + uans_to_path
+```
+
+### Zero Breaking Changes Guarantee
+
+- `profile.json` is additive: new fields are ignored by agents that don't know about them
+- `UserContext._hydrate()` uses `data.get("vehicles", [])` — missing field → empty list
+- Existing agents never import from `vehicleAgent` — the PA interface (`DisciplineAgent`) is the only contract
+- `AGENT_DIRECTORIES` provisioning is idempotent — safe to re-run `wsCmd.py --setup` after adding a new agent
