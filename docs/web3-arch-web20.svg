@@ -1,15 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 428" width="100%"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 400" width="100%"
      font-family="system-ui,-apple-system,sans-serif">
 <defs>
   <marker id="arr" markerWidth="9" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,9 3,0 6" fill="#64748b"/></marker>
   <marker id="arr-rev" markerWidth="9" markerHeight="6" refX="1" refY="3" orient="auto"><polygon points="9 0,0 3,9 6" fill="#64748b"/></marker>
   <filter id="shadow" x="-5%" y="-5%" width="115%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.08"/></filter>
 </defs>
-<rect x="0" y="0" width="500" height="428" fill="#f8fafc" rx="12"/>
-<rect x="0" y="0" width="500" height="48" fill="#1e293b" rx="12"/>
-<rect x="0" y="36" width="500" height="12" fill="#1e293b" rx="0"/>
-<text x="250" y="22" text-anchor="middle" font-size="13" fill="#f1f5f9" font-weight="700" letter-spacing="0.3">Web 2.0  —  Javier in Others' Platforms</text>
-<text x="250" y="39" text-anchor="middle" font-size="9" fill="#94a3b8">BirthPlan · current state</text>
+<rect x="0" y="0" width="620" height="400" fill="#f8fafc" rx="12"/>
+<rect x="0" y="0" width="620" height="48" fill="#1e293b" rx="12"/>
+<rect x="0" y="36" width="620" height="12" fill="#1e293b" rx="0"/>
+<text x="310" y="22" text-anchor="middle" font-size="13" fill="#f1f5f9" font-weight="700" letter-spacing="0.3">Web 2.0  —  Javier in Others' Platforms</text>
+<text x="310" y="39" text-anchor="middle" font-size="9" fill="#94a3b8">BirthPlan · current state</text>
 <line x1="198" y1="94" x2="302" y2="94" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5,4"/>
 <line x1="175" y1="117" x2="210" y2="158" stroke="#64748b" stroke-width="1.8" marker-start="url(#arr-rev)" marker-end="url(#arr)"/>
 <rect x="183" y="129" width="18" height="16" fill="#f8fafc" rx="3"/>
@@ -21,7 +21,7 @@
 <circle cx="325" cy="94" r="23" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
 <text x="325" y="101" text-anchor="middle" font-size="20" fill="#000">🌐</text>
 <text x="351" y="131" text-anchor="middle" font-size="10" fill="#15803d" font-weight="700">The World</text>
-<rect x="48" y="158" width="404" height="140" fill="#ccfbf1" rx="9" stroke="#0f766e" stroke-width="2.5" filter="url(#shadow)"/>
+<rect x="48" y="158" width="404" height="108" fill="#ccfbf1" rx="9" stroke="#0f766e" stroke-width="2.5" filter="url(#shadow)"/>
 <rect x="54" y="162" width="126" height="22" fill="#fff7ed" rx="3" stroke="#ea580c" stroke-width="0.8"/>
 <text x="117" y="171" text-anchor="middle" font-size="8" fill="#000">📞</text>
 <text x="117" y="180" text-anchor="middle" font-size="6.5" fill="#ea580c" font-weight="700">Twilio</text>
@@ -36,35 +36,42 @@
 <text x="216" y="204" text-anchor="start" font-size="12" fill="#064e3b" font-weight="700">Javier</text>
 <text x="216" y="218" text-anchor="start" font-size="8" fill="#065f46">Personal Assistant</text>
 <line x1="58" y1="229" x2="442" y2="229" stroke="#a7f3d0" stroke-width="1"/>
-<rect x="51" y="232" width="398" height="26" fill="#0d9488" rx="5"/>
-<text x="250" y="250" text-anchor="middle" font-size="9" fill="#ccfbf1" font-weight="700">🧠  AI · Knowledge Base</text>
-<line x1="58" y1="260" x2="442" y2="260" stroke="#a7f3d0" stroke-width="1"/>
-<rect x="52" y="263" width="96" height="30" fill="#f0fdf4" rx="4" stroke="#16a34a" stroke-width="1"/>
-<text x="100" y="273" text-anchor="middle" font-size="10" fill="#000">🏠</text>
-<text x="100" y="284" text-anchor="middle" font-size="6.5" fill="#16a34a" font-weight="700">houseAgent</text>
-<rect x="152" y="263" width="96" height="30" fill="#eff6ff" rx="4" stroke="#3b82f6" stroke-width="1"/>
-<text x="200" y="273" text-anchor="middle" font-size="10" fill="#000">🏥</text>
-<text x="200" y="284" text-anchor="middle" font-size="6.5" fill="#3b82f6" font-weight="700">medicalAgent</text>
-<rect x="252" y="263" width="96" height="30" fill="#fefce8" rx="4" stroke="#ca8a04" stroke-width="1"/>
-<text x="300" y="273" text-anchor="middle" font-size="10" fill="#000">💰</text>
-<text x="300" y="284" text-anchor="middle" font-size="6.5" fill="#ca8a04" font-weight="700">moneyAgent</text>
-<rect x="352" y="263" width="96" height="30" fill="#fdf4ff" rx="4" stroke="#9333ea" stroke-width="1"/>
-<text x="400" y="273" text-anchor="middle" font-size="10" fill="#000">📄</text>
-<text x="400" y="284" text-anchor="middle" font-size="6.5" fill="#9333ea" font-weight="700">estateAgent</text>
-<line x1="100" y1="293" x2="100" y2="316" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="200" y1="293" x2="200" y2="316" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="300" y1="293" x2="300" y2="316" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
-<line x1="400" y1="293" x2="400" y2="316" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
-<rect x="28" y="316" width="444" height="62" fill="#fffbeb" rx="8" stroke="#d97706" stroke-width="1.5" filter="url(#shadow)"/>
-<rect x="32" y="320" width="294" height="54" fill="#fff7ed" rx="5" stroke="#fbbf24" stroke-width="1"/>
-<text x="179" y="336" text-anchor="middle" font-size="10" fill="#92400e" font-weight="700">📁  Google Drive</text>
-<text x="179" y="352" text-anchor="middle" font-size="8.5" fill="#b45309">🏠 house  ·  🏥 medical  ·  💰 finance  ·  …</text>
-<text x="179" y="366" text-anchor="middle" font-size="7.5" fill="#d97706">Google owns · can read · can go down</text>
-<rect x="330" y="320" width="138" height="54" fill="#fff7ed" rx="5" stroke="#fbbf24" stroke-width="1"/>
-<text x="399" y="336" text-anchor="middle" font-size="10" fill="#92400e" font-weight="700">✉  Gmail</text>
-<text x="399" y="352" text-anchor="middle" font-size="8.5" fill="#b45309">email · comm</text>
-<text x="399" y="366" text-anchor="middle" font-size="7.5" fill="#d97706">Google reads</text>
-<text x="250" y="391" text-anchor="middle" font-size="8" fill="#b45309" font-style="italic">principal data  (platforms own it ⚠)</text>
-<text x="250" y="405" text-anchor="middle" font-size="8" fill="#dc2626" font-weight="700">⚠  Principal is a user of these platforms — not an owner</text>
-<text x="250" y="417" text-anchor="middle" font-size="7.5" fill="#dc2626">any platform can read the data · go dark · sell to a competitor</text>
+<rect x="52" y="232" width="96" height="30" fill="#f0fdf4" rx="4" stroke="#16a34a" stroke-width="1"/>
+<text x="100" y="242" text-anchor="middle" font-size="10" fill="#000">🏠</text>
+<text x="100" y="253" text-anchor="middle" font-size="6.5" fill="#16a34a" font-weight="700">houseAgent</text>
+<rect x="152" y="232" width="96" height="30" fill="#eff6ff" rx="4" stroke="#3b82f6" stroke-width="1"/>
+<text x="200" y="242" text-anchor="middle" font-size="10" fill="#000">🏥</text>
+<text x="200" y="253" text-anchor="middle" font-size="6.5" fill="#3b82f6" font-weight="700">medicalAgent</text>
+<rect x="252" y="232" width="96" height="30" fill="#fefce8" rx="4" stroke="#ca8a04" stroke-width="1"/>
+<text x="300" y="242" text-anchor="middle" font-size="10" fill="#000">💰</text>
+<text x="300" y="253" text-anchor="middle" font-size="6.5" fill="#ca8a04" font-weight="700">moneyAgent</text>
+<rect x="352" y="232" width="96" height="30" fill="#fdf4ff" rx="4" stroke="#9333ea" stroke-width="1"/>
+<text x="400" y="242" text-anchor="middle" font-size="10" fill="#000">📄</text>
+<text x="400" y="253" text-anchor="middle" font-size="6.5" fill="#9333ea" font-weight="700">estateAgent</text>
+<line x1="100" y1="262" x2="100" y2="286" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="200" y1="262" x2="200" y2="286" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="300" y1="262" x2="300" y2="286" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="400" y1="262" x2="400" y2="286" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="452" y1="212" x2="480" y2="212" stroke="#64748b" stroke-width="1.8" marker-start="url(#arr-rev)" marker-end="url(#arr)"/>
+<text x="466" y="207" text-anchor="middle" font-size="7" fill="#94a3b8">API</text>
+<rect x="480" y="158" width="124" height="108" fill="#e0f2fe" rx="9" stroke="#0284c7" stroke-width="2" filter="url(#shadow)"/>
+<text x="542" y="178" text-anchor="middle" font-size="16" fill="#000">🧠</text>
+<text x="542" y="196" text-anchor="middle" font-size="9" fill="#075985" font-weight="700">Anthropic LLM</text>
+<text x="542" y="208" text-anchor="middle" font-size="8" fill="#0284c7">cloud API</text>
+<line x1="488" y1="218" x2="596" y2="218" stroke="#7dd3fc" stroke-width="1"/>
+<text x="542" y="232" text-anchor="middle" font-size="8.5" fill="#075985" font-weight="700">Knowledge Base</text>
+<text x="542" y="246" text-anchor="middle" font-size="7.5" fill="#0284c7">grounded in</text>
+<text x="542" y="257" text-anchor="middle" font-size="7.5" fill="#0284c7">platform data</text>
+<rect x="28" y="286" width="444" height="62" fill="#fffbeb" rx="8" stroke="#d97706" stroke-width="1.5" filter="url(#shadow)"/>
+<rect x="32" y="290" width="294" height="54" fill="#fff7ed" rx="5" stroke="#fbbf24" stroke-width="1"/>
+<text x="179" y="306" text-anchor="middle" font-size="10" fill="#92400e" font-weight="700">📁  Google Drive</text>
+<text x="179" y="322" text-anchor="middle" font-size="8.5" fill="#b45309">🏠 house  ·  🏥 medical  ·  💰 finance  ·  …</text>
+<text x="179" y="336" text-anchor="middle" font-size="7.5" fill="#d97706">Google owns · can read · can go down</text>
+<rect x="330" y="290" width="138" height="54" fill="#fff7ed" rx="5" stroke="#fbbf24" stroke-width="1"/>
+<text x="399" y="306" text-anchor="middle" font-size="10" fill="#92400e" font-weight="700">✉  Gmail</text>
+<text x="399" y="322" text-anchor="middle" font-size="8.5" fill="#b45309">email · comm</text>
+<text x="399" y="336" text-anchor="middle" font-size="7.5" fill="#d97706">Google reads</text>
+<text x="250" y="361" text-anchor="middle" font-size="8" fill="#b45309" font-style="italic">principal data  (platforms own it ⚠)</text>
+<text x="250" y="375" text-anchor="middle" font-size="8" fill="#dc2626" font-weight="700">⚠  Principal is a user of these platforms — not an owner</text>
+<text x="250" y="387" text-anchor="middle" font-size="7.5" fill="#dc2626">any platform can read the data · go dark · sell to a competitor</text>
 </svg>

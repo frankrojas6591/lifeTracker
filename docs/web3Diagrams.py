@@ -99,7 +99,7 @@ def thinker_icon(x, y, h):
     return f'<image href="{_THINKER_URI}" x="{x}" y="{y}" width="{w}" height="{h}" style="mix-blend-mode:multiply"/>'
 
 
-W20, H20 = 500, 428
+W20, H20 = 620, 400   # wider: Anthropic LLM/KB box sits right of Javier
 
 # two top-tier actors (closer together)
 PRINC_CX, PRINC_CY, PRINC_R = 175, 94, 23
@@ -132,16 +132,26 @@ _AGENTS = [
 
 
 def build_web20():
+    # Web 2.0: AI/KB is EXTERNAL (Anthropic cloud API) — not inside Javier
+    JAV_H    = 108
+    JAV_BOT  = JAV_Y + JAV_H       # 266 (shorter than Web 3.0's 298)
+    DATA_Y   = 286                  # moved up to follow shorter J box
+    DATA_H   = 62
+    DATA_CX  = DATA_X + DATA_W // 2  # 250
+    DATA_BOT = DATA_Y + DATA_H      # 348
+    # external AI/KB box right of Javier
+    ai_x  = JAV_X + JAV_W + 28     # 480 (28px gap for bidir arrow)
+    ai_y  = JAV_Y                   # 158
+    ai_w  = W20 - ai_x - 16        # 124
+    ai_h  = JAV_H                   # 108
+    ai_cx = ai_x + ai_w // 2       # 542
     # ── Javier internals ──
     CH_Y   = JAV_Y + 4         # 162
     CH_H   = 22
     SEP1_Y = CH_Y + CH_H + 3  # 187
-    ID_ICN = SEP1_Y + 15      # thinker center-y: 202
+    ID_ICN = SEP1_Y + 15      # 202
     SEP2_Y = SEP1_Y + 42      # 229
-    AI_Y   = SEP2_Y + 3       # 232
-    AI_H   = 26
-    SEP3_Y = AI_Y + AI_H + 2  # 260
-    AG_Y   = SEP3_Y + 3       # 263
+    AG_Y   = SEP2_Y + 3       # 232  — no AI/KB strip; agents right after identity
     AG_H   = 30
 
     ag_w = (JAV_W - 5 * 4) // 4   # 96px each
@@ -202,10 +212,6 @@ def build_web20():
         text(JAV_CX - 34, ID_ICN + 2,  "Javier", 12, "#064e3b", bold=True, anchor="start"),
         text(JAV_CX - 34, ID_ICN + 16, "Personal Assistant", 8, "#065f46", anchor="start"),
         sep_line(JAV_X+10, SEP2_Y, JAV_X+JAV_W-10, "#a7f3d0"),
-        # AI/KB strip
-        rect(JAV_X+3, AI_Y, JAV_W-6, AI_H, "#0d9488", rx=5),
-        text(JAV_CX, AI_Y + AI_H//2 + 5, "🧠  AI · Knowledge Base", 9, "#ccfbf1", bold=True),
-        sep_line(JAV_X+10, SEP3_Y, JAV_X+JAV_W-10, "#a7f3d0"),
     ]
 
     # agent boxes inside Javier
@@ -223,6 +229,21 @@ def build_web20():
         parts.append(
             line(acx, AG_Y+AG_H, acx, DATA_Y, stroke="#94a3b8", sw=1.2, marker="arr")
         )
+
+    # external Anthropic LLM / Knowledge Base — right of Javier, connected via API
+    conn_y = (JAV_Y + JAV_BOT) // 2   # 212 — horizontal mid of J box
+    parts += [
+        bidir_line(JAV_X+JAV_W, conn_y, ai_x, conn_y),
+        text((JAV_X+JAV_W + ai_x) // 2, conn_y - 5, "API", 7, "#94a3b8"),
+        rect(ai_x, ai_y, ai_w, ai_h, "#e0f2fe", rx=9, stroke="#0284c7", sw=2, filt="shadow"),
+        text(ai_cx, ai_y+20, "🧠", 16, "#000"),
+        text(ai_cx, ai_y+38, "Anthropic LLM", 9, "#075985", bold=True),
+        text(ai_cx, ai_y+50, "cloud API", 8, "#0284c7"),
+        sep_line(ai_x+8, ai_y+60, ai_x+ai_w-8, "#7dd3fc"),
+        text(ai_cx, ai_y+74, "Knowledge Base", 8.5, "#075985", bold=True),
+        text(ai_cx, ai_y+88, "grounded in", 7.5, "#0284c7"),
+        text(ai_cx, ai_y+99, "platform data", 7.5, "#0284c7"),
+    ]
 
     parts += [
         # Principal Data box (no label above)
@@ -256,7 +277,7 @@ def build_web20():
 # WEB 3.0 DIAGRAM  —  same logical flow as Web 2.0; Principal owns the data
 # Same canvas, same triangle, same Javier internals — only the data layer changes
 # ══════════════════════════════════════════════════════════════════════════════
-W30, H30 = W20, H20   # identical canvas — parallelism is intentional
+W30, H30 = 500, 428   # explicit; same layout as Web 2.0 (parallelism intentional)
 
 # Web 3.0 replaces the 3 platform interface chips with 2 AI-native interfaces
 _CHANNELS_30 = [
@@ -310,10 +331,10 @@ def build_web30():
         # ── same actors ──
         circle(PRINC_CX, PRINC_CY, PRINC_R, "#dbeafe", stroke="#3b82f6", sw=2, filt="shadow"),
         text(PRINC_CX, PRINC_CY+7,           "🧑", 20, "#000"),
-        text(PRINC_CX, PRINC_CY+PRINC_R+16, "Principal", 10, "#1e40af", bold=True),
+        text(PRINC_CX-20, PRINC_CY+PRINC_R+16, "Principal", 10, "#1e40af", bold=True),
         circle(WORLD_CX, WORLD_CY, WORLD_R, "#dcfce7", stroke="#16a34a", sw=2, filt="shadow"),
         text(WORLD_CX, WORLD_CY+7,           "🌐", 20, "#000"),
-        text(WORLD_CX, WORLD_CY+WORLD_R+16, "The World", 10, "#15803d", bold=True),
+        text(WORLD_CX+26, WORLD_CY+WORLD_R+16, "The World", 10, "#15803d", bold=True),
         # ── Javier outer box (greener than Web 2.0) ──
         rect(JAV_X, JAV_Y, JAV_W, JAV_H, "#d1fae5", rx=9,
              stroke="#059669", sw=2.5, filt="shadow"),

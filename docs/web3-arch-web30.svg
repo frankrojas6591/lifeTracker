@@ -18,10 +18,10 @@
 <line x1="325" y1="117" x2="290" y2="158" stroke="#64748b" stroke-width="1.8" marker-start="url(#arr-rev)" marker-end="url(#arr)"/>
 <circle cx="175" cy="94" r="23" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
 <text x="175" y="101" text-anchor="middle" font-size="20" fill="#000">🧑</text>
-<text x="175" y="133" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="700">Principal</text>
+<text x="155" y="133" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="700">Principal</text>
 <circle cx="325" cy="94" r="23" fill="#dcfce7" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
 <text x="325" y="101" text-anchor="middle" font-size="20" fill="#000">🌐</text>
-<text x="325" y="133" text-anchor="middle" font-size="10" fill="#15803d" font-weight="700">The World</text>
+<text x="351" y="133" text-anchor="middle" font-size="10" fill="#15803d" font-weight="700">The World</text>
 <rect x="48" y="158" width="404" height="140" fill="#d1fae5" rx="9" stroke="#059669" stroke-width="2.5" filter="url(#shadow)"/>
 <rect x="54" y="162" width="193" height="30" fill="#e0f2fe" rx="3" stroke="#0284c7" stroke-width="0.8"/>
 <text x="150" y="174" text-anchor="middle" font-size="8.5" fill="#0284c7" font-weight="700">Agent Mesh</text>
