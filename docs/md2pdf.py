@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -30,25 +31,50 @@ ul, ol  { margin: 4px 0; padding-left: 18px; }
 li      { margin-bottom: 2px; }
 hr      { border: none; border-top: 1px solid #ccc; margin: 12px 0; }
 img     { max-width: 100%; height: auto; display: block; margin: 8px 0; }
+.svg-figure      { margin: 10px 0; page-break-inside: avoid; }
+.svg-figure svg  { width: 100%; height: auto; }
 """
 
-NEWPAGE_MD  = r'\newpage'
+NEWPAGE_MD   = r'\newpage'
 NEWPAGE_HTML = '<div style="page-break-after: always;"></div>'
+
+# Match any <img ... src="path.svg" ...> (self-closing or not)
+_SVG_IMG = re.compile(
+    r'<img\b[^>]*?\bsrc=["\']([^"\']+\.svg)["\'][^>]*/?>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _inline_svgs(html: str, base_dir: Path) -> str:
+    """Replace <img src="*.svg"> with the raw SVG markup inline.
+
+    Avoids WeasyPrint's external-file URL resolution entirely — no path
+    encoding or base_url issues regardless of spaces / special chars in the
+    directory name.
+    """
+    def _sub(m):
+        src = m.group(1)
+        svg_path = (base_dir / src).resolve()
+        if not svg_path.exists():
+            return m.group(0)           # leave unchanged if file missing
+        return f'<div class="svg-figure">{svg_path.read_text(encoding="utf-8")}</div>'
+
+    return _SVG_IMG.sub(_sub, html)
 
 
 def convert(md_path: Path) -> Path:
     pdf_path = md_path.with_suffix('.pdf')
 
-    raw = md_path.read_text(encoding='utf-8').replace(NEWPAGE_MD, NEWPAGE_HTML)
+    raw  = md_path.read_text(encoding='utf-8').replace(NEWPAGE_MD, NEWPAGE_HTML)
     body = markdown.markdown(raw, extensions=['tables', 'fenced_code', 'nl2br'])
+    body = _inline_svgs(body, md_path.parent)
 
     html = (
         '<!DOCTYPE html><html><head><meta charset="utf-8">'
         f'<style>{CSS}</style></head><body>{body}</body></html>'
     )
 
-    # base_url tells WeasyPrint where to resolve relative image paths (SVGs, etc.)
-    HTML(string=html, base_url=md_path.parent.as_uri()).write_pdf(str(pdf_path))
+    HTML(string=html).write_pdf(str(pdf_path))
     return pdf_path
 
 
