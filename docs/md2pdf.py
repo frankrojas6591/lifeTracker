@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
+"""
+md2pdf.py  —  Convert a Markdown file to PDF via WeasyPrint.
+
+SVG images referenced as ![alt](path.svg) are copied to a safe temp path
+(no spaces / special chars) so WeasyPrint's file:// resolver can load them.
+"""
 import argparse
 import re
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 import markdown
@@ -31,39 +39,43 @@ ul, ol  { margin: 4px 0; padding-left: 18px; }
 li      { margin-bottom: 2px; }
 hr      { border: none; border-top: 1px solid #ccc; margin: 12px 0; }
 img     { max-width: 100%; height: auto; display: block; margin: 8px 0; }
-.svg-figure      { margin: 10px 0; page-break-inside: avoid; }
-.svg-figure svg  { width: 100%; height: auto; }
 """
 
 NEWPAGE_MD   = r'\newpage'
 NEWPAGE_HTML = '<div style="page-break-after: always;"></div>'
 
-# Match any <img ... src="path.svg" ...> (self-closing or not)
-_SVG_IMG = re.compile(
-    r'<img\b[^>]*?\bsrc=["\']([^"\']+\.svg)["\'][^>]*/?>',
+_IMG_TAG = re.compile(
+    r'<img\b[^>]*?\bsrc=["\']([^"\']+)["\'][^>]*/?>',
     re.IGNORECASE | re.DOTALL,
 )
 
 
-def _inline_svgs(html: str, base_dir: Path) -> str:
-    """Replace <img src="*.svg"> with raw SVG markup inlined directly.
+def _stage_images(html: str, base_dir: Path, tmp_dir: Path) -> str:
+    """Copy every referenced image into tmp_dir (no spaces/@ in path) and
+    rewrite src attributes to absolute file:// URIs pointing there.
 
-    Avoids WeasyPrint's external-file URL resolution entirely — no path
-    encoding or base_url issues regardless of spaces / @ in the directory.
-
-    Also injects width="100%" into the <svg> opening tag so WeasyPrint can
-    size it correctly (viewBox alone is not enough — renders blank without it).
+    WeasyPrint 67 cannot resolve paths containing spaces or @ via any URL
+    mechanism; copying to /tmp sidesteps the problem entirely.
     """
-    def _sub(m):
-        src = m.group(1)
-        svg_path = (base_dir / src).resolve()
-        if not svg_path.exists():
-            return m.group(0)
-        svg = svg_path.read_text(encoding='utf-8')
-        svg = re.sub(r'(<svg\b)', r'\1 width="100%"', svg, count=1, flags=re.IGNORECASE)
-        return f'<div class="svg-figure">{svg}</div>'
+    counter = [0]
 
-    return _SVG_IMG.sub(_sub, html)
+    def _sub(m):
+        full_tag = m.group(0)
+        src = m.group(1)
+        if src.startswith(('http://', 'https://', 'data:')):
+            return full_tag                 # leave remote/data URIs alone
+        orig = (base_dir / src).resolve()
+        if not orig.exists():
+            return full_tag
+        counter[0] += 1
+        safe_name = f'img{counter[0]:03d}{orig.suffix}'
+        staged = tmp_dir / safe_name
+        shutil.copy2(orig, staged)
+        safe_uri = staged.as_uri()          # file:///tmp/md2pdf_xxx/img001.svg
+        return full_tag.replace(f'src="{src}"', f'src="{safe_uri}"') \
+                       .replace(f"src='{src}'", f"src='{safe_uri}'")
+
+    return _IMG_TAG.sub(_sub, html)
 
 
 def convert(md_path: Path) -> Path:
@@ -71,14 +83,17 @@ def convert(md_path: Path) -> Path:
 
     raw  = md_path.read_text(encoding='utf-8').replace(NEWPAGE_MD, NEWPAGE_HTML)
     body = markdown.markdown(raw, extensions=['tables', 'fenced_code', 'nl2br'])
-    body = _inline_svgs(body, md_path.parent)
 
-    html = (
-        '<!DOCTYPE html><html><head><meta charset="utf-8">'
-        f'<style>{CSS}</style></head><body>{body}</body></html>'
-    )
+    with tempfile.TemporaryDirectory(prefix='md2pdf_') as tmp:
+        tmp_dir = Path(tmp)
+        body = _stage_images(body, md_path.parent, tmp_dir)
 
-    HTML(string=html).write_pdf(str(pdf_path))
+        html = (
+            '<!DOCTYPE html><html><head><meta charset="utf-8">'
+            f'<style>{CSS}</style></head><body>{body}</body></html>'
+        )
+        HTML(string=html).write_pdf(str(pdf_path))
+
     return pdf_path
 
 
