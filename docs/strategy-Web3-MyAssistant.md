@@ -6,7 +6,34 @@
 
 ---
 
-## The Two Web 3.0s — Which One Matters Here?
+## Contents
+
+- [1. lifeTracker's Web 3.0 Story](#1-lifetrackers-web-30-story)
+  - [1.1 The Two Web 3.0s — Which One Matters Here?](#11-the-two-web-30s--which-one-matters-here)
+  - [1.1a The One Sentence Summary](#11a-the-one-sentence-summary)
+  - [1.2 Web 2.0 Javier — Trapped in Platforms](#12-what-web-20-javier-looks-like-birthplan)
+  - [1.3 Web 3.0 Javier — Sovereign Agent](#13-what-web-30-javier-looks-like-trustedplan)
+- [2. The Relevant Web 3.0 Technologies](#2-the-relevant-web-30-technologies)
+  - [2.1 Self-Sovereign Identity (SSI)](#21-self-sovereign-identity-ssi--w3c-dids--verifiable-credentials)
+  - [2.2 SOLID Pods — Personal Data Sovereignty](#22-solid-pods--personal-data-sovereignty)
+  - [2.3 Agent-to-Agent Protocols (MCP + A2A)](#23-agent-to-agent-protocols-mcp--a2a)
+  - [2.4 Zero-Knowledge Proofs (ZKPs)](#24-zero-knowledge-proofs-zkps--share-proof-not-data)
+  - [2.5 Smart Contracts — Estate Execution](#25-smart-contracts--estate-execution-crypto-web3-intersection)
+- [3. Web 2.0 → Web 3.0 Evolution Map](#3-web-20--web-30-evolution-map)
+- [4. Technology Readiness Matrix](#4-technology-readiness-matrix)
+- [5. Migration Timetable](#5-migration-timetable)
+  - [Now — BirthPlan (Year 1)](#now--birthplan-year-1-build-web-20-right)
+  - [5.1 Year 2 — Identity + Agent Protocols](#51-year-2--web-25-identity--agent-protocols)
+  - [5.2 Year 3 — SOLID + Agent Mesh](#52-year-3--web-30-foundation-solid--agent-mesh)
+  - [5.3 Year 4+ — ZK + Smart Contracts](#53-year-4--full-autonomy-zk--smart-contracts)
+  - [5.4 What This Means for Javier's Identity](#54-what-this-means-for-javiers-identity)
+  - [5.5 What NOT to Build (Web 3.0 Traps)](#55-what-not-to-build-web-30-traps)
+
+---
+
+## 1. lifeTracker's Web 3.0 story
+
+### 1.1 The Two Web 3.0s — Which One Matters Here?
 
 Two movements share the "Web 3.0" name. They are not the same thing.
 
@@ -18,83 +45,74 @@ Two movements share the "Web 3.0" name. They are not the same thing.
 | **Maturity** | Boom/bust cycles; speculative | Steady W3C standards; production in 2025–2026 |
 | **Our bet** | 10% (estate smart contracts, Year 3+) | 90% (identity, data sovereignty, agent mesh) |
 
-**lifeTracker's Web 3.0 story is not about crypto. It is about Javier becoming a sovereign agent — owning Frank's data, speaking to the world on Frank's behalf, without middlemen.**
+**lifeTracker's Web 3.0 story is not about crypto. It is about Javier becoming a sovereign agent — owning principal's data, speaking to the world on the principal's behalf, without middlemen.**
+
+## 1.1a The One Sentence Summary
+
+> **Build a clean Web 2.0 assistant now. Every abstraction layer created today (RecordAgent, UANS, UserContext, MCP tools) is a Web 3.0 swap point later — and Javier (lifeTracker Assistant) evolves from an app into a sovereign agent who holds the principal's keys, owns their data, and speaks to the world on their behalf.**
+
 
 ---
 
-## What Web 2.0 Javier Looks Like (BirthPlan)
+### 1.2 What Web 2.0 Javier Looks Like (BirthPlan)
 
-```
-Frank ──► Browser/iPhone ──► Flask (Javier) ──► Anthropic API
-                                    │
-                         Google Drive (data)
-                         Gmail (commEmail)
-                         Twilio (SMS)
-```
+![Web 2.0 Architecture — Javier trapped in platforms](./web3-arch-web20.svg)
 
 **Every layer has a platform in the middle:**
-- Identity: Frank logs in with a password Javier hashes. Platform = lifeTracker's own DB.
+- Identity: principal logs in with a password Javier hashes. Platform = lifeTracker's own DB.
 - Data: Google owns the Drive. Google can read it. Google can go down.
 - AI: Anthropic processes every prompt. Anthropic sees the context.
-- Communication: Gmail reads Frank's email. Twilio owns the phone channel.
+- Communication: Gmail reads principal's email. Twilio owns the phone channel.
 
-This is Web 2.0. Frank is a user of platforms. Javier is an app inside those platforms.
+This is Web 2.0. principal is a user of platforms. Javier is an app inside those platforms.
 
 ---
 
-## What Web 3.0 Javier Looks Like (TrustedPlan+)
+### 1.3 What Web 3.0 Javier Looks Like (TrustedPlan+)
 
-```
-Frank ──► DID (did:key:frankrojas) ──► Javier (sovereign agent)
-                                            │
-                        ┌───────────────────┼────────────────────┐
-                        │                   │                    │
-                  SOLID Pod            Agent Mesh           ZK Proofs
-               (Frank's data)     (doctor, attorney,       (share proof,
-              encrypted, local    contractor agents)        not data)
-```
+![Web 3.0 Architecture — Javier as sovereign agent](./web3-arch-web30.svg)
 
-**Every layer is Frank's:**
-- Identity: Frank IS his DID. No password file. No platform. Cryptographic proof.
-- Data: Frank's SOLID pod. Apps request access. Frank approves. Data never leaves.
+**Every layer is principal's:**
+- Identity: principal IS his DID. No password file. No platform. Cryptographic proof.
+- Data: principal's SOLID pod. Apps request access. principal approves. Data never leaves.
 - AI: Javier is a named agent. Talks to other agents via open protocols.
 - Communication: Agent-to-agent messaging. No Gmail middleman required.
 
 ---
 
-## The Relevant Web 3.0 Technologies
+## 2. The Relevant Web 3.0 Technologies
 
-### 1. Self-Sovereign Identity (SSI) — W3C DIDs + Verifiable Credentials
+### 2.1. Self-Sovereign Identity (SSI) — W3C DIDs + Verifiable Credentials
 
 **What it is:**
-- **DID** (Decentralized Identifier): `did:key:z6Mk...` — cryptographic ID Frank generates and owns. Like a passport no government issued.
-- **VC** (Verifiable Credential): A signed claim. ARC signs: *"Frank is a patient, DOB 1959."* Frank holds it. Shows it without exposing raw EHR data.
+- **DID** (Decentralized Identifier): `did:key:z6Mk...` — cryptographic ID principal generates and owns. Like a passport no government issued.
+- **VC** (Verifiable Credential): A signed claim. ARC signs: *"principal is a patient, DOB 1959."* principal holds it. Shows it without exposing raw EHR data.
 
 **Scenario:**
-> Javier needs to book a specialist referral. Today: Frank has to call, give his name, DOB, insurance — to a receptionist who types it into Epic.
+> Javier needs to book a specialist referral. Today: principal has to call, give his name, DOB, insurance — to a receptionist who types it into Epic.
 >
-> Web 3.0: Javier presents Frank's VC from ARC. Specialist's agent verifies it cryptographically in 2 seconds. No phone call. No data entry. No fax.
+> Web 3.0: Javier presents principal's VC from ARC (doctor). Specialist's agent verifies it cryptographically in 2 seconds. No phone call. No data entry. No fax.
 
 **Maturity:** W3C standard (2022). Production SDKs exist (`did-resolver`, `@veramo/core`). **Ready now for design; Year 2 for implementation.**
 
 ---
 
-### 2. SOLID Pods — Personal Data Sovereignty
+### 2.2. SOLID Pods — Personal Data Sovereignty
 
 **What it is:** Sir Tim Berners-Lee's answer to Big Tech owning your data. A **SOLID pod** is your personal data store — a server you control (or self-host). Apps don't store your data; they request read/write access to your pod with your permission.
 
 **The lifeTracker parallel:** `<userData>/agents/` on Google Drive IS a proto-pod. Swapping Google Drive for a SOLID pod is a storage layer change, not an architecture change — because RecordAgent already abstracts all I/O.
 
 **Scenario:**
-> Frank's cardiologist's app wants to see his BP history. Today: Frank downloads a CSV from myAir, emails it.
+> principal's cardiologist's app wants to see his BP history. Today: principal downloads a CSV from myAir, emails it.
 >
-> Web 3.0: Cardiologist's app requests read on `did:frank/agents/medical/vitals/bp/`. Javier approves. Cardiologist reads live data. Frank revokes access after the appointment.
+> Web 3.0: Cardiologist's app requests read on `did:principal/agents/medical/vitals/bp/`. Javier approves. Cardiologist reads live data. principal revokes access after the appointment.
 
 **Maturity:** SOLID protocol spec is final. CSS (Community Solid Server) is production-grade. **Year 2–3 for lifeTracker adoption.**
 
 ---
 
-### 3. Agent-to-Agent Protocols (MCP + A2A)
+### 2.3. Agent-to-Agent Protocols (MCP + A2A)
 
 **What it is:** The infrastructure for agents talking to other agents, not just to humans.
 
@@ -105,25 +123,25 @@ Frank ──► DID (did:key:frankrojas) ──► Javier (sovereign agent)
 | **ANP** (Agent Network Protocol) | Open standard (2025) | Peer-to-peer agent communication with DID-based authentication |
 
 **Scenario:**
-> Frank's HVAC needs replacing. Today: Frank calls 3 contractors, gets quotes by email, enters them in a spreadsheet.
+> principal's HVAC needs replacing. Today: principal calls 3 contractors, gets quotes by email, enters them in a spreadsheet.
 >
-> Web 3.0: Javier (houseAgent) sends an A2A task to a contractor registry. 3 licensed contractor agents respond with structured quotes (UANS-compatible JSON). Javier compares, checks Frank's moneyAgent for liquidity, makes a recommendation. Frank says yes. Javier books.
+> Web 3.0: Javier (houseAgent) sends an A2A task to a contractor registry. 3 licensed contractor agents respond with structured quotes (UANS-compatible JSON). Javier compares, checks principal's moneyAgent for liquidity, makes a recommendation. principal says yes. Javier books.
 
 **Maturity:** MCP — production now. A2A — emerging (2025 spec). ANP — early draft. **MCP: already in use. A2A: Year 2 horizon.**
 
 ---
 
-### 4. Zero-Knowledge Proofs (ZKPs) — Share Proof, Not Data
+### 2.4. Zero-Knowledge Proofs (ZKPs) — Share Proof, Not Data
 
 **What it is:** Cryptographic technique that proves a statement is true without revealing the underlying data.
 
 **Why it matters for health + estate:**
-- Prove *"Frank's A1C is below 7.5"* without sharing the lab value → insurance pricing
-- Prove *"Frank is over 65"* without showing DOB → pharmacy discount
-- Prove *"Frank has a valid advance directive on file"* without sharing the document → hospital system
+- Prove *"principal's A1C is below 7.5"* without sharing the lab value → insurance pricing
+- Prove *"principal is over 65"* without showing DOB → pharmacy discount
+- Prove *"principal has a valid advance directive on file"* without sharing the document → hospital system
 
 **Scenario:**
-> Frank applies for long-term care insurance. Today: 6-month underwriting process; 40-page medical questionnaire; full EHR release to insurer.
+> principal applies for long-term care insurance. Today: 6-month underwriting process; 40-page medical questionnaire; full EHR release to insurer.
 >
 > Web 3.0: Javier generates a ZK proof bundle: conditions controlled (✓), no hospitalization in 3 years (✓), medications list within acceptable range (✓). Insurer's agent verifies the proofs. Policy issued in 48 hours. Insurer never sees a single lab value.
 
@@ -131,14 +149,14 @@ Frank ──► DID (did:key:frankrojas) ──► Javier (sovereign agent)
 
 ---
 
-### 5. Smart Contracts — Estate Execution (Crypto Web3 Intersection)
+### 2.5. Smart Contracts — Estate Execution (Crypto Web3 Intersection)
 
 **What it is:** Self-executing code on a blockchain. When conditions are met, actions fire automatically.
 
-**The narrow use case for Frank:** Estate execution — not speculation.
+**The narrow use case for principal:** Estate execution — not speculation.
 
 **Scenario:**
-> Frank's estate plan has a TODD (Transfer on Death Deed) for Wimberley house. Today: it requires probate, an attorney, 6–18 months.
+> principal's estate plan has a TODD (Transfer on Death Deed) for Wimberley house. Today: it requires probate, an attorney, 6–18 months.
 >
 > Web 3.0: A death certificate VC is issued (county → DID registry). Javier's estate agent detects the VC. Smart contract fires: property title transfers to named beneficiary on-chain. Attorney involvement: zero for the transfer itself.
 
@@ -146,7 +164,7 @@ Frank ──► DID (did:key:frankrojas) ──► Javier (sovereign agent)
 
 ---
 
-## Web 2.0 → Web 3.0 Evolution Map
+## 3. Web 2.0 → Web 3.0 Evolution Map
 
 ```
 TODAY                        YEAR 2              YEAR 3+
@@ -154,8 +172,8 @@ TODAY                        YEAR 2              YEAR 3+
 ─────────────────────────────────────────────────────────────────
 IDENTITY
   Passphrase + JWT         → DID created       → DID-based sessions
-  users.json.gpg           → DID keystore      → VC wallet (Frank's credentials)
-  user_id = "frank"        → did:key:z6Mk...   → SSI everywhere
+  users.json.gpg           → DID keystore      → VC wallet (principal's credentials)
+  user_id = "principal"        → did:key:z6Mk...   → SSI everywhere
 
 DATA STORE
   Google Drive             → Encrypted GDrive  → SOLID pod (self-hosted)
@@ -183,7 +201,7 @@ ESTATE
 
 ---
 
-## Technology Readiness Matrix
+## 4. Technology Readiness Matrix
 
 | Technology | Standard Body | Maturity | Adoption Risk | lifeTracker Target |
 |---|---|---|---|---|
@@ -198,7 +216,7 @@ ESTATE
 
 ---
 
-## Migration Timetable
+## 5. Migration Timetable
 
 ### Now — BirthPlan (Year 1): Build Web 2.0 Right
 
@@ -217,28 +235,28 @@ The smartest Web 3.0 prep is **clean abstraction now**. Every interface that hid
 
 ---
 
-### Year 2 — Web 2.5: Identity + Agent Protocols
+### 5.1 Year 2 — Web 2.5: Identity + Agent Protocols
 
-**Trigger:** CertificationPlan complete. Javier is trusted. Time to give Frank a digital identity.
+**Trigger:** CertificationPlan complete. Javier is trusted. Time to give principal a digital identity.
 
 | Task | Module | Effort |
 |---|---|---|
-| Generate Frank's DID (`did:key`) | `core/identity/did_manager.py` | 1 session |
+| Generate principal's DID (`did:key`) | `core/identity/did_manager.py` | 1 session |
 | DID-based JWT replacement | `core/auth/did_auth.py` | 1 session |
-| VC wallet for Frank's health credentials | `core/identity/vc_wallet.py` | 2 sessions |
+| VC wallet for principal's health credentials | `core/identity/vc_wallet.py` | 2 sessions |
 | Request ARC to issue patient VC (Epic SMART on FHIR) | `medicalAgent/fhir_vc.py` | 2 sessions |
 | A2A task endpoint (Javier accepts inbound tasks) | `core/agent/a2a_server.py` | 2 sessions |
 | A2A client (Javier delegates to external agents) | `core/agent/a2a_client.py` | 1 session |
 | Encrypt Google Drive data at rest (GPG per-file) | `core/records/encrypted_store.py` | 1 session |
 
 **Year 2 milestone test:**
-> Javier presents Frank's ARC patient VC to a specialist's scheduling agent. Appointment booked without a phone call.
+> Javier presents principal's ARC patient VC to a specialist's scheduling agent. Appointment booked without a phone call.
 
 ---
 
-### Year 3 — Web 3.0 Foundation: SOLID + Agent Mesh
+### 5.2 Year 3 — Web 3.0 Foundation: SOLID + Agent Mesh
 
-**Trigger:** Frank is comfortable with agent-assisted decisions. Time to own his data.
+**Trigger:** principal is comfortable with agent-assisted decisions. Time to own his data.
 
 | Task | Module | Effort |
 |---|---|---|
@@ -250,13 +268,13 @@ The smartest Web 3.0 prep is **clean abstraction now**. Every interface that hid
 | Knowledge graph: agent-mesh cross-agent signals | `core/knowledge/graph.py` | 3 sessions |
 
 **Year 3 milestone test:**
-> Frank's cardiologist's app requests read access to `medical/vitals/bp/`. Javier approves. Access auto-revoked after 30 days. Frank never types his BP data again.
+> principal's cardiologist's app requests read access to `medical/vitals/bp/`. Javier approves. Access auto-revoked after 30 days. principal never types his BP data again.
 
 ---
 
-### Year 4+ — Full Autonomy: ZK + Smart Contracts
+### 5.3 Year 4+ — Full Autonomy: ZK + Smart Contracts
 
-**Trigger:** Frank's estate plan is in order. Legal frameworks have caught up.
+**Trigger:** principal's estate plan is in order. Legal frameworks have caught up.
 
 | Task | Effort | Notes |
 |---|---|---|
@@ -266,26 +284,26 @@ The smartest Web 3.0 prep is **clean abstraction now**. Every interface that hid
 | Autonomous estate agent | 4 sessions | High stakes — human-in-the-loop for all actions |
 
 **Year 4 milestone test:**
-> Frank's long-term care insurer's agent receives a ZK proof bundle from Javier. Policy approved. Zero raw health data exchanged.
+> principal's long-term care insurer's agent receives a ZK proof bundle from Javier. Policy approved. Zero raw health data exchanged.
 
 ---
 
-## What This Means for Javier's Identity
+## 5.4 What This Means for Javier's Identity
 
-Today Javier is **Frank's app**.
+Today Javier is **principal's app**.
 
-Web 3.0 Javier is **Frank's agent** — a named, cryptographically-identified actor in the world with:
+Web 3.0 Javier is **principal's agent** — a named, cryptographically-identified actor in the world with:
 
-- A **DID** (`did:key:z6MkJavier...`) — Javier's own identity, separate from Frank's, but authorized by Frank
+- A **DID** (`did:key:z6MkJavier...`) — Javier's own identity, separate from principal's, but authorized by principal
 - An **A2A endpoint** — other agents can find Javier and send tasks
-- A **VC authority** — Javier can issue credentials on Frank's behalf ("Frank authorized this contractor to bill $X")
-- A **pod ACL role** — Javier manages who sees what in Frank's SOLID pod
+- A **VC authority** — Javier can issue credentials on principal's behalf ("principal authorized this contractor to bill $X")
+- A **pod ACL role** — Javier manages who sees what in principal's SOLID pod
 
 This is the **agentic internet** — not agents as chatbots, but agents as actors with keys, permissions, and persistent relationships.
 
 ---
 
-## What NOT to Build (Web 3.0 Traps)
+## 5.5 What NOT to Build (Web 3.0 Traps)
 
 | Trap | Why to Avoid |
 |---|---|
@@ -297,6 +315,3 @@ This is the **agentic internet** — not agents as chatbots, but agents as actor
 
 ---
 
-## The One Sentence Summary
-
-> **Build a clean Web 2.0 assistant now. Every abstraction layer you create today (RecordAgent, UANS, UserContext, MCP tools) is a Web 3.0 swap point later — and Javier evolves from an app into a sovereign agent who holds Frank's keys, owns his data, and speaks to the world on his behalf.**
