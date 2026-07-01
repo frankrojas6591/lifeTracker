@@ -93,9 +93,10 @@ def svg_wrap(w, h, content):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def thinker_icon(x, y, h):
-    """PNG thinker icon with top-left at (x,y), height h; width auto-scaled (208:316)."""
+    """PNG thinker icon with top-left at (x,y), height h; width auto-scaled (208:316).
+    multiply blend: white bg disappears into parent fill; dark silhouette stays."""
     w = round(h * 208 / 316)
-    return f'<image href="{_THINKER_URI}" x="{x}" y="{y}" width="{w}" height="{h}"/>'
+    return f'<image href="{_THINKER_URI}" x="{x}" y="{y}" width="{w}" height="{h}" style="mix-blend-mode:multiply"/>'
 
 
 W20, H20 = 500, 428
@@ -169,10 +170,10 @@ def build_web20():
         # ── actors ──
         circle(PRINC_CX, PRINC_CY, PRINC_R, "#dbeafe", stroke="#3b82f6", sw=2, filt="shadow"),
         text(PRINC_CX, PRINC_CY+7,           "🧑", 20, "#000"),
-        text(PRINC_CX, PRINC_CY+PRINC_R+16, "Principal", 10, "#1e40af", bold=True),
+        text(PRINC_CX-20, PRINC_CY+PRINC_R+14, "Principal", 10, "#1e40af", bold=True),
         circle(WORLD_CX, WORLD_CY, WORLD_R, "#dcfce7", stroke="#16a34a", sw=2, filt="shadow"),
         text(WORLD_CX, WORLD_CY+7,           "🌐", 20, "#000"),
-        text(WORLD_CX, WORLD_CY+WORLD_R+16, "The World", 10, "#15803d", bold=True),
+        text(WORLD_CX+26, WORLD_CY+WORLD_R+14, "The World", 10, "#15803d", bold=True),
         # ── Javier outer box ──
         rect(JAV_X, JAV_Y, JAV_W, JAV_H, "#ccfbf1", rx=9,
              stroke="#0f766e", sw=2.5, filt="shadow"),
@@ -249,159 +250,128 @@ def build_web20():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# WEB 3.0 DIAGRAM  —  "Javier as a Sovereign Agent"
+# WEB 3.0 DIAGRAM  —  same logical flow as Web 2.0; Principal owns the data
+# Same canvas, same triangle, same Javier internals — only the data layer changes
 # ══════════════════════════════════════════════════════════════════════════════
-W30, H30 = 740, 390
-
-# Principal DID box
-FK_X, FK_Y, FK_W, FK_H = 18, 156, 158, 100
-FK_CX = FK_X + FK_W // 2     # 97
-
-# Javier box
-JV_X, JV_Y, JV_W, JV_H = 238, 112, 162, 190
-JV_CX = JV_X + JV_W // 2     # 319
-JV_RX = JV_X + JV_W          # 400 — right edge
-
-# Branch boxes (right side)
-BR_X, BR_W = 480, 234
-BR_CX = BR_X + BR_W // 2     # 597
-
-# Each branch: box geometry, colors, arrow source y on Javier, lines of text
-BRANCHES = [
-    dict(
-        y=58, h=100, icon="🗄", label="SOLID Pod",
-        bg="#dcfce7", border="#16a34a", title_c="#15803d",
-        arr_id="arr-green", arr_color="#059669",
-        from_y=JV_Y+46, to_y=108,
-        lines=[
-            ("Principal's personal data store",           "#166534", 10),
-            ("Encrypted · Self-hosted",                "#15803d",  9),
-            ("Apps request access · Principal revokes",    "#15803d",  9),
-            ("RecordAgent API unchanged — swap store", "#16a34a", 8.5),
-        ],
-    ),
-    dict(
-        y=173, h=84, icon="🤝", label="Agent Mesh  (A2A)",
-        bg="#e0f2fe", border="#0284c7", title_c="#0369a1",
-        arr_id="arr-sky", arr_color="#0284c7",
-        from_y=JV_Y+JV_H//2, to_y=215,
-        lines=[
-            ("Doctor · Attorney · Contractor agents",  "#075985", 10),
-            ("Agent2Agent protocol · DID-auth",         "#0284c7",  9),
-            ("Javier books, negotiates, delegates",     "#0284c7",  9),
-        ],
-    ),
-    dict(
-        y=271, h=88, icon="🔒", label="ZK Proofs",
-        bg="#f3e8ff", border="#7c3aed", title_c="#6b21a8",
-        arr_id="arr-purple", arr_color="#7c3aed",
-        from_y=JV_Y+JV_H-46, to_y=315,
-        lines=[
-            ("Share proof, not raw data",                   "#581c87", 10),
-            ('"A1C &lt; 7.5" — insurer sees proof only',    "#7c3aed",  9),
-            ("HIPAA-compatible · privacy by design",         "#7c3aed",  9),
-        ],
-    ),
-]
-
-
-def web30_defs():
-    parts = ["<defs>",
-             f"  {arrow_marker('arr-blue', '#1d4ed8')}"]
-    for b in BRANCHES:
-        parts.append(f"  {arrow_marker(b['arr_id'], b['arr_color'])}")
-    parts += [
-        f"  {drop_shadow('shadow')}",
-        f"  {drop_shadow('glow', dx=0, dy=0, std=6, color='#059669', opacity='0.35', px='-12%', py='-12%', pw='128%', ph='134%')}",
-        "</defs>",
-    ]
-    return "\n".join(parts)
-
-
-def web30_header():
-    return "\n".join([
-        rect(0, 0, W30, 56, "#064e3b", rx=12),
-        rect(0, 44, W30, 12, "#064e3b"),
-        text(W30//2, 26, "Web 3.0  —  Javier as a Sovereign Agent",
-             14, "#d1fae5", bold=True, spacing="0.3"),
-        text(W30//2, 44, "TrustedPlan+ · target state", 10, "#6ee7b7"),
-    ])
-
-
-def web30_Principal():
-    cx, mid_y = FK_CX, FK_Y + FK_H // 2
-    auth_label_x = (FK_X + FK_W + JV_X) // 2
-    return "\n".join([
-        rect(FK_X, FK_Y, FK_W, FK_H, "#dbeafe", rx=9, stroke="#1d4ed8", sw=2, filt="shadow"),
-        text(cx, FK_Y+28, "🔑", 24, "#000"),
-        text(cx, FK_Y+52, "Principal", 13, "#1e40af", bold=True),
-        text(cx, FK_Y+68, "did:key:z6MkPrincipal…", 8.5, "#1d4ed8"),
-        text(cx, FK_Y+82, "self-sovereign identity", 8.5, "#3b82f6"),
-        text(cx, FK_Y+94, "cryptographic · no middleman", 8, "#60a5fa"),
-        # arrow Principal → Javier
-        line(FK_X+FK_W, mid_y, JV_X, JV_Y+JV_H//2, stroke="#1d4ed8", sw=2.2, marker="arr-blue"),
-        text(auth_label_x, mid_y-8, "authorizes", 8.5, "#1d4ed8", italic=True),
-    ])
-
-
-def web30_javier():
-    cx, sep_y = JV_CX, JV_Y+98
-    return "\n".join([
-        rect(JV_X, JV_Y, JV_W, JV_H, "#d1fae5", rx=11, stroke="#059669", sw=3, filt="glow"),
-        text(cx, JV_Y+38, "🛡", 30, "#000"),
-        text(cx, JV_Y+70, "Javier", 16, "#064e3b", bold=True),
-        text(cx, JV_Y+88, "Sovereign Agent", 10, "#047857", bold=True),
-        sep_line(JV_X+18, sep_y, JV_X+JV_W-18),
-        text(cx, JV_Y+112, "did:key:z6MkJavier…", 8.5, "#065f46"),
-        text(cx, JV_Y+127, "Principal's authorized actor", 8.5, "#065f46"),
-        text(cx, JV_Y+142, "holds keys · acts on Principal's", 8.5, "#065f46"),
-        text(cx, JV_Y+157, "behalf in the world", 8.5, "#065f46"),
-        text(cx, JV_Y+173, "A2A endpoint · VC authority", 8, "#6ee7b7"),
-        text(cx, JV_Y+185, "pod ACL manager", 8, "#6ee7b7"),
-    ])
-
-
-def web30_branches():
-    parts = []
-    for b in BRANCHES:
-        title_y = b["y"] + 24
-        # arrow from Javier right edge
-        parts.append(line(JV_RX, b["from_y"], BR_X, b["to_y"],
-                          stroke=b["arr_color"], sw=2.2, marker=b["arr_id"]))
-        # box
-        parts.append(rect(BR_X, b["y"], BR_W, b["h"],
-                          b["bg"], rx=8, stroke=b["border"], sw=2, filt="shadow"))
-        # title with icon
-        parts.append(text(BR_CX, title_y, f'{b["icon"]}  {b["label"]}',
-                          12, b["title_c"], bold=True))
-        # detail lines
-        line_y = title_y + 20
-        for msg, fill, sz in b["lines"]:
-            parts.append(text(BR_CX, line_y, msg, sz, fill))
-            line_y += int(sz) + 5
-    return "\n".join(parts)
-
-
-def web30_success():
-    return "\n".join([
-        rect(28, H30-22, 684, 14, "#86efac", rx=6, opacity=0.5),
-        text(W30//2, H30-11,
-             "✓  Principal owns every layer — identity · data · communication · privacy",
-             9.5, "#15803d", bold=True),
-    ])
+W30, H30 = W20, H20   # identical canvas — parallelism is intentional
 
 
 def build_web30():
-    sections = [
-        web30_defs(),
+    # Same internal geometry as build_web20()
+    CH_Y   = JAV_Y + 4
+    CH_H   = 22
+    SEP1_Y = CH_Y + CH_H + 3   # 187
+    ID_ICN = SEP1_Y + 15       # 202
+    SEP2_Y = SEP1_Y + 42       # 229
+    AI_Y   = SEP2_Y + 3        # 232
+    AI_H   = 26
+    SEP3_Y = AI_Y + AI_H + 2   # 260
+    AG_Y   = SEP3_Y + 3        # 263
+    AG_H   = 30
+
+    ag_w        = (JAV_W - 5 * 4) // 4
+    ag_x_starts = [JAV_X + 4 + i*(ag_w + 4) for i in range(4)]
+    ag_centers  = [x + ag_w // 2 for x in ag_x_starts]
+
+    parts = [
+        "\n".join([
+            "<defs>",
+            f"  {arrow_marker('arr-g', '#059669')}",   # green — owned connection
+            f"  {arrow_marker_rev('arr-rev', '#64748b')}",
+            f"  {drop_shadow('shadow')}",
+            "</defs>",
+        ]),
+        # ── background + header (deep green — signals ownership era) ──
         rect(0, 0, W30, H30, "#f0fdf4", rx=12),
-        "<!-- header -->", web30_header(),
-        "<!-- Principal DID -->", web30_Principal(),
-        "<!-- Javier sovereign agent -->", web30_javier(),
-        "<!-- branch arrows + boxes -->", web30_branches(),
-        "<!-- success banner -->", web30_success(),
+        rect(0, 0, W30, 48, "#064e3b", rx=12),
+        rect(0, 36, W30, 12, "#064e3b"),
+        text(W30//2, 22, "Web 3.0  —  Javier as Your Sovereign Agent",
+             13, "#d1fae5", bold=True, spacing="0.3"),
+        text(W30//2, 39, "TrustedPlan+ · target state", 9, "#6ee7b7"),
+        # ── same triangle skeleton ──
+        line(PRINC_CX+PRINC_R, PRINC_CY, WORLD_CX-WORLD_R, WORLD_CY,
+             stroke="#bbf7d0", sw=1.2, dash="5,4"),
+        bidir_line(PRINC_CX, PRINC_CY+PRINC_R, 210, JAV_Y),
+        bidir_line(WORLD_CX, WORLD_CY+WORLD_R, 290, JAV_Y),
+        # ── same actors ──
+        circle(PRINC_CX, PRINC_CY, PRINC_R, "#dbeafe", stroke="#3b82f6", sw=2, filt="shadow"),
+        text(PRINC_CX, PRINC_CY+7,           "🧑", 20, "#000"),
+        text(PRINC_CX, PRINC_CY+PRINC_R+16, "Principal", 10, "#1e40af", bold=True),
+        circle(WORLD_CX, WORLD_CY, WORLD_R, "#dcfce7", stroke="#16a34a", sw=2, filt="shadow"),
+        text(WORLD_CX, WORLD_CY+7,           "🌐", 20, "#000"),
+        text(WORLD_CX, WORLD_CY+WORLD_R+16, "The World", 10, "#15803d", bold=True),
+        # ── Javier outer box (greener than Web 2.0) ──
+        rect(JAV_X, JAV_Y, JAV_W, JAV_H, "#d1fae5", rx=9,
+             stroke="#059669", sw=2.5, filt="shadow"),
     ]
-    return svg_wrap(W30, H30, "\n".join(sections))
+
+    # interface chips — identical to Web 2.0 (same platforms, same interfaces)
+    ch_x = JAV_X + 6
+    for icon, label, bg, border in _CHANNELS:
+        cw = 126
+        ccx = ch_x + cw // 2
+        parts += [
+            rect(ch_x, CH_Y, cw, CH_H, bg, rx=3, stroke=border, sw=0.8),
+            text(ccx, CH_Y+9,  icon,  8, "#000"),
+            text(ccx, CH_Y+18, label, 6.5, border, bold=True),
+        ]
+        ch_x += cw + 5
+
+    parts += [
+        sep_line(JAV_X+10, SEP1_Y, JAV_X+JAV_W-10, "#86efac"),
+        # thinker + identity ("Sovereign Agent" vs "Personal Assistant" in Web 2.0)
+        thinker_icon(x=JAV_CX - 56, y=ID_ICN - 10, h=24),
+        text(JAV_CX - 34, ID_ICN + 2,  "Javier", 12, "#064e3b", bold=True, anchor="start"),
+        text(JAV_CX - 34, ID_ICN + 16, "Sovereign Agent", 8, "#065f46", anchor="start"),
+        sep_line(JAV_X+10, SEP2_Y, JAV_X+JAV_W-10, "#86efac"),
+        # AI/KB strip (same)
+        rect(JAV_X+3, AI_Y, JAV_W-6, AI_H, "#065f46", rx=5),
+        text(JAV_CX, AI_Y + AI_H//2 + 5, "🧠  AI · Knowledge Base", 9, "#d1fae5", bold=True),
+        sep_line(JAV_X+10, SEP3_Y, JAV_X+JAV_W-10, "#86efac"),
+    ]
+
+    # same agent boxes inside Javier
+    for i, (icon, label, bg, border) in enumerate(_AGENTS):
+        ax = ag_x_starts[i]
+        acx = ag_centers[i]
+        parts += [
+            rect(ax, AG_Y, ag_w, AG_H, bg, rx=4, stroke=border, sw=1),
+            text(acx, AG_Y+11, icon,  10, "#000"),
+            text(acx, AG_Y+24, label,  6.5, border, bold=True),
+        ]
+
+    # green agent lines → YOUR vault (contrast: gray → foreign platform in Web 2.0)
+    for acx in ag_centers:
+        parts.append(
+            line(acx, AG_Y+AG_H, acx, DATA_Y, stroke="#059669", sw=1.4, marker="arr-g")
+        )
+
+    parts += [
+        # ── Your Vault — the one thing that changed ──
+        rect(DATA_X, DATA_Y, DATA_W, DATA_H, "#dcfce7", rx=8,
+             stroke="#16a34a", sw=2, filt="shadow"),
+        # Left sub-box: your data (mirrors Google Drive box position in Web 2.0)
+        rect(DATA_X+4, DATA_Y+4, 294, DATA_H-8, "#f0fdf4", rx=5, stroke="#4ade80", sw=1),
+        text(DATA_X+151, DATA_Y+20, "🔒  Your SOLID Pod", 10, "#14532d", bold=True),
+        text(DATA_X+151, DATA_Y+36, "🏠 house  ·  🏥 medical  ·  💰 finances  ·  📄 estate", 8.5, "#15803d"),
+        text(DATA_X+151, DATA_Y+50, "self-hosted · encrypted · your keys", 7.5, "#16a34a"),
+        # Right sub-box: access control (mirrors Gmail box position in Web 2.0)
+        rect(DATA_X+302, DATA_Y+4, 138, DATA_H-8, "#f0fdf4", rx=5, stroke="#4ade80", sw=1),
+        text(DATA_X+371, DATA_Y+18, "🔑  You Control", 9.5, "#14532d", bold=True),
+        text(DATA_X+371, DATA_Y+33, "grant · revoke", 8.5, "#15803d"),
+        text(DATA_X+371, DATA_Y+47, "no platform reads", 7.5, "#16a34a"),
+        # label + celebration BELOW data box (contrast to Web 2.0's warning)
+        text(DATA_CX, DATA_BOT+13,
+             "your data  (you own it ✓)", 8, "#15803d", italic=True),
+        text(DATA_CX, DATA_BOT+27,
+             "✓  same Javier · same agents · same interfaces  —  different ownership",
+             8, "#059669", bold=True),
+        text(DATA_CX, DATA_BOT+39,
+             "swap any platform · revoke any access · no vendor can go dark",
+             7.5, "#16a34a"),
+    ]
+
+    return svg_wrap(W30, H30, "\n".join(parts))
 
 
 # ── main ──────────────────────────────────────────────────────────────────────
