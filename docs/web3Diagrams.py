@@ -65,7 +65,7 @@ def drop_shadow(fid, dx=0, dy=2, std=3, color="#0f172a", opacity="0.08",
             f'{inner}</filter>')
 
 def svg_wrap(w, h, content):
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}"\n'
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="100%"\n'
             f'     font-family="system-ui,-apple-system,sans-serif">\n'
             f'{content}\n</svg>')
 

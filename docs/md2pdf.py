@@ -46,18 +46,22 @@ _SVG_IMG = re.compile(
 
 
 def _inline_svgs(html: str, base_dir: Path) -> str:
-    """Replace <img src="*.svg"> with the raw SVG markup inline.
+    """Replace <img src="*.svg"> with raw SVG markup inlined directly.
 
     Avoids WeasyPrint's external-file URL resolution entirely — no path
-    encoding or base_url issues regardless of spaces / special chars in the
-    directory name.
+    encoding or base_url issues regardless of spaces / @ in the directory.
+
+    Also injects width="100%" into the <svg> opening tag so WeasyPrint can
+    size it correctly (viewBox alone is not enough — renders blank without it).
     """
     def _sub(m):
         src = m.group(1)
         svg_path = (base_dir / src).resolve()
         if not svg_path.exists():
-            return m.group(0)           # leave unchanged if file missing
-        return f'<div class="svg-figure">{svg_path.read_text(encoding="utf-8")}</div>'
+            return m.group(0)
+        svg = svg_path.read_text(encoding='utf-8')
+        svg = re.sub(r'(<svg\b)', r'\1 width="100%"', svg, count=1, flags=re.IGNORECASE)
+        return f'<div class="svg-figure">{svg}</div>'
 
     return _SVG_IMG.sub(_sub, html)
 
