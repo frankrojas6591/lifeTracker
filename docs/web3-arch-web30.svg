@@ -14,11 +14,11 @@
 <rect x="0" y="44" width="740" height="12" fill="#064e3b" rx="0"/>
 <text x="370" y="26" text-anchor="middle" font-size="14" fill="#d1fae5" font-weight="700" letter-spacing="0.3">Web 3.0  —  Javier as a Sovereign Agent</text>
 <text x="370" y="44" text-anchor="middle" font-size="10" fill="#6ee7b7">TrustedPlan+ · target state</text>
-<!-- Frank DID -->
+<!-- Principal DID -->
 <rect x="18" y="156" width="158" height="100" fill="#dbeafe" rx="9" stroke="#1d4ed8" stroke-width="2" filter="url(#shadow)"/>
 <text x="97" y="184" text-anchor="middle" font-size="24" fill="#000">🔑</text>
-<text x="97" y="208" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="700">Frank</text>
-<text x="97" y="224" text-anchor="middle" font-size="8.5" fill="#1d4ed8">did:key:z6MkFrank…</text>
+<text x="97" y="208" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="700">Principal</text>
+<text x="97" y="224" text-anchor="middle" font-size="8.5" fill="#1d4ed8">did:key:z6MkPrincipal…</text>
 <text x="97" y="238" text-anchor="middle" font-size="8.5" fill="#3b82f6">self-sovereign identity</text>
 <text x="97" y="250" text-anchor="middle" font-size="8" fill="#60a5fa">cryptographic · no middleman</text>
 <line x1="176" y1="206" x2="238" y2="207" stroke="#1d4ed8" stroke-width="2.2" marker-end="url(#arr-blue)"/>
@@ -30,8 +30,8 @@
 <text x="319" y="200" text-anchor="middle" font-size="10" fill="#047857" font-weight="700">Sovereign Agent</text>
 <line x1="256" y1="210" x2="382" y2="210" stroke="#a7f3d0" stroke-width="1"/>
 <text x="319" y="224" text-anchor="middle" font-size="8.5" fill="#065f46">did:key:z6MkJavier…</text>
-<text x="319" y="239" text-anchor="middle" font-size="8.5" fill="#065f46">Frank's authorized actor</text>
-<text x="319" y="254" text-anchor="middle" font-size="8.5" fill="#065f46">holds keys · acts on Frank's</text>
+<text x="319" y="239" text-anchor="middle" font-size="8.5" fill="#065f46">Principal's authorized actor</text>
+<text x="319" y="254" text-anchor="middle" font-size="8.5" fill="#065f46">holds keys · acts on Principal's</text>
 <text x="319" y="269" text-anchor="middle" font-size="8.5" fill="#065f46">behalf in the world</text>
 <text x="319" y="285" text-anchor="middle" font-size="8" fill="#6ee7b7">A2A endpoint · VC authority</text>
 <text x="319" y="297" text-anchor="middle" font-size="8" fill="#6ee7b7">pod ACL manager</text>
@@ -39,9 +39,9 @@
 <line x1="400" y1="158" x2="480" y2="108" stroke="#059669" stroke-width="2.2" marker-end="url(#arr-green)"/>
 <rect x="480" y="58" width="234" height="100" fill="#dcfce7" rx="8" stroke="#16a34a" stroke-width="2" filter="url(#shadow)"/>
 <text x="597" y="82" text-anchor="middle" font-size="12" fill="#15803d" font-weight="700">🗄  SOLID Pod</text>
-<text x="597" y="102" text-anchor="middle" font-size="10" fill="#166534">Frank's personal data store</text>
+<text x="597" y="102" text-anchor="middle" font-size="10" fill="#166534">Principal's personal data store</text>
 <text x="597" y="117" text-anchor="middle" font-size="9" fill="#15803d">Encrypted · Self-hosted</text>
-<text x="597" y="131" text-anchor="middle" font-size="9" fill="#15803d">Apps request access · Frank revokes</text>
+<text x="597" y="131" text-anchor="middle" font-size="9" fill="#15803d">Apps request access · Principal revokes</text>
 <text x="597" y="145" text-anchor="middle" font-size="8.5" fill="#16a34a">RecordAgent API unchanged — swap store</text>
 <line x1="400" y1="207" x2="480" y2="215" stroke="#0284c7" stroke-width="2.2" marker-end="url(#arr-sky)"/>
 <rect x="480" y="173" width="234" height="84" fill="#e0f2fe" rx="8" stroke="#0284c7" stroke-width="2" filter="url(#shadow)"/>
@@ -57,5 +57,5 @@
 <text x="597" y="344" text-anchor="middle" font-size="9" fill="#7c3aed">HIPAA-compatible · privacy by design</text>
 <!-- success banner -->
 <rect x="28" y="368" width="684" height="14" fill="#86efac" rx="6" opacity="0.5"/>
-<text x="370" y="379" text-anchor="middle" font-size="9.5" fill="#15803d" font-weight="700">✓  Frank owns every layer — identity · data · communication · privacy</text>
+<text x="370" y="379" text-anchor="middle" font-size="9.5" fill="#15803d" font-weight="700">✓  Principal owns every layer — identity · data · communication · privacy</text>
 </svg>

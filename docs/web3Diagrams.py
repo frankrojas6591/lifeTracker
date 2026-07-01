@@ -5,9 +5,16 @@ web3Diagrams.py  →  generates web3-arch-web20.svg  and  web3-arch-web30.svg
 Run:
     python3 docs/web3Diagrams.py
 """
+import base64
 from pathlib import Path
 
 OUT_DIR = Path(__file__).parent
+
+def _png_data_uri(filename):
+    data = base64.b64encode((OUT_DIR / filename).read_bytes()).decode()
+    return f"data:image/png;base64,{data}"
+
+_THINKER_URI = _png_data_uri("iconThinker.png")
 
 
 # ── shared helpers (same style as lifeTrackerDiagram.py) ──────────────────────
@@ -57,6 +64,17 @@ def arrow_marker(mid, color):
     return (f'<marker id="{mid}" markerWidth="9" markerHeight="6" '
             f'refX="8" refY="3" orient="auto">{poly}</marker>')
 
+def arrow_marker_rev(mid, color):
+    poly = tag("polygon", {"points": "9 0,0 3,9 6", "fill": color})
+    return (f'<marker id="{mid}" markerWidth="9" markerHeight="6" '
+            f'refX="1" refY="3" orient="auto">{poly}</marker>')
+
+def bidir_line(x1, y1, x2, y2, stroke="#64748b", sw=1.8):
+    a = {"x1": x1, "y1": y1, "x2": x2, "y2": y2,
+         "stroke": stroke, "stroke-width": sw,
+         "marker-start": "url(#arr-rev)", "marker-end": "url(#arr)"}
+    return tag("line", a)
+
 def drop_shadow(fid, dx=0, dy=2, std=3, color="#0f172a", opacity="0.08",
                 px="-5%", py="-5%", pw="115%", ph="130%"):
     inner = (f'<feDropShadow dx="{dx}" dy="{dy}" stdDeviation="{std}" '
@@ -71,117 +89,163 @@ def svg_wrap(w, h, content):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# WEB 2.0 DIAGRAM  —  "Javier as an App in Others' Platforms"
+# WEB 2.0 DIAGRAM  —  upside-down triangle: Principal · World → [interface|Javier]
 # ══════════════════════════════════════════════════════════════════════════════
-W20, H20 = 740, 358
 
-# layout
-FLOW_Y    = 105   # main flow row center-y
-JAV20_CX  = 388   # Javier center-x
-RAIL_Y    = 178   # dashed dependency rail y
-PLAT_Y    = 198   # platform boxes top-y
-WARN_Y    = 284   # warning banner top-y
+def thinker_icon(x, y, h):
+    """PNG thinker icon with top-left at (x,y), height h; width auto-scaled (208:316)."""
+    w = round(h * 208 / 316)
+    return f'<image href="{_THINKER_URI}" x="{x}" y="{y}" width="{w}" height="{h}"/>'
 
-PLATFORMS = [
-    dict(bx=112, cx=200, bw=176, icon="☁",  title="Google Drive", sub="data store · Google owns · can read"),
-    dict(bx=305, cx=388, bw=166, icon="✉",  title="Gmail",        sub="email channel · Google reads"),
-    dict(bx=508, cx=590, bw=164, icon="☎",  title="Twilio",       sub="SMS channel · Twilio-owned"),
+
+W20, H20 = 500, 428
+
+# two top-tier actors (closer together)
+PRINC_CX, PRINC_CY, PRINC_R = 175, 94, 23
+WORLD_CX, WORLD_CY, WORLD_R = 325, 94, 23
+
+# Javier box: chips (top) · identity+thinker (mid) · AI/KB (mid) · agents (bottom)
+JAV_X, JAV_Y, JAV_W, JAV_H = 48, 158, 404, 140
+JAV_CX  = JAV_X + JAV_W // 2   # 250
+JAV_BOT = JAV_Y + JAV_H        # 298
+
+# Principal Data box
+DATA_X, DATA_Y, DATA_W, DATA_H = 28, 316, 444, 62
+DATA_CX = DATA_X + DATA_W // 2  # 250
+DATA_BOT = DATA_Y + DATA_H      # 378
+
+# interface channel chips  (icon, label, bg, border)
+_CHANNELS = [
+    ("📞", "Twilio",  "#fff7ed", "#ea580c"),
+    ("📱", "iPhone",  "#eff6ff", "#3b82f6"),
+    ("💻", "Web UI",  "#f0fdf4", "#16a34a"),
+]
+
+# discipline agent boxes (inside Javier bottom)
+_AGENTS = [
+    ("🏠", "houseAgent",   "#f0fdf4", "#16a34a"),
+    ("🏥", "medicalAgent", "#eff6ff", "#3b82f6"),
+    ("💰", "moneyAgent",   "#fefce8", "#ca8a04"),
+    ("📄", "estateAgent",  "#fdf4ff", "#9333ea"),
 ]
 
 
-def web20_defs():
-    return "\n".join([
-        "<defs>",
-        f"  {arrow_marker('arr', '#64748b')}",
-        f"  {arrow_marker('arr-dash', '#94a3b8')}",
-        f"  {drop_shadow('shadow')}",
-        "</defs>",
-    ])
-
-
-def web20_header():
-    return "\n".join([
-        rect(0, 0, W20, 56, "#1e293b", rx=12),
-        rect(0, 44, W20, 12, "#1e293b"),           # fill rounded-corner notch
-        text(W20//2, 26, "Web 2.0  —  Javier as an App in Others' Platforms",
-             14, "#f1f5f9", bold=True, spacing="0.3"),
-        text(W20//2, 44, "BirthPlan · current state", 10, "#94a3b8"),
-    ])
-
-
-def web20_flow():
-    return "\n".join([
-        # Frank
-        circle(68, FLOW_Y, 26, "#dbeafe", stroke="#3b82f6", filt="shadow"),
-        text(68, FLOW_Y+8, "🧑", 24, "#000"),
-        text(68, FLOW_Y+34, "Frank", 11, "#1d4ed8", bold=True),
-        line(95, FLOW_Y, 150, FLOW_Y, marker="arr"),
-        # Browser / iPhone
-        rect(150, 82, 118, 46, "#e0f2fe", rx=7, stroke="#0284c7", filt="shadow"),
-        text(209, 100, "Browser", 11, "#0c4a6e", bold=True),
-        text(209, 116, "/ iPhone", 10, "#0369a1"),
-        line(268, FLOW_Y, 318, FLOW_Y, marker="arr"),
-        # Javier
-        rect(318, 68, 140, 74, "#ccfbf1", rx=9, stroke="#0f766e", sw=2.5, filt="shadow"),
-        text(JAV20_CX, 94, "Javier", 15, "#064e3b", bold=True),
-        text(JAV20_CX, 112, "Personal Assistant", 9.5, "#065f46"),
-        text(JAV20_CX, 127, "(Flask app)", 9.5, "#065f46"),
-        line(458, FLOW_Y, 510, FLOW_Y, marker="arr"),
-        # Anthropic
-        rect(510, 76, 205, 58, "#ede9fe", rx=7, stroke="#7c3aed", filt="shadow"),
-        text(612, 99, "Anthropic API", 11, "#4c1d95", bold=True),
-        text(612, 115, "Claude — sees all context", 10, "#6d28d9"),
-        text(612, 128, "Anthropic-owned infra", 9, "#7c3aed"),
-    ])
-
-
-def web20_rails():
-    parts = [
-        line(JAV20_CX, 142, JAV20_CX, RAIL_Y, stroke="#cbd5e1", sw=1.5, dash="5,3"),
-        line(200, RAIL_Y, 590, RAIL_Y,         stroke="#cbd5e1", sw=1.5, dash="5,3"),
-        text(JAV20_CX, RAIL_Y-4, "Javier depends on ↓", 8.5, "#94a3b8", italic=True),
-    ]
-    for cx in [p["cx"] for p in PLATFORMS]:
-        parts.append(line(cx, RAIL_Y, cx, PLAT_Y-2, stroke="#cbd5e1",
-                          sw=1.5, dash="5,3", marker="arr-dash"))
-    return "\n".join(parts)
-
-
-def web20_platforms():
-    parts = []
-    for p in PLATFORMS:
-        parts += [
-            rect(p["bx"], PLAT_Y, p["bw"], 68, "#fff7ed",
-                 rx=7, stroke="#f97316", sw=2, filt="shadow"),
-            text(p["cx"], PLAT_Y+22, p["icon"], 20, "#7a7a7a"),
-            text(p["cx"], PLAT_Y+42, p["title"], 11, "#c2410c", bold=True),
-            text(p["cx"], PLAT_Y+57, p["sub"], 9, "#ea580c"),
-        ]
-    return "\n".join(parts)
-
-
-def web20_warning():
-    return "\n".join([
-        rect(28, WARN_Y, 684, 58, "#fef2f2", rx=8, stroke="#fca5a5"),
-        text(W20//2, WARN_Y+22, "⚠  Frank is a user of platforms — not an owner",
-             12, "#dc2626", bold=True),
-        text(W20//2, WARN_Y+40,
-             "Any platform can read his data · change terms · go dark · sell to a competitor",
-             10, "#b91c1c"),
-    ])
-
-
 def build_web20():
-    sections = [
-        web20_defs(),
+    # ── Javier internals ──
+    CH_Y   = JAV_Y + 4         # 162
+    CH_H   = 22
+    SEP1_Y = CH_Y + CH_H + 3  # 187
+    ID_ICN = SEP1_Y + 15      # thinker center-y: 202
+    SEP2_Y = SEP1_Y + 42      # 229
+    AI_Y   = SEP2_Y + 3       # 232
+    AI_H   = 26
+    SEP3_Y = AI_Y + AI_H + 2  # 260
+    AG_Y   = SEP3_Y + 3       # 263
+    AG_H   = 30
+
+    ag_w = (JAV_W - 5 * 4) // 4   # 96px each
+    ag_x_starts = [JAV_X + 4 + i*(ag_w + 4) for i in range(4)]
+    ag_centers  = [x + ag_w // 2 for x in ag_x_starts]  # [100, 200, 300, 400]
+
+    parts = [
+        "\n".join([
+            "<defs>",
+            f"  {arrow_marker('arr', '#64748b')}",
+            f"  {arrow_marker_rev('arr-rev', '#64748b')}",
+            f"  {drop_shadow('shadow')}",
+            "</defs>",
+        ]),
         rect(0, 0, W20, H20, "#f8fafc", rx=12),
-        "<!-- header -->", web20_header(),
-        "<!-- main flow -->", web20_flow(),
-        "<!-- dependency rails -->", web20_rails(),
-        "<!-- platform boxes -->", web20_platforms(),
-        "<!-- warning banner -->", web20_warning(),
+        rect(0, 0, W20, 48, "#1e293b", rx=12),
+        rect(0, 36, W20, 12, "#1e293b"),
+        text(W20//2, 22, "Web 2.0  —  Javier in Others' Platforms",
+             13, "#f1f5f9", bold=True, spacing="0.3"),
+        text(W20//2, 39, "BirthPlan · current state", 9, "#94a3b8"),
+        # ── triangle skeleton ──
+        line(PRINC_CX+PRINC_R, PRINC_CY, WORLD_CX-WORLD_R, WORLD_CY,
+             stroke="#cbd5e1", sw=1.2, dash="5,4"),
+        bidir_line(PRINC_CX, PRINC_CY+PRINC_R, 210, JAV_Y),
+        bidir_line(WORLD_CX, WORLD_CY+WORLD_R, 290, JAV_Y),
+        # ── actors ──
+        circle(PRINC_CX, PRINC_CY, PRINC_R, "#dbeafe", stroke="#3b82f6", sw=2, filt="shadow"),
+        text(PRINC_CX, PRINC_CY+7,           "🧑", 20, "#000"),
+        text(PRINC_CX, PRINC_CY+PRINC_R+16, "Principal", 10, "#1e40af", bold=True),
+        circle(WORLD_CX, WORLD_CY, WORLD_R, "#dcfce7", stroke="#16a34a", sw=2, filt="shadow"),
+        text(WORLD_CX, WORLD_CY+7,           "🌐", 20, "#000"),
+        text(WORLD_CX, WORLD_CY+WORLD_R+16, "The World", 10, "#15803d", bold=True),
+        # ── Javier outer box ──
+        rect(JAV_X, JAV_Y, JAV_W, JAV_H, "#ccfbf1", rx=9,
+             stroke="#0f766e", sw=2.5, filt="shadow"),
     ]
-    return svg_wrap(W20, H20, "\n".join(sections))
+
+    # interface chips (slim, inside Javier top)
+    ch_x = JAV_X + 6
+    for icon, label, bg, border in _CHANNELS:
+        cw = 126
+        ccx = ch_x + cw // 2
+        parts += [
+            rect(ch_x, CH_Y, cw, CH_H, bg, rx=3, stroke=border, sw=0.8),
+            text(ccx, CH_Y+9,  icon,  8, "#000"),
+            text(ccx, CH_Y+18, label, 6.5, border, bold=True),
+        ]
+        ch_x += cw + 5
+
+    parts += [
+        sep_line(JAV_X+10, SEP1_Y, JAV_X+JAV_W-10, "#a7f3d0"),
+        # thinker PNG icon + Javier identity — group centered in J box
+        # icon h=24 matches two-line text block; w≈16 (208:316 ratio)
+        thinker_icon(x=JAV_CX - 56, y=ID_ICN - 10, h=24),
+        text(JAV_CX - 34, ID_ICN + 2,  "Javier", 12, "#064e3b", bold=True, anchor="start"),
+        text(JAV_CX - 34, ID_ICN + 16, "Personal Assistant", 8, "#065f46", anchor="start"),
+        sep_line(JAV_X+10, SEP2_Y, JAV_X+JAV_W-10, "#a7f3d0"),
+        # AI/KB strip
+        rect(JAV_X+3, AI_Y, JAV_W-6, AI_H, "#0d9488", rx=5),
+        text(JAV_CX, AI_Y + AI_H//2 + 5, "🧠  AI · Knowledge Base", 9, "#ccfbf1", bold=True),
+        sep_line(JAV_X+10, SEP3_Y, JAV_X+JAV_W-10, "#a7f3d0"),
+    ]
+
+    # agent boxes inside Javier
+    for i, (icon, label, bg, border) in enumerate(_AGENTS):
+        ax = ag_x_starts[i]
+        acx = ag_centers[i]
+        parts += [
+            rect(ax, AG_Y, ag_w, AG_H, bg, rx=4, stroke=border, sw=1),
+            text(acx, AG_Y+11, icon,  10, "#000"),
+            text(acx, AG_Y+24, label,  6.5, border, bold=True),
+        ]
+
+    # 1 line per agent piercing through Javier bottom → data box top
+    for acx in ag_centers:
+        parts.append(
+            line(acx, AG_Y+AG_H, acx, DATA_Y, stroke="#94a3b8", sw=1.2, marker="arr")
+        )
+
+    parts += [
+        # Principal Data box (no label above)
+        rect(DATA_X, DATA_Y, DATA_W, DATA_H, "#fffbeb", rx=8,
+             stroke="#d97706", sw=1.5, filt="shadow"),
+        # Google Drive sub-section
+        rect(DATA_X+4, DATA_Y+4, 294, DATA_H-8, "#fff7ed", rx=5, stroke="#fbbf24", sw=1),
+        text(DATA_X+151, DATA_Y+20, "📁  Google Drive", 10, "#92400e", bold=True),
+        text(DATA_X+151, DATA_Y+36, "🏠 house  ·  🏥 medical  ·  💰 finance  ·  …", 8.5, "#b45309"),
+        text(DATA_X+151, DATA_Y+50, "Google owns · can read · can go down", 7.5, "#d97706"),
+        # Gmail sub-section
+        rect(DATA_X+302, DATA_Y+4, 138, DATA_H-8, "#fff7ed", rx=5, stroke="#fbbf24", sw=1),
+        text(DATA_X+371, DATA_Y+20, "✉  Gmail", 10, "#92400e", bold=True),
+        text(DATA_X+371, DATA_Y+36, "email · comm", 8.5, "#b45309"),
+        text(DATA_X+371, DATA_Y+50, "Google reads", 7.5, "#d97706"),
+        # label + warning BELOW data box
+        text(DATA_CX, DATA_BOT+13,
+             "principal data  (platforms own it ⚠)", 8, "#b45309", italic=True),
+        text(DATA_CX, DATA_BOT+27,
+             "⚠  Principal is a user of these platforms — not an owner",
+             8, "#dc2626", bold=True),
+        text(DATA_CX, DATA_BOT+39,
+             "any platform can read the data · go dark · sell to a competitor",
+             7.5, "#dc2626"),
+    ]
+
+    return svg_wrap(W20, H20, "\n".join(parts))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -189,7 +253,7 @@ def build_web20():
 # ══════════════════════════════════════════════════════════════════════════════
 W30, H30 = 740, 390
 
-# Frank DID box
+# Principal DID box
 FK_X, FK_Y, FK_W, FK_H = 18, 156, 158, 100
 FK_CX = FK_X + FK_W // 2     # 97
 
@@ -210,9 +274,9 @@ BRANCHES = [
         arr_id="arr-green", arr_color="#059669",
         from_y=JV_Y+46, to_y=108,
         lines=[
-            ("Frank's personal data store",           "#166534", 10),
+            ("Principal's personal data store",           "#166534", 10),
             ("Encrypted · Self-hosted",                "#15803d",  9),
-            ("Apps request access · Frank revokes",    "#15803d",  9),
+            ("Apps request access · Principal revokes",    "#15803d",  9),
             ("RecordAgent API unchanged — swap store", "#16a34a", 8.5),
         ],
     ),
@@ -264,17 +328,17 @@ def web30_header():
     ])
 
 
-def web30_frank():
+def web30_Principal():
     cx, mid_y = FK_CX, FK_Y + FK_H // 2
     auth_label_x = (FK_X + FK_W + JV_X) // 2
     return "\n".join([
         rect(FK_X, FK_Y, FK_W, FK_H, "#dbeafe", rx=9, stroke="#1d4ed8", sw=2, filt="shadow"),
         text(cx, FK_Y+28, "🔑", 24, "#000"),
-        text(cx, FK_Y+52, "Frank", 13, "#1e40af", bold=True),
-        text(cx, FK_Y+68, "did:key:z6MkFrank…", 8.5, "#1d4ed8"),
+        text(cx, FK_Y+52, "Principal", 13, "#1e40af", bold=True),
+        text(cx, FK_Y+68, "did:key:z6MkPrincipal…", 8.5, "#1d4ed8"),
         text(cx, FK_Y+82, "self-sovereign identity", 8.5, "#3b82f6"),
         text(cx, FK_Y+94, "cryptographic · no middleman", 8, "#60a5fa"),
-        # arrow Frank → Javier
+        # arrow Principal → Javier
         line(FK_X+FK_W, mid_y, JV_X, JV_Y+JV_H//2, stroke="#1d4ed8", sw=2.2, marker="arr-blue"),
         text(auth_label_x, mid_y-8, "authorizes", 8.5, "#1d4ed8", italic=True),
     ])
@@ -289,8 +353,8 @@ def web30_javier():
         text(cx, JV_Y+88, "Sovereign Agent", 10, "#047857", bold=True),
         sep_line(JV_X+18, sep_y, JV_X+JV_W-18),
         text(cx, JV_Y+112, "did:key:z6MkJavier…", 8.5, "#065f46"),
-        text(cx, JV_Y+127, "Frank's authorized actor", 8.5, "#065f46"),
-        text(cx, JV_Y+142, "holds keys · acts on Frank's", 8.5, "#065f46"),
+        text(cx, JV_Y+127, "Principal's authorized actor", 8.5, "#065f46"),
+        text(cx, JV_Y+142, "holds keys · acts on Principal's", 8.5, "#065f46"),
         text(cx, JV_Y+157, "behalf in the world", 8.5, "#065f46"),
         text(cx, JV_Y+173, "A2A endpoint · VC authority", 8, "#6ee7b7"),
         text(cx, JV_Y+185, "pod ACL manager", 8, "#6ee7b7"),
@@ -322,7 +386,7 @@ def web30_success():
     return "\n".join([
         rect(28, H30-22, 684, 14, "#86efac", rx=6, opacity=0.5),
         text(W30//2, H30-11,
-             "✓  Frank owns every layer — identity · data · communication · privacy",
+             "✓  Principal owns every layer — identity · data · communication · privacy",
              9.5, "#15803d", bold=True),
     ])
 
@@ -332,7 +396,7 @@ def build_web30():
         web30_defs(),
         rect(0, 0, W30, H30, "#f0fdf4", rx=12),
         "<!-- header -->", web30_header(),
-        "<!-- Frank DID -->", web30_frank(),
+        "<!-- Principal DID -->", web30_Principal(),
         "<!-- Javier sovereign agent -->", web30_javier(),
         "<!-- branch arrows + boxes -->", web30_branches(),
         "<!-- success banner -->", web30_success(),
