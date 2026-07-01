@@ -8,6 +8,7 @@ SVG images referenced as ![alt](path.svg) are copied to a safe temp path
 import argparse
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -68,10 +69,19 @@ def _stage_images(html: str, base_dir: Path, tmp_dir: Path) -> str:
         if not orig.exists():
             return full_tag
         counter[0] += 1
-        safe_name = f'img{counter[0]:03d}{orig.suffix}'
-        staged = tmp_dir / safe_name
-        shutil.copy2(orig, staged)
-        safe_uri = staged.as_uri()          # file:///tmp/md2pdf_xxx/img001.svg
+        if orig.suffix.lower() == '.svg':
+            # WeasyPrint's SVG renderer doesn't support filters/markers — rasterize via sips
+            staged = tmp_dir / f'img{counter[0]:03d}.png'
+            r = subprocess.run(
+                ['sips', '-s', 'format', 'png', str(orig), '--out', str(staged)],
+                capture_output=True,
+            )
+            if r.returncode != 0 or not staged.exists():
+                return full_tag
+        else:
+            staged = tmp_dir / f'img{counter[0]:03d}{orig.suffix}'
+            shutil.copy2(orig, staged)
+        safe_uri = staged.as_uri()
         return full_tag.replace(f'src="{src}"', f'src="{safe_uri}"') \
                        .replace(f"src='{src}'", f"src='{safe_uri}'")
 
