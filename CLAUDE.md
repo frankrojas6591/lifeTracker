@@ -83,7 +83,10 @@ All Python source should use a `setup_paths.py` module at the package root to an
 
 ## 4. Running the Application
 
-> Commands will be added here once the project is bootstrapped.
+- myMIA (medical insurance agent), from `medicalAgent/myMIA/`:
+  - `jupyter notebook myMIA.ipynb` — set `YEAR`; reads `<medInsDir>/<YEAR>/annualProfile.json`
+  - medicalAgent profile: `~/GDrive/Family/Health/medicalAgentProfile.json` (auto-created if missing; override with `MEDICAL_AGENT_PROFILE`)
+  - personal data (claims, providers, annual profile) lives in the Health folder, never in the repo
 
 ---
 
